@@ -657,7 +657,10 @@ app.post('/api/outputs/:tenant/:cycle', (req, res) => {
 });
 
 // Serve static frontend files in production
-const frontendDistPath = path.join(__dirname, '../ui/dist');
+const frontendDistPath = fs.existsSync(path.join(__dirname, 'dist'))
+    ? path.join(__dirname, 'dist')
+    : path.join(__dirname, '../ui/dist');
+
 if (fs.existsSync(frontendDistPath)) {
     app.use(express.static(frontendDistPath));
     app.use((req, res, next) => {

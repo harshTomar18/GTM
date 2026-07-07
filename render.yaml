@@ -3,7 +3,7 @@ services:
     name: gtm-operating-system
     env: node
     plan: free
-    buildCommand: cd backend && npm install && cd ../ui && npm install && npm run build
+    buildCommand: cd backend && npm install && cd ../ui && npm install && npm run build && cp -r dist ../backend/dist
     startCommand: node backend/server.js
     envVars:
       - key: GEMINI_API_KEY
