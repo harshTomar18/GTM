@@ -1,0 +1,84 @@
+slug: phase2.narrative_lock
+phase: 2
+stage: 5
+mission: >
+  Lock the Phase 2 messaging architecture into a single frozen artifact every
+  Phase 3/4 agent reads. This is the Phase 2 exit gate — requires CMO + CEO +
+  SalesLeader approval. Cycle cannot proceed to asset creation until locked.
+
+inputs:
+  - key: phase2.positioning.output
+    schema_version: "PositioningStatement:v1"
+    required: true
+    require_approved: true
+  - key: phase2.value_proposition.output
+    schema_version: "ValuePropositionSet:v1"
+    required: true
+    require_approved: true
+  - key: phase2.messaging_matrix.output
+    schema_version: "MessagingMatrix:v1"
+    required: true
+    require_approved: true
+  - key: phase2.content_pillars.output
+    schema_version: "ContentPillarSet:v1"
+    required: true
+    require_approved: true
+
+profile_keys:
+  - profile.company.brand_name
+  - profile.operating_calendar
+
+output_schema: "NarrativeLockDoc:v1.0.0"
+artifact_markdown_template: "agents/phase2_narrative/narrative_lock/prompt.md"
+
+approval_policy_ids:
+  - phase_exit_gate        # CMO + SalesLeader; blocks downstream
+  - executive_voice        # CEO too
+
+kpis:
+  - id: stakeholder_signoff
+    name: "Required approvers signed off"
+    target: 1.0
+    unit: "ratio"
+  - id: must_say_count
+    name: "Phrases marked must_say"
+    target: 5
+    unit: "count"  # ≥ 5
+  - id: must_not_say_count
+    name: "Phrases marked must_not_say"
+    target: 3
+    unit: "count"  # ≥ 3 specific positioning traps
+  - id: mid_cycle_reopens
+    name: "Mid-cycle lock-reopen requests"
+    target: 0
+    unit: "count"  # observed over cycle lifetime
+
+sla:
+  max_tokens: 12000
+  max_latency_s: 300
+  max_cost_usd: 1.50
+
+failure_modes:
+  - mode: referenced_artifact_unapproved
+    detection: "any of the 4 upstream artifacts lacks approved_at"
+    auto_mitigation: redo
+  - mode: must_say_too_short
+    detection: "must_say count < 5"
+    auto_mitigation: redo
+  - mode: must_not_say_too_short
+    detection: "must_not_say count < 3"
+    auto_mitigation: redo
+  - mode: narrative_arc_incomplete
+    detection: "narrative_arc has any of the 5 acts empty"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-opus-4-7

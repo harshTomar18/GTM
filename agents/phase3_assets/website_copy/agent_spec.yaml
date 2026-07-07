@@ -1,0 +1,85 @@
+slug: phase3.website_copy
+phase: 3
+stage: 1
+mission: >
+  Generate homepage + solution + landing page copy (with meta + variants) aligned
+  to the locked narrative architecture. Tied 1:1 to specific keywords + personas.
+
+inputs:
+  - key: phase2.narrative_lock.output
+    schema_version: "NarrativeLockDoc:v1"
+    required: true
+    require_approved: true
+  - key: phase2.messaging_matrix.output
+    schema_version: "MessagingMatrix:v1"
+    required: true
+  - key: phase2.value_proposition.output
+    schema_version: "ValuePropositionSet:v1"
+    required: true
+  - key: phase1.keyword_intent.output
+    schema_version: "KeywordCluster:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+
+profile_keys:
+  - profile.brand_voice
+  - profile.regulatory_constraints
+  - profile.languages.default
+
+output_schema: "WebsiteCopyPack:v1.0.0"
+artifact_markdown_template: "agents/phase3_assets/website_copy/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - legal_regulated         # fires for tenants with regulatory_constraints.content_review_required
+  - framework_or_regulated_claims
+
+kpis:
+  - id: pages_produced
+    name: "Pages produced"
+    target: 5
+    unit: "count"
+  - id: must_say_coverage
+    name: "must_say phrases appearing in copy"
+    target: 0.80
+    unit: "ratio"
+  - id: keyword_h1_alignment
+    name: "Pages with primary_keyword in H1"
+    target: 1.0
+    unit: "ratio"
+  - id: meta_within_limits
+    name: "Meta title ≤60 + description ≤160 chars"
+    target: 1.0
+    unit: "ratio"
+
+sla:
+  max_tokens: 32000
+  max_latency_s: 600
+  max_cost_usd: 4.00
+
+failure_modes:
+  - mode: must_not_say_violation
+    detection: "Any narrative_lock.must_not_say phrase appears in copy"
+    auto_mitigation: redo_strict
+  - mode: meta_overflow
+    detection: "title_tag > 60 OR meta_description > 160 chars"
+    auto_mitigation: redo
+  - mode: keyword_h1_missing
+    detection: "Page declares primary_keyword but H1 doesn't include it"
+    auto_mitigation: redo
+  - mode: lp_landing_promise_mismatch
+    detection: "Hero promise contradicts paid_ad_creative when both targeted to same audience"
+    auto_mitigation: escalate_to_human
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

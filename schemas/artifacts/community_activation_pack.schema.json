@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/community_activation_pack.schema.json",
+  "title": "CommunityActivationPack",
+  "description": "Owned/earned/adjacent community programs. Output of phase4.community_activation.",
+  "type": "object",
+  "required": ["schema_version", "community_programs"],
+  "properties": {
+    "schema_version": { "const": "CommunityActivationPack:v1.0.0" },
+    "community_programs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["program_id", "community_id", "type", "cadence", "kpi_target"],
+        "properties": {
+          "program_id": { "type": "string" },
+          "community_id": { "type": "string", "description": "Named community — 'FinOps Foundation Slack', 'r/CISO', 'CISO Series Podcast'" },
+          "type": { "enum": ["owned", "earned", "adjacent", "influencer", "employee_advocacy", "ama"] },
+          "platform": { "enum": ["slack", "discord", "linkedin_group", "circle", "reddit", "podcast", "newsletter", "in_person", "x_community"] },
+          "cadence": { "type": "string", "description": "Weekly post / daily engagement / quarterly AMA / etc." },
+          "primary_persona_id": { "type": "string" },
+          "content_plan_summary": { "type": "string" },
+          "moderators_or_advocates": { "type": "array", "items": { "type": "string" } },
+          "kpi_target": {
+            "type": "object",
+            "properties": {
+              "metric": { "type": "string" },
+              "target": { "type": "string" },
+              "measurement_window": { "type": "string" }
+            }
+          },
+          "escalation_paths": { "type": "array", "items": { "type": "string" } },
+          "creator_partnerships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "creator_name": { "type": "string" },
+                "platform": { "type": "string" },
+                "disclosure_required": { "type": "boolean" },
+                "deliverables": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "ama_schedule": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "host_or_guest": { "type": "string" },
+                "date": { "type": "string", "format": "date" },
+                "platform": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "owned_community_status": { "enum": ["none", "considering", "building", "active"], "default": "none" },
+    "employee_advocacy_roster": { "type": "array", "items": { "type": "string" } }
+  }
+}

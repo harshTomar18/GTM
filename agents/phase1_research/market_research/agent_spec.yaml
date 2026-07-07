@@ -1,0 +1,75 @@
+slug: phase1.market_research
+phase: 1
+stage: 2
+mission: >
+  Map market size, growth, key players, dynamics, regulatory shifts, and positioning
+  whitespace for this cycle. Produces a CompetitorProfile per direct competitor + a
+  separate market landscape doc.
+
+inputs:
+  - key: phase1.brief_intake.output
+    schema_version: "BriefIntake:v1"
+    required: true
+
+entrypoint: false
+
+profile_keys:
+  - profile.industry.primary
+  - profile.industry.secondary
+  - profile.geography.primary_markets
+  - profile.frameworks
+  - profile.regulatory_constraints
+  - profile.icp_archetypes
+
+output_schema: "CompetitorProfile:v1.0.0"  # Note: emits an ARRAY of these
+artifact_markdown_template: "agents/phase1_research/market_research/prompt.md"
+
+approval_policy_ids: []  # No mandatory gate; SME may review framework claims
+
+kpis:
+  - id: competitors_profiled
+    name: "Competitors profiled"
+    target: 5
+    unit: "count"
+  - id: citation_density
+    name: "Citations per claim"
+    target: 0.80
+    unit: "ratio"
+  - id: source_freshness_median_days
+    name: "Median source age (days)"
+    target: 180
+    unit: "days"
+  - id: whitespace_angles
+    name: "Whitespace positioning angles identified"
+    target: 3
+    unit: "count"
+
+sla:
+  max_tokens: 32000
+  max_latency_s: 600
+  max_cost_usd: 3.00
+
+failure_modes:
+  - mode: hallucinated_competitor
+    detection: "competitor name not in BriefIntake.known_competitors AND no citation"
+    auto_mitigation: redo_strict
+  - mode: missing_citations
+    detection: "any factual claim without a citation"
+    auto_mitigation: redo
+  - mode: stale_sources
+    detection: "median citation age > 365 days"
+    auto_mitigation: redo
+  - mode: weak_whitespace
+    detection: "whitespace section claims '<3 angles' or 'no whitespace found'"
+    auto_mitigation: escalate_to_human  # rare; usually means market is genuinely saturated
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true   # BriefIntake is in cycle context
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7      # heavier — research synthesis
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

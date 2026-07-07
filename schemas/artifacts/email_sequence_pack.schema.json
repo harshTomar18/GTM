@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/email_sequence_pack.schema.json",
+  "title": "EmailSequencePack",
+  "description": "Nurture / prospecting / lifecycle / re-engagement sequences. Output of phase3.email_sequences.",
+  "type": "object",
+  "required": ["schema_version", "sequences"],
+  "properties": {
+    "schema_version": { "const": "EmailSequencePack:v1.0.0" },
+    "sequences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sequence_id", "purpose", "trigger", "primary_persona_id", "steps"],
+        "properties": {
+          "sequence_id": { "type": "string" },
+          "purpose": { "enum": ["nurture", "prospecting_outbound", "lifecycle_onboarding", "lifecycle_adoption", "reengagement", "post_event", "upsell"] },
+          "trigger": { "type": "string", "description": "Event that fires the sequence (form_fill, score_threshold, dormant_X_days, …)" },
+          "primary_persona_id": { "type": "string" },
+          "channel": { "enum": ["email_nurture", "email_outbound", "email_lifecycle"], "default": "email_nurture" },
+          "suppression_rules": { "type": "array", "items": { "type": "string" } },
+          "frequency_cap_per_week": { "type": ["integer", "null"] },
+          "deliverability_notes": { "type": "string" },
+          "regulatory_footer_required": { "type": "boolean", "default": false },
+          "steps": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "object",
+              "required": ["step_number", "subject", "preheader", "body_markdown", "cta"],
+              "properties": {
+                "step_number": { "type": "integer" },
+                "subject": { "type": "string" },
+                "preheader": { "type": "string" },
+                "body_markdown": { "type": "string" },
+                "cta": { "type": "string" },
+                "delay_after_prior_step_hours": { "type": ["integer", "null"] },
+                "branch_on": {
+                  "type": "object",
+                  "properties": {
+                    "opened": { "type": ["string", "null"], "description": "Next step id on open" },
+                    "clicked": { "type": ["string", "null"] },
+                    "replied": { "type": ["string", "null"] },
+                    "no_response": { "type": ["string", "null"] }
+                  }
+                },
+                "personalization_tokens": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

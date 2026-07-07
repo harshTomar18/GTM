@@ -1,0 +1,44 @@
+agent_slug: phase2.value_proposition
+
+criteria:
+  - id: persona_coverage
+    weight: 0.20
+    hard_fail: true
+    description: "per_persona[] has one entry per persona in audience_intelligence.personas. No missing personas."
+
+  - id: outcomes_quantified
+    weight: 0.20
+    hard_fail: true
+    description: "≥60% of key_benefits[].outcome fields contain a number + unit + timeframe (e.g. 'cut 8 hours/week within 30 days')."
+
+  - id: proof_density
+    weight: 0.15
+    description: "Average ≥1.5 supporting_proof entries per key_benefit (or [RESEARCH NEEDED] markers if proof is missing)."
+
+  - id: objections_addressed
+    weight: 0.15
+    description: "Each persona's top 3 objections (from PersonaSpec.objections) get a one-sentence response in objections_addressed."
+
+  - id: vs_alternatives_honest
+    weight: 0.10
+    description: "vs_alternatives names 2-3 real alternatives (could be competitors, DIY, in-house, status quo) — not 'other vendors' generically."
+
+  - id: legal_clearance_respected
+    weight: 0.05
+    hard_fail: true
+    description: "No customer named in proof_points that isn't in q_named_customers_legal_status."
+
+  - id: per_persona_distinct
+    weight: 0.10
+    description: "Each per_persona block has meaningfully different framing/benefits — not copy-paste of the core with synonyms."
+
+  - id: brand_voice_compliance
+    weight: 0.05
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+  - "\\b(streamline|increase productivity|save time)\\b(?!.*\\d)"  # unquantified outcome verbs
+
+auto_redo_threshold: 0.75

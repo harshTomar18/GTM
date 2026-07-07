@@ -1,0 +1,54 @@
+version: "1.0.0"
+agent: phase5.experiment_review
+
+questions:
+
+  - id: q_significance_threshold
+    label: "Significance threshold for declaring a winner?"
+    schema: optional
+    reusable_key: cycle.experiments.significance_threshold
+    type: number
+    default: 0.95
+    hint: >
+      Confidence level (0–1) required before a variant is declared the winning
+      arm. The default of 0.95 (95%) is standard for most growth experiments.
+      Lower values increase sensitivity but raise the false-positive rate.
+
+  - id: q_mde
+    label: "Minimum detectable effect (% relative lift) to consider a win meaningful?"
+    schema: optional
+    reusable_key: cycle.experiments.mde_pct
+    type: number
+    default: 5
+    hint: >
+      The smallest relative lift (e.g., 5 = 5%) that is worth acting on.
+      Experiments showing statistically significant results below this
+      threshold will be noted as "significant but below MDE — hold."
+
+  - id: q_rollout_scope
+    label: "Rollout strategy for winners?"
+    schema: optional
+    reusable_key: cycle.experiments.rollout_strategy
+    type: single_select
+    options:
+      - value: full_immediate
+        label: "Full immediate — ship winning variant to 100% of audience now"
+      - value: phased_25pct_then_100
+        label: "Phased — 25% for 7 days, then 100% if no regressions"
+      - value: manual_approval_per_winner
+        label: "Manual approval per winner — each rollout requires explicit sign-off"
+    hint: >
+      Governs the default rollout_action proposed for each winning experiment.
+      Can be overridden per experiment in the findings section.
+
+  - id: q_cycle_end_force_conclude
+    label: "Force-conclude all running experiments at cycle end?"
+    schema: optional
+    reusable_key: cycle.experiments.force_conclude_at_cycle_end
+    type: boolean
+    default: true
+    hint: >
+      When true, any experiment still running at cycle boundary is treated as
+      concluded and reviewed with whatever data exists — underpowered
+      experiments are flagged accordingly. When false, running experiments
+      are excluded from this report and carry over to the next cycle.

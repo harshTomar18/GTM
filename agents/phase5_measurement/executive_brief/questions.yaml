@@ -1,0 +1,98 @@
+# questions.yaml — phase5.executive_brief
+# Collected from the user before the agent runs.
+# Answers are injected into the prompt as inputs.answers.*
+
+questions:
+
+  q_audience_seniority:
+    label: "Who is the primary audience for this brief?"
+    required: true
+    reusable_key: cycle.brief.audience_seniority
+    type: select
+    options:
+      - value: board_of_directors
+        label: "Board of Directors"
+        hint: >
+          Governance-level stakeholders. Focus on revenue, risk, and strategic
+          positioning. Omit channel-level tactical detail.
+      - value: ceo_cfo
+        label: "CEO / CFO"
+        hint: >
+          P&L and growth focus. Lead with revenue impact, cost efficiency,
+          and ROI. Keep operational detail minimal.
+      - value: cmo_vp_marketing
+        label: "CMO / VP Marketing"
+        hint: >
+          Brand and pipeline focus. Include funnel metrics, brand health
+          signals, and channel performance highlights.
+      - value: gtm_leadership
+        label: "GTM Leadership (Sales, RevOps, CS)"
+        hint: >
+          Pipeline and conversion focus. Include pipeline contribution, deal
+          velocity impact, and enablement outcomes.
+    validation:
+      required_message: "Audience seniority is required — it controls the brief's tone, depth, and what gets omitted."
+
+  q_format:
+    label: "What is the intended delivery format?"
+    required: true
+    reusable_key: cycle.brief.format
+    type: select
+    options:
+      - value: markdown_notion
+        label: "Markdown / Notion"
+        hint: "Output optimised for direct paste into Notion or a markdown viewer."
+      - value: pdf_export
+        label: "PDF Export"
+        hint: "Markdown formatted for clean PDF rendering via downstream pdf skill."
+      - value: pptx_export
+        label: "PPTX / Slide Deck"
+        hint: "Sections mapped to slide titles; bullets kept to ≤ 6 words each for pptx skill."
+      - value: email_summary
+        label: "Email Summary"
+        hint: "Condensed single-section narrative suitable for an executive email body."
+    validation:
+      required_message: "Delivery format is required to correctly structure the output."
+
+  q_length_cap:
+    label: "Maximum word count for the brief body (excluding frontmatter)?"
+    required: false
+    reusable_key: cycle.brief.length_cap
+    type: integer
+    default: 800
+    hint: >
+      800 words (~2 pages) is the recommended default for senior audiences.
+      Boards typically prefer ≤ 600. GTM leadership can absorb up to 1,200.
+    validation:
+      min: 200
+      max: 2000
+      range_message: "Word cap must be between 200 and 2,000 words."
+
+  q_off_limits_topics:
+    label: "Are there any topics that must NOT appear in this brief?"
+    required: false
+    type: text
+    hint: >
+      List sensitive topics to exclude — e.g. ongoing acquisition negotiation,
+      pending legal matters, unannounced product decisions, personnel changes.
+    example: "ongoing acquisition negotiation, legal matters, unannounced partnership with a named third party"
+    note: >
+      When this field is populated, off_limits_applied will be set to true in
+      the output frontmatter and the agent will explicitly avoid those areas.
+
+  q_asks_needed:
+    label: "What decisions or asks should the brief include?"
+    required: true
+    type: text
+    hint: >
+      State each ask in plain language. Include who owns the decision and,
+      ideally, when it is needed. The agent will format these into the
+      structured Asks & Decisions Needed section.
+    example: >
+      Approve Q3 budget increase of $50k for paid media;
+      ratify messaging lock for 12 months;
+      confirm headcount approval for two demand-gen hires by end of quarter
+    validation:
+      required_message: >
+        At least one ask is required. A brief with no asks leaves the audience
+        with nothing to act on — defeating its purpose.

@@ -1,0 +1,31 @@
+agent_slug: phase4.channel_strategy
+
+questions:
+  - id: q_total_budget_usd
+    prompt: "Total cycle budget envelope (USD, paid + content production + tooling)?"
+    type: number
+    required_for: plan
+    reusable_key: cycle.budget.total_usd
+
+  - id: q_prior_cycle_attribution
+    prompt: "Prior-cycle channel performance data available? (Paste channel × CAC × pipeline numbers, or 'first cycle / no prior data'.)"
+    type: long_text
+    required_for: gather
+    reusable_key: profile.attribution.prior_cycle
+
+  - id: q_strategic_channel_mandates
+    prompt: "Any strategic mandates? ('we MUST crack LinkedIn this year' / 'no TikTok until 2027' / 'partner channel must be ≥20% spend' — anything board-level.)"
+    type: long_text
+    required_for: plan
+
+  - id: q_off_limits_channels
+    prompt: "Channels explicitly OFF-LIMITS this cycle? (e.g., 'no programmatic display — past failure', 'no influencer until brand-safety policy ships')"
+    type: long_text
+    required_for: plan
+
+  - id: q_time_to_results_tolerance
+    prompt: "Time-to-results tolerance? ('need pipeline in 30 days' / 'comfortable with 6-month builds' — affects SEO vs paid mix.)"
+    type: enum
+    enum_options: ["30_days", "60_days", "90_days", "6_months", "12_months"]
+    required_for: plan
+    default: "90_days"

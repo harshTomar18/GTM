@@ -1,0 +1,40 @@
+agent_slug: phase3.email_sequences
+
+questions:
+  - id: q_sequences_in_scope
+    prompt: "Which sequences this cycle? (Pick from: nurture, prospecting_outbound, lifecycle_onboarding, lifecycle_adoption, reengagement, post_event, upsell.)"
+    type: long_text
+    required_for: plan
+    default: "nurture, prospecting_outbound, lifecycle_onboarding, reengagement"
+
+  - id: q_steps_per_sequence
+    prompt: "Steps per sequence? (Typical: nurture 5-7, prospecting 5-7, lifecycle 3-5, reengagement 3.) Format: 'nurture=6, prospecting_outbound=7, ...'"
+    type: long_text
+    required_for: plan
+    default: "nurture=6, prospecting_outbound=7, lifecycle_onboarding=4, reengagement=3"
+
+  - id: q_personalization_tokens
+    prompt: "Personalization tokens available in our ESP/CRM? (Comma-separated. e.g., {{ '{{first_name}}' }}, {{ '{{company}}' }}, {{ '{{industry}}' }}, {{ '{{recent_signal}}' }})"
+    type: long_text
+    required_for: write
+    default: "{{ '{{first_name}}, {{company}}, {{title}}' }}"
+
+  - id: q_suppression_rules
+    prompt: "Standard suppression rules? (e.g., 'exclude active opps', 'exclude customers', 'exclude unsubscribed', 'exclude opened-in-last-7-days')"
+    type: long_text
+    required_for: plan
+    reusable_key: profile.email.suppression_rules
+    default: "exclude active opps, customers, unsubscribed, hard bounces"
+
+  - id: q_frequency_cap
+    prompt: "Frequency cap per recipient per week across all sequences?"
+    type: number
+    required_for: plan
+    default: "2"
+    reusable_key: profile.email.frequency_cap_per_week
+
+  - id: q_send_window
+    prompt: "Send window (timezone + days/times)? e.g., 'US Eastern, Mon-Thu 9-11am'"
+    type: text
+    required_for: plan
+    reusable_key: profile.email.send_window

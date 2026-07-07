@@ -1,0 +1,33 @@
+agent_slug: phase4.campaign_calendar
+
+questions:
+  - id: q_tentpole_dates
+    prompt: "Tentpole moments this cycle? (Product launches, conferences, fiscal close, customer events. Format: 'YYYY-MM-DD: <event name>' one per line.)"
+    type: long_text
+    required_for: plan
+
+  - id: q_cycle_start_date
+    prompt: "Cycle start date (YYYY-MM-DD)? Default: today."
+    type: date
+    required_for: plan
+
+  - id: q_cycle_end_date
+    prompt: "Cycle end date (YYYY-MM-DD)? Determines 90/60/30-day plan length."
+    type: date
+    required_for: plan
+
+  - id: q_owners_roster
+    prompt: "Owners available to assign items to? (Name : role format, comma-separated. Example: 'Jane Doe: Content; John Smith: Performance; Lin Tao: SDR')"
+    type: long_text
+    required_for: plan
+    reusable_key: profile.execution.owners_roster
+
+  - id: q_theme_weeks
+    prompt: "Theme weeks planned? (Optional. e.g., 'Week 3: Compliance Theme — all content + ads anchor on regulatory readiness'.)"
+    type: long_text
+    required_for: plan
+
+  - id: q_pto_blackouts_cycle_specific
+    prompt: "Cycle-specific PTO blackouts beyond profile.operating_calendar.blackout_dates? (Per-owner if relevant.)"
+    type: long_text
+    required_for: gather

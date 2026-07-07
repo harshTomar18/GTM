@@ -1,0 +1,70 @@
+slug: phase2.content_pillars
+phase: 2
+stage: 4
+mission: >
+  Define 3-5 content pillars + map pillars to keyword clusters + produce topic
+  cluster map for internal-linking strategy. Pillars are themes we'll OWN in our
+  category.
+
+inputs:
+  - key: phase2.messaging_matrix.output
+    schema_version: "MessagingMatrix:v1"
+    required: true
+    require_approved: true
+  - key: phase1.keyword_intent.output
+    schema_version: "KeywordCluster:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+
+profile_keys:
+  - profile.frameworks
+  - profile.regulatory_constraints
+
+output_schema: "ContentPillarSet:v1.0.0"
+artifact_markdown_template: "agents/phase2_narrative/content_pillars/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+
+kpis:
+  - id: pillar_count
+    name: "Content pillars"
+    target: 4
+    unit: "count"  # 3-5 acceptable
+  - id: keyword_cluster_coverage
+    name: "Keyword clusters mapped to pillars"
+    target: 0.80
+    unit: "ratio"  # how many of the 8-12 clusters fit under some pillar
+  - id: pillar_uniqueness
+    name: "Pillars not claimed by 3+ competitors"
+    target: 0.80
+    unit: "ratio"  # at least 80% of pillars are differentiated
+
+sla:
+  max_tokens: 8000
+  max_latency_s: 240
+  max_cost_usd: 1.00
+
+failure_modes:
+  - mode: pillar_count_wrong
+    detection: "pillar count < 3 OR > 5"
+    auto_mitigation: redo
+  - mode: orphan_clusters
+    detection: "more than 30% of keyword clusters don't map to any pillar"
+    auto_mitigation: redo
+  - mode: pillar_too_broad
+    detection: "any pillar's pov_statement is < 10 words OR doesn't take a stance"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

@@ -1,0 +1,36 @@
+agent_slug: phase1.audience_intelligence
+
+questions:
+  - id: q_customer_interviews
+    prompt: "Do you have existing customer interview transcripts, sales call recordings (Gong/Chorus), or support tickets we can mine? Paste paths, URLs, or 'none'."
+    type: long_text
+    required_for: gather
+    reusable_key: profile.customer_research_sources
+
+  - id: q_communities_to_mine
+    prompt: "Which Reddit subreddits, forums, Slack/Discord communities, or LinkedIn groups should we mine for verbatim audience language? List each on a new line. (e.g., r/cfo, r/AccountingDept, FinOps Slack, …)"
+    type: long_text
+    required_for: gather
+    reusable_key: profile.icp.watering_holes
+
+  - id: q_g2_review_anchor
+    prompt: "G2/Capterra category page URLs we should mine for review excerpts? (Often the most concentrated source of pain language.)"
+    type: long_text
+    required_for: gather
+
+  - id: q_persona_priority
+    prompt: "Of the ICP archetype(s) declared in the profile, which is the SINGLE most important persona for this cycle? (We'll go deep on 1 primary + 1-2 secondary.)"
+    type: text
+    required_for: plan
+    reusable_key: cycle.icp.primary_persona
+
+  - id: q_off_limits_personas
+    prompt: "Any personas we should explicitly EXCLUDE from this cycle? (e.g., 'don't waste effort on SMB CFOs', 'skip end-users — we sell to procurement')"
+    type: long_text
+    required_for: plan
+
+  - id: q_existing_voc_doc
+    prompt: "Existing voice-of-customer doc, persona brief, or research from prior cycles? Paste path/URL or 'none' (in which case we build from scratch)."
+    type: text
+    required_for: gather
+    reusable_key: profile.prior_voc_doc

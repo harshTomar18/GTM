@@ -1,0 +1,82 @@
+slug: phase3.sales_enablement
+phase: 3
+stage: 6
+mission: >
+  Produce the cycle's sales enablement pack — battlecards per competitor, one-pagers,
+  discovery questions, objection-handling guides, demo script, mutual close plan
+  template, persona cheat sheets, ROI talking points.
+
+inputs:
+  - key: phase2.narrative_lock.output
+    schema_version: "NarrativeLockDoc:v1"
+    required: true
+    require_approved: true
+  - key: phase2.messaging_matrix.output
+    schema_version: "MessagingMatrix:v1"
+    required: true
+  - key: phase1.market_research.output
+    schema_version: "CompetitorProfile:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase2.value_proposition.output
+    schema_version: "ValuePropositionSet:v1"
+    required: true
+
+profile_keys:
+  - profile.brand_voice
+  - profile.tech_stack
+  - profile.frameworks
+
+output_schema: "SalesEnablementPack:v1.0.0"
+artifact_markdown_template: "agents/phase3_assets/sales_enablement/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting   # CMO
+  # sales_leader approval is also implied; CMO + Sales Leader review per blueprint
+
+kpis:
+  - id: battlecards_produced
+    name: "Battlecards (one per competitor)"
+    target: 1.0
+    unit: "ratio"   # every CompetitorProfile gets a battlecard
+  - id: discovery_questions_count
+    name: "Discovery questions"
+    target: 12
+    unit: "count"   # min 8
+  - id: objection_responses_count
+    name: "Objection responses"
+    target: 8
+    unit: "count"   # min 6
+  - id: persona_cheat_sheets
+    name: "Persona cheat sheets"
+    target: 1.0
+    unit: "ratio"   # every persona gets one
+
+sla:
+  max_tokens: 32000
+  max_latency_s: 600
+  max_cost_usd: 3.50
+
+failure_modes:
+  - mode: battlecard_missing
+    detection: "any CompetitorProfile has no battlecard in this pack"
+    auto_mitigation: redo
+  - mode: objections_too_few
+    detection: "objection_responses count < 6"
+    auto_mitigation: redo
+  - mode: differentiators_uncited
+    detection: "battlecard claims a differentiator with no proof"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

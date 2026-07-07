@@ -1,0 +1,11 @@
+{
+  "id": "q4ftk43k",
+  "tenant": "microsoft",
+  "cycle": "2026-Q3",
+  "agent": "email_sequences",
+  "required_role": "CMO",
+  "status": "approved",
+  "created_at": "2026-07-06T08:23:50.367Z",
+  "resolved_at": "2026-07-06T08:27:35.739Z",
+  "comment": "Approved for execution"
+}

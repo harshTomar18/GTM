@@ -1,0 +1,88 @@
+slug: phase4.campaign_calendar
+phase: 4
+stage: 2
+mission: >
+  Sequence all Phase 3 assets into a time-phased 90-day plan with channel mapping,
+  owners, dependencies, and conflict checks. Honors operating calendar blackouts
+  and tentpole moments.
+
+inputs:
+  - key: phase4.channel_strategy.output
+    schema_version: "ChannelPlan:v1"
+    required: true
+    require_approved: true
+  - key: phase3.website_copy.output
+    schema_version: "WebsiteCopyPack:v1"
+    required: false
+  - key: phase3.content_assets.output
+    schema_version: "ContentAssetPack:v1"
+    required: false
+  - key: phase3.email_sequences.output
+    schema_version: "EmailSequencePack:v1"
+    required: false
+  - key: phase3.social_content.output
+    schema_version: "SocialContentPack:v1"
+    required: false
+  - key: phase3.paid_ad_creative.output
+    schema_version: "PaidAdCreativePack:v1"
+    required: false
+  - key: phase3.sales_enablement.output
+    schema_version: "SalesEnablementPack:v1"
+    required: false
+
+profile_keys:
+  - profile.operating_calendar
+
+output_schema: "CampaignCalendar:v1.0.0"
+artifact_markdown_template: "agents/phase4_distribution/campaign_calendar/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+
+kpis:
+  - id: items_scheduled
+    name: "Calendar items scheduled"
+    target: 30
+    unit: "count"   # depends on cycle scale
+  - id: blackout_respected
+    name: "No items scheduled on blackout dates"
+    target: 1.0
+    unit: "ratio"
+  - id: dependency_violations
+    name: "Items scheduled before their depends_on are due"
+    target: 0
+    unit: "count"
+  - id: owner_assigned
+    name: "Items with owner assigned"
+    target: 1.0
+    unit: "ratio"
+
+sla:
+  max_tokens: 16000
+  max_latency_s: 300
+  max_cost_usd: 2.00
+
+failure_modes:
+  - mode: blackout_violation
+    detection: "any item.scheduled_date falls inside profile.operating_calendar.blackout_dates"
+    auto_mitigation: redo
+  - mode: dependency_cycle
+    detection: "depends_on graph has a cycle"
+    auto_mitigation: redo_strict
+  - mode: owner_missing
+    detection: "any item lacks owner"
+    auto_mitigation: redo
+  - mode: frequency_overload
+    detection: "more than profile.email.frequency_cap_per_week email items scheduled to same audience in same week"
+    auto_mitigation: redo
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

@@ -1,0 +1,20 @@
+agent_slug: phase2.narrative_lock
+
+questions:
+  - id: q_lock_duration
+    prompt: "How long should this lock stay in force? (Options: 'cycle' = until current cycle completes; 'quarter' = until end of fiscal quarter; 'year' = until end of fiscal year. Longer = more leverage, less flexibility.)"
+    type: enum
+    enum_options: ["cycle", "quarter", "year"]
+    required_for: plan
+    default: "cycle"
+    reusable_key: cycle.narrative_lock.duration
+
+  - id: q_reopen_conditions
+    prompt: "What events would justify breaking the lock mid-cycle? (Comma-separated. Examples: 'competitor acquired by hyperscaler', 'regulatory ruling on X', 'losing 3 deals in a row to new positioning angle')"
+    type: long_text
+    required_for: plan
+
+  - id: q_executive_voice_override
+    prompt: "Should any executive's personal voice override the locked narrative for their own communications? (e.g., CEO blog posts, CISO thought leadership.) If yes, name the executive(s) + scope."
+    type: long_text
+    required_for: plan

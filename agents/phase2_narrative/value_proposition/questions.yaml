@@ -1,0 +1,26 @@
+agent_slug: phase2.value_proposition
+
+questions:
+  - id: q_proof_library_path
+    prompt: "Path/URL to existing proof-point library, customer outcomes doc, or case-study repository? (If 'none', we'll surface what's missing as [RESEARCH NEEDED] markers.)"
+    type: text
+    required_for: gather
+    reusable_key: profile.proof_library_path
+
+  - id: q_named_customers_legal_status
+    prompt: "Which customers have we cleared LEGALLY to name in marketing? (Comma-separated. Anything not on this list will be referenced as 'a Fortune 500 financial services firm' style.)"
+    type: long_text
+    required_for: gather
+    reusable_key: profile.legally_cleared_logos
+
+  - id: q_outcome_metrics_we_track
+    prompt: "Which customer outcome metrics do we actually measure and can prove? (e.g., 'time-to-close reduction', 'audit prep hours saved', 'support ticket reduction')"
+    type: long_text
+    required_for: gather
+    reusable_key: profile.measured_outcomes
+
+  - id: q_proof_freshness_floor
+    prompt: "Reject proof points older than how many months? (Default: 18. Faster-moving categories: 12.)"
+    type: number
+    required_for: plan
+    default: "18"

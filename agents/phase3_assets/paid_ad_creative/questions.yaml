@@ -1,0 +1,37 @@
+agent_slug: phase3.paid_ad_creative
+
+questions:
+  - id: q_platforms_in_scope
+    prompt: "Paid platforms in scope this cycle? (Comma-separated. e.g., 'google_search, linkedin_ads, meta_ads, x_ads, programmatic_dsp, tiktok_ads, reddit_ads')"
+    type: long_text
+    required_for: plan
+    reusable_key: cycle.paid.platforms
+    default: "google_search, linkedin_ads"
+
+  - id: q_campaigns_per_platform
+    prompt: "Campaigns per platform with their objectives? (Format: 'google_search: branded_search_defense + non-branded; linkedin_ads: lead_gen + retargeting; ...')"
+    type: long_text
+    required_for: plan
+
+  - id: q_total_budget_signal
+    prompt: "Total paid budget envelope this cycle? (USD. Triggers budget_threshold approval policy if > $25k.)"
+    type: number
+    required_for: plan
+    reusable_key: cycle.budget.total_usd
+
+  - id: q_variants_per_ad_group
+    prompt: "Variants per ad group? (Default: 3 for statistical significance. 2 = minimum. 5+ = significant test budget needed.)"
+    type: number
+    required_for: plan
+    default: "3"
+
+  - id: q_static_vs_video
+    prompt: "Static vs video mix? (e.g., 'static_only', 'video_only', '70_30_static_video', etc.)"
+    type: text
+    required_for: plan
+    default: "70_30_static_video"
+
+  - id: q_compliance_disclaimers_required
+    prompt: "Required compliance disclaimers per platform? (e.g., financial: 'Past performance does not guarantee future results'; healthcare: 'Consult a healthcare provider'; only required if applicable.)"
+    type: long_text
+    required_for: gather

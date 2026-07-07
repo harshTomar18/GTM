@@ -1,0 +1,80 @@
+slug: phase4.community_activation
+phase: 4
+stage: 6
+mission: >
+  Activate owned, earned, adjacent, influencer, employee-advocacy, and AMA
+  community programs. Honors per-program cadence, escalation paths, disclosure
+  requirements, and named community accounts.
+
+inputs:
+  - key: phase4.campaign_calendar.output
+    schema_version: "CampaignCalendar:v1"
+    required: true
+    require_approved: true
+  - key: phase3.social_content.output
+    schema_version: "SocialContentPack:v1"
+    required: true
+  - key: phase3.content_assets.output
+    schema_version: "ContentAssetPack:v1"
+    required: false
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+
+profile_keys:
+  - profile.brand_voice
+
+output_schema: "CommunityActivationPack:v1.0.0"
+artifact_markdown_template: "agents/phase4_distribution/community_activation/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - executive_voice   # CEO if executive community programs activated
+
+kpis:
+  - id: community_programs_count
+    name: "Active community programs"
+    target: 3
+    unit: "count"
+  - id: persona_watering_hole_coverage
+    name: "Programs covering primary persona watering_holes"
+    target: 0.80
+    unit: "ratio"
+  - id: kpi_targets_present
+    name: "Programs with kpi_target defined"
+    target: 1.0
+    unit: "ratio"
+  - id: disclosure_compliance
+    name: "Creator partnerships with disclosure_required=true have disclosure plan"
+    target: 1.0
+    unit: "ratio"
+
+sla:
+  max_tokens: 16000
+  max_latency_s: 400
+  max_cost_usd: 2.00
+
+failure_modes:
+  - mode: watering_hole_orphan
+    detection: "primary persona's named watering_hole has no community program"
+    auto_mitigation: redo
+  - mode: missing_kpi_target
+    detection: "any program without kpi_target.metric + target"
+    auto_mitigation: redo
+  - mode: undeclared_creator
+    detection: "creator_partnership without disclosure_required boolean explicit"
+    auto_mitigation: redo_strict
+  - mode: ceo_post_no_approval
+    detection: "executive AMA / ghost-written exec content + CEO not in approval_roles"
+    auto_mitigation: escalate_to_human
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

@@ -1,0 +1,27 @@
+agent_slug: phase2.positioning
+
+questions:
+  - id: q_category_strategy
+    prompt: "Are we OWNING an existing category, CREATING a new one, or CHALLENGING the current leader's framing? (Owning = lower risk, harder differentiation. Creating = higher reward, higher risk. Challenging = mid.)"
+    type: enum
+    enum_options: ["owning", "creating", "challenging"]
+    required_for: plan
+    reusable_key: cycle.positioning.category_strategy
+    default: "owning"
+
+  - id: q_named_customers_ok
+    prompt: "Reference customers we can name in the positioning statement? (Comma-separated; or 'none' if we can't name any yet.)"
+    type: long_text
+    required_for: gather
+    reusable_key: profile.named_customers
+
+  - id: q_category_creation_tolerance
+    prompt: "If we recommend category creation, are you (and the CEO) comfortable spending 18+ months educating the market on a new category? (Yes/No — affects whether we even propose a creation variant.)"
+    type: boolean
+    required_for: plan
+    default: "false"
+
+  - id: q_forbidden_angles
+    prompt: "Positioning angles to AVOID? (e.g., 'don't position on price', 'don't claim ML/AI unless we can demo it', 'no comparisons to Competitor X due to partnership'.)"
+    type: long_text
+    required_for: plan

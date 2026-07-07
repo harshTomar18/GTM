@@ -1,0 +1,172 @@
+{
+  "schema_version": "paid_ad_creative.Output:v1.0.0",
+  "written_by_agent": "paid_ad_creative",
+  "written_at": "2026-07-05T14:23:33.148Z",
+  "tenant_id": "Absliq",
+  "cycle_id": "2026-Q3",
+  "payload": {
+    "paid_ad_creative_pack": {
+      "google_search": [
+        {
+          "campaign_id": "google_search_p1_awareness",
+          "ad_groups": [
+            {
+              "ad_group_id": "core_product_keywords",
+              "keywords": [
+                "financial close software",
+                "accounting close software",
+                "month end close software",
+                "quarter end close software",
+                "data reconciliation automation",
+                "financial data reconciliation",
+                "automated data reconciliation tool",
+                "variance analysis software",
+                "financial variance analysis tool"
+              ],
+              "negative_keywords": [
+                "free",
+                "jobs",
+                "templates",
+                "spreadsheet",
+                "excel",
+                "training"
+              ],
+              "ad_variants": [
+                {
+                  "variant_label": "outcome_lead_fast_close",
+                  "experiment_id": null,
+                  "headlines": [
+                    "Close Books Faster",
+                    "AI Financial Automation",
+                    "Reduce Close Time by 50%"
+                  ],
+                  "primary_text": null,
+                  "description": "Streamline your financial close with AI. Automate reconciliation & variance analysis for accuracy.",
+                  "cta": "Get started",
+                  "landing_url": "/product?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+                  "image_prompt": null,
+                  "video_brief": null,
+                  "emotional_trigger": "mastery"
+                },
+                {
+                  "variant_label": "pain_solution_audit_ready",
+                  "experiment_id": null,
+                  "headlines": [
+                    "Tired of Slow Closes?",
+                    "Automate Finance Tasks",
+                    "Audit-Ready Data Now"
+                  ],
+                  "primary_text": null,
+                  "description": "Prevent costly delays & data issues. Our platform ensures audit-ready data integrity and speed.",
+                  "cta": "Learn more",
+                  "landing_url": "/product?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+                  "image_prompt": null,
+                  "video_brief": null,
+                  "emotional_trigger": "safety"
+                },
+                {
+                  "variant_label": "value_prop_strategic_focus",
+                  "experiment_id": null,
+                  "headlines": [
+                    "Accurate Financial Close",
+                    "Real-time Variance",
+                    "Strategic Finance Focus"
+                  ],
+                  "primary_text": null,
+                  "description": "Free up your finance team for strategy. Get real-time insights with automated data analysis.",
+                  "cta": "Learn more",
+                  "landing_url": "/product?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+                  "image_prompt": null,
+                  "video_brief": null,
+                  "emotional_trigger": "aspiration"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "linkedin_ads": [
+        {
+          "campaign_id": "linkedin_awareness_leadgen",
+          "ad_groups": [
+            {
+              "ad_group_id": "finance_directors_pain",
+              "ad_variants": [
+                {
+                  "variant_label": "pain_to_outcome_close_time",
+                  "experiment_id": null,
+                  "headlines": [
+                    "Transform Your Financial Close: Reduce Time & Issues with AI"
+                  ],
+                  "primary_text": "Finance Directors: Is your team spending weeks on financial close? Our AI platform cuts close times by 50% and boosts reconciliation accuracy. Free up your team for strategic analysis. Stop the grind, start leveraging true efficiency.",
+                  "description": "Get faster, more accurate closes. Request a demo to see how.",
+                  "cta": "Demo",
+                  "landing_url": "/demo?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+                  "image_prompt": "Mid-40s female Finance Director, diverse background, looking confidently at a clear, modern dashboard showing a significant reduction in financial close time, with green trend arrows. Professional, calm office setting, soft natural light. Brand colors: #4CAF50 (green) and #2196F3 (blue) subtle accents on screen.",
+                  "video_brief": null,
+                  "emotional_trigger": "mastery"
+                },
+                {
+                  "variant_label": "question_value_strategic_finance",
+                  "experiment_id": null,
+                  "headlines": [
+                    "Unlock Strategic Finance: Automate Close & Gain Insights"
+                  ],
+                  "primary_text": "What if you could ensure audit-ready data integrity AND free up your finance team for higher-value work? Our AI automation platform delivers real-time variance analysis & rapid data reconciliation. Elevate your financial operations.",
+                  "description": "Discover how to empower your team. Request your personalized demo today.",
+                  "cta": "Demo",
+                  "landing_url": "/demo?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+                  "image_prompt": "Group of three diverse finance professionals (mid-30s to 50s) collaborating around a large monitor displaying an intuitive, visually rich dashboard with financial metrics. One, a Finance Director type, is pointing to a data point with a thoughtful, satisfied expression. Modern, bright office environment. Brand colors: #FFC107 (yellow) and #9C27B0 (purple) for graphic elements.",
+                  "video_brief": null,
+                  "emotional_trigger": "aspiration"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "meta_ads": [
+        {
+          "campaign_id": "meta_retargeting_website",
+          "ad_groups": [
+            {
+              "ad_group_id": "website_visitors_offer",
+              "ad_variants": [
+                {
+                  "variant_label": "urgency_offer_retarget",
+                  "experiment_id": null,
+                  "headlines": [
+                    "Fast, Accurate Financial Close"
+                  ],
+                  "primary_text": "You checked out our AI financial close platform. Don't let manual tasks hold you back. See how we reduce close times by 50%. Request your demo today!",
+                  "description": null,
+                  "link_description": "See the AI difference",
+                  "cta": "Demo",
+                  "landing_url": "/demo?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+                  "image_prompt": "Dynamic close-up of a finance professional's hands quickly interacting with a sleek, modern tablet interface showing green progress bars and analytics. The background is slightly blurred with other finance team members in a collaborative setting. Energetic, forward-moving feel. Brand colors: #00BCD4 (cyan) and #FFEB3B (light yellow) as highlights.",
+                  "video_brief": null,
+                  "emotional_trigger": "urgency"
+                },
+                {
+                  "variant_label": "benefit_reengage_data_accuracy",
+                  "experiment_id": null,
+                  "headlines": [
+                    "Automate Your Financial Close"
+                  ],
+                  "primary_text": "You've seen how our AI platform transforms financial operations. Ready to ensure data accuracy and gain real-time insights? Take the next step: request a quick demo.",
+                  "description": null,
+                  "link_description": "Get a personalized demo",
+                  "cta": "Get started",
+                  "landing_url": "/demo?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+                  "image_prompt": "A diverse group of finance team members (3-4 people) looking happy and engaged around a conference table. One person is confidently presenting a tablet or laptop screen to the group, showing simplified, clear financial dashboards. The overall mood is collaborative and successful. Brand colors: #E91E63 (pink) and #FF9800 (orange) for subtle accents in room decor.",
+                  "video_brief": null,
+                  "emotional_trigger": "belonging"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

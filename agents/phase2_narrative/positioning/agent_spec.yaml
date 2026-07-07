@@ -1,0 +1,71 @@
+slug: phase2.positioning
+phase: 2
+stage: 1
+mission: >
+  Produce 2-3 positioning statement variants for the cycle, using Geoffrey Moore
+  and April Dunford frames, anchored on the Research Dossier's recommended angle
+  and the audience language bank.
+
+inputs:
+  - key: phase1.research_synthesis.output
+    schema_version: "ResearchDossier:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase1.market_research.output
+    schema_version: "CompetitorProfile:v1"
+    required: true
+
+profile_keys:
+  - profile.company.brand_name
+  - profile.industry.primary
+  - profile.lob
+
+output_schema: "PositioningStatement:v1.0.0"   # array of variants
+artifact_markdown_template: "agents/phase2_narrative/positioning/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - executive_voice   # positioning is CEO-level
+
+kpis:
+  - id: variants_produced
+    name: "Positioning variants"
+    target: 3
+    unit: "count"   # 2-3 acceptable; 1 is auto-redo
+  - id: differentiation_score
+    name: "LLM-judge differentiation vs competitors"
+    target: 0.75
+    unit: "ratio"
+  - id: language_resonance_score
+    name: "LLM-judge resonance vs language bank"
+    target: 0.75
+    unit: "ratio"
+
+sla:
+  max_tokens: 12000
+  max_latency_s: 300
+  max_cost_usd: 2.00
+
+failure_modes:
+  - mode: variant_count_wrong
+    detection: "variants count < 2 OR > 4"
+    auto_mitigation: redo
+  - mode: positioning_too_crowded
+    detection: "differentiation_score < 0.50 (3+ competitors could claim it)"
+    auto_mitigation: redo_strict
+  - mode: ignores_whitespace
+    detection: "no variant aligns with positioning_whitespace.recommended_angles from market_research"
+    auto_mitigation: redo
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-opus-4-7

@@ -1,0 +1,78 @@
+# Approval policies — matched against artifact attributes at submission time.
+# See core/schemas/policies.py for the schema. Order does not matter; `priority`
+# (lower = earlier) controls match ordering when multiple policies fire.
+
+version: 1
+
+policies:
+  - id: brand_impacting
+    priority: 10
+    when:
+      artifact_types:
+        - positioning
+        - messaging_matrix
+        - narrative_lock
+        - website_copy
+        - campaign_brief
+    requires: [CMO]
+    sla_hours: 48
+    escalate_after_hours: 72
+    escalate_to: [CEO]
+
+  - id: framework_or_regulated_claims
+    priority: 20
+    when:
+      content_contains_any_from: profile.frameworks
+    requires: [SME]
+    sla_hours: 24
+
+  - id: legal_regulated
+    priority: 15
+    when:
+      profile_flag: profile.regulatory_constraints.content_review_required
+      artifact_types:
+        - website_copy
+        - email_sequences
+        - paid_ad_creative
+        - content_assets
+    requires: [SME, Legal]
+    sla_hours: 48
+
+  - id: budget_threshold
+    priority: 25
+    when:
+      artifact_types:
+        - paid_media_setup
+        - channel_plan
+        - campaign_calendar
+      total_spend_usd_gt: 25000
+    requires: [CFO]
+    revision_loop:
+      max_iterations: 3
+      on_exceed: escalate_to_CEO
+
+  - id: customer_named
+    priority: 30
+    when:
+      content_contains_pattern: '@customer\.(case_study|logo)'
+    requires: [Legal, CustomerSuccess]
+
+  - id: executive_voice
+    priority: 35
+    when:
+      author_voice_role: [CEO, CFO, CISO, CMO]
+    requires: [CEO]
+
+  - id: phase_exit_gate
+    priority: 5
+    when:
+      artifact_types:
+        - research_synthesis
+        - narrative_lock
+        - kpi_framework
+    requires: [CMO, SalesLeader]
+    blocks_downstream: true
+
+defaults:
+  unmatched_artifact:
+    requires: [CMO]

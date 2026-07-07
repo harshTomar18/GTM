@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/website_copy_pack.schema.json",
+  "title": "WebsiteCopyPack",
+  "description": "Homepage + solution + landing page copy with meta. Output of phase3.website_copy.",
+  "type": "object",
+  "required": ["schema_version", "pages"],
+  "properties": {
+    "schema_version": { "const": "WebsiteCopyPack:v1.0.0" },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["page_id", "page_type", "url_slug", "sections", "meta"],
+        "properties": {
+          "page_id": { "type": "string" },
+          "page_type": { "enum": ["homepage", "solution", "product", "feature", "landing", "about", "pricing", "compare"] },
+          "url_slug": { "type": "string" },
+          "primary_persona_id": { "type": "string" },
+          "primary_keyword": { "type": ["string", "null"] },
+          "sections": {
+            "type": "object",
+            "properties": {
+              "hero": { "$ref": "#/$defs/Section" },
+              "subhero": { "$ref": "#/$defs/Section" },
+              "problem": { "$ref": "#/$defs/Section" },
+              "solution_overview": { "$ref": "#/$defs/Section" },
+              "key_capabilities": { "$ref": "#/$defs/Section" },
+              "benefits_by_persona": { "$ref": "#/$defs/Section" },
+              "competitive_differentiation": { "$ref": "#/$defs/Section" },
+              "proof": { "$ref": "#/$defs/Section" },
+              "faq": { "$ref": "#/$defs/Section" },
+              "cta": { "$ref": "#/$defs/Section" }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": ["title_tag", "meta_description"],
+            "properties": {
+              "title_tag": { "type": "string", "maxLength": 60 },
+              "meta_description": { "type": "string", "maxLength": 160 },
+              "og_image_prompt": { "type": ["string", "null"] },
+              "schema_jsonld_type": { "type": ["string", "null"] }
+            }
+          },
+          "variants": {
+            "type": "array",
+            "description": "A/B test variants for hero/cta if any",
+            "items": {
+              "type": "object",
+              "properties": {
+                "variant_label": { "type": "string" },
+                "experiment_id": { "type": ["string", "null"] },
+                "section": { "type": "string" },
+                "alt_content": { "type": "string" }
+              }
+            }
+          },
+          "internal_links_out": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "Section": {
+      "type": "object",
+      "properties": {
+        "headline": { "type": ["string", "null"] },
+        "subhead": { "type": ["string", "null"] },
+        "body_markdown": { "type": ["string", "null"] },
+        "cta_label": { "type": ["string", "null"] },
+        "cta_target": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

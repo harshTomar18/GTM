@@ -1,0 +1,49 @@
+agent_slug: phase1.brief_intake
+
+# Self-review rubric — scored by the model in stage 5. Score = weighted average.
+# If any "hard_fail" criterion fails, score is forced to 0 and auto_redo fires.
+
+criteria:
+  - id: research_question_count
+    weight: 0.15
+    hard_fail: true
+    description: "Total research_questions across 4 buckets is between 15 and 25."
+
+  - id: objective_quantified
+    weight: 0.15
+    description: "business_objective contains a number AND a unit AND a deadline, OR has [ASSUMPTION: ...] markers calling out the gap."
+
+  - id: competitor_specificity
+    weight: 0.15
+    description: "research_questions.competitor names actual competitors from known_competitors list, not 'competitors' generically."
+
+  - id: audience_persona_named
+    weight: 0.15
+    description: "research_questions.audience references a named persona/role (CFO, CISO, Controller, etc.), not 'the audience'."
+
+  - id: language_questions_ask_verbatim
+    weight: 0.10
+    description: "research_questions.language asks for verbatim phrases/quotes, not abstract themes."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Output contains zero phrases from profile.brand_voice.banned_phrases."
+
+  - id: known_facts_preserved
+    weight: 0.10
+    description: "known_facts captures what user supplied without paraphrasing away specifics."
+
+  - id: assumptions_surfaced
+    weight: 0.10
+    description: "unknowns contains at least 3 specific assumptions, not just 'we don't know X yet'."
+
+# Banned phrases regex (added on top of profile.brand_voice.banned_phrases)
+banned_patterns:
+  - "\\bsynergize\\b"
+  - "\\bworld[-\\s]?class\\b"
+  - "\\bcutting[-\\s]?edge\\b"
+  - "\\bnext[-\\s]?gen(eration)?\\b"
+  - "\\bgame[-\\s]?chang(er|ing)\\b"
+
+auto_redo_threshold: 0.70

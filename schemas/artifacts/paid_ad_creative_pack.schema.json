@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/paid_ad_creative_pack.schema.json",
+  "title": "PaidAdCreativePack",
+  "description": "Ad-unit copy + creative direction per channel. Output of phase3.paid_ad_creative.",
+  "type": "object",
+  "required": ["schema_version", "campaigns"],
+  "properties": {
+    "schema_version": { "const": "PaidAdCreativePack:v1.0.0" },
+    "campaigns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["campaign_id", "platform", "objective", "ad_groups"],
+        "properties": {
+          "campaign_id": { "type": "string" },
+          "platform": { "enum": ["google_search", "google_display", "google_video", "linkedin_ads", "meta_ads", "x_ads", "programmatic_dsp", "tiktok_ads", "reddit_ads"] },
+          "objective": { "enum": ["awareness", "consideration", "lead_gen", "demo_request", "retargeting", "branded_search_defense"] },
+          "primary_persona_id": { "type": "string" },
+          "funnel_stage": { "enum": ["TOFU", "MOFU", "BOFU", "RETENTION"] },
+          "landing_url": { "type": "string" },
+          "compliance_constraints": { "type": "array", "items": { "type": "string" } },
+          "ad_groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["ad_group_id", "audience_targeting", "variants"],
+              "properties": {
+                "ad_group_id": { "type": "string" },
+                "audience_targeting": { "type": "string", "description": "ICP definition or audience name — drives platform targeting" },
+                "keywords": { "type": "array", "items": { "type": "string" }, "description": "Search ads only" },
+                "negative_keywords": { "type": "array", "items": { "type": "string" } },
+                "variants": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "object",
+                    "required": ["variant_label", "headlines", "primary_text", "cta"],
+                    "properties": {
+                      "variant_label": { "type": "string" },
+                      "experiment_id": { "type": ["string", "null"] },
+                      "headlines": { "type": "array", "items": { "type": "string" } },
+                      "primary_text": { "type": "string" },
+                      "description": { "type": ["string", "null"] },
+                      "cta": { "type": "string" },
+                      "image_prompt": { "type": ["string", "null"] },
+                      "video_brief": { "type": ["string", "null"] },
+                      "emotional_trigger": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "utm_template": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/content_pillar_set.schema.json",
+  "title": "ContentPillarSet",
+  "description": "3-5 content pillars + pillar→keyword cluster mapping + topic clusters. Output of phase2.content_pillars.",
+  "type": "object",
+  "required": ["schema_version", "pillars"],
+  "properties": {
+    "schema_version": { "const": "ContentPillarSet:v1.0.0" },
+    "pillars": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["pillar_id", "name", "pov_statement", "supporting_keyword_clusters"],
+        "properties": {
+          "pillar_id": { "type": "string" },
+          "name": { "type": "string", "description": "3-5 word pillar label" },
+          "pov_statement": { "type": "string", "description": "1-sentence opinionated POV the tenant defends" },
+          "why_we_own_it": { "type": "string", "description": "Authority anchor — proof, expertise, history" },
+          "primary_persona_ids": { "type": "array", "items": { "type": "string" } },
+          "supporting_keyword_clusters": { "type": "array", "items": { "type": "string" }, "description": "cluster_ids from KeywordCluster" },
+          "content_cadence": { "type": "string", "description": "How often we publish on this pillar (weekly/monthly/quarterly)" },
+          "flagship_asset_brief": { "type": ["string", "null"], "description": "1-line summary of the cornerstone asset for this pillar" }
+        }
+      }
+    },
+    "topic_cluster_map": {
+      "type": "array",
+      "description": "Per pillar: hub topic + spoke topics for internal-linking strategy",
+      "items": {
+        "type": "object",
+        "required": ["pillar_id", "hub_topic", "spoke_topics"],
+        "properties": {
+          "pillar_id": { "type": "string" },
+          "hub_topic": { "type": "string" },
+          "spoke_topics": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "pillars_avoided": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["topic", "reason"],
+        "properties": {
+          "topic": { "type": "string" },
+          "reason": { "type": "string", "description": "Why this pillar is off-limits (regulatory, brand, strategy)" }
+        }
+      }
+    }
+  }
+}

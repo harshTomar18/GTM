@@ -1,0 +1,44 @@
+agent_slug: phase1.audience_intelligence
+
+criteria:
+  - id: persona_count
+    weight: 0.10
+    hard_fail: true
+    description: "2-3 personas. 1 = redo. 4+ = scope creep, redo."
+
+  - id: pain_points_per_persona
+    weight: 0.20
+    hard_fail: true
+    description: "Each persona has ≥5 pain_points with verbatim quotes + sources."
+
+  - id: language_bank_size
+    weight: 0.15
+    hard_fail: true
+    description: "language_phrases total across personas ≥ 40."
+
+  - id: source_diversity
+    weight: 0.15
+    description: "Citations span ≥6 distinct sources (Reddit thread, G2 review, podcast, interview, etc.). One-source personas auto-fail this criterion."
+
+  - id: verbatim_not_paraphrased
+    weight: 0.15
+    description: "Pain quotes read like actual human speech (contractions, fragments, frustration markers) — not marketing copy."
+
+  - id: persona_texture_beyond_archetype
+    weight: 0.10
+    description: "Each persona adds detail the profile.icp_archetypes didn't already supply (specific sub-segment, background, behavior pattern)."
+
+  - id: watering_hole_specificity
+    weight: 0.05
+    description: "watering_holes are named communities/podcasts/people — not 'LinkedIn' or 'Twitter' generically."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(struggles? with|inefficient process|pain[-\\s]?point)\\b"  # marketing-speak signals
+  - "\\b(synergize|world[-\\s]?class)\\b"
+
+auto_redo_threshold: 0.75

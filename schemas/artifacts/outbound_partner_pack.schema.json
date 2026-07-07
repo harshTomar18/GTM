@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/outbound_partner_pack.schema.json",
+  "title": "OutboundPartnerPack",
+  "description": "Named-account outbound + partner co-sell motion. Output of phase4.outbound_partner.",
+  "type": "object",
+  "required": ["schema_version", "tier_1_accounts", "sdr_ae_handoff_sla"],
+  "properties": {
+    "schema_version": { "const": "OutboundPartnerPack:v1.0.0" },
+    "tier_1_accounts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["account_id_or_name", "tier", "icp_archetype_id"],
+        "properties": {
+          "account_id_or_name": { "type": "string" },
+          "tier": { "enum": ["tier_1", "tier_2", "tier_3"] },
+          "icp_archetype_id": { "type": "string" },
+          "intent_signal_score": { "type": ["number", "null"] },
+          "multi_thread_personas": { "type": "array", "items": { "type": "string" }, "description": "Persona_ids to multi-thread across" },
+          "assigned_sequence_id": { "type": "string", "description": "EmailSequencePack sequence ref" },
+          "partner_co_sell": { "type": ["string", "null"], "description": "Partner name if co-selling" },
+          "research_brief_summary": { "type": "string" }
+        }
+      }
+    },
+    "list_build_strategy": {
+      "type": "object",
+      "properties": {
+        "source": { "enum": ["6sense", "bombora", "demandbase", "zoominfo", "apollo", "cognism", "crm_first_party", "manual"] },
+        "tier_thresholds": { "type": "string" },
+        "exclusion_filters": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "sdr_ae_handoff_sla": {
+      "type": "object",
+      "required": ["acceptance_criteria", "response_time_hours", "kickback_policy"],
+      "properties": {
+        "acceptance_criteria": { "type": "string" },
+        "response_time_hours": { "type": "integer" },
+        "kickback_policy": { "type": "string" }
+      }
+    },
+    "partner_kits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "partner_name": { "type": "string" },
+          "partner_tier": { "enum": ["strategic", "preferred", "registered"] },
+          "co_marketing_assets": { "type": "array", "items": { "type": "string" } },
+          "deal_registration_url": { "type": ["string", "null"] },
+          "revenue_split": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "co_marketing_calendar": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "partner_name": { "type": "string" },
+          "activity_type": { "enum": ["webinar", "joint_blog", "field_event", "podcast", "white_paper", "case_study"] },
+          "scheduled_date": { "type": "string", "format": "date" },
+          "joint_target_audience": { "type": "string" }
+        }
+      }
+    }
+  }
+}

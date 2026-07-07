@@ -1,0 +1,70 @@
+slug: phase2.value_proposition
+phase: 2
+stage: 2
+mission: >
+  Translate approved positioning into a core value proposition + per-persona value
+  props + tied proof points using the Value Proposition Canvas frame.
+
+inputs:
+  - key: phase2.positioning.output
+    schema_version: "PositioningStatement:v1"
+    required: true
+    require_approved: true   # CMO+CEO must have chosen a variant
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase1.research_synthesis.output
+    schema_version: "ResearchDossier:v1"
+    required: true
+
+profile_keys:
+  - profile.company.brand_name
+  - profile.frameworks
+
+output_schema: "ValuePropositionSet:v1.0.0"
+artifact_markdown_template: "agents/phase2_narrative/value_proposition/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - customer_named   # if proof points cite named customers
+
+kpis:
+  - id: persona_coverage
+    name: "Personas with custom value prop"
+    target: 1.0
+    unit: "ratio"   # every persona from audience_intelligence has a per-persona block
+  - id: proof_density
+    name: "Proof points per benefit"
+    target: 1.5
+    unit: "ratio"
+  - id: quantified_proof_ratio
+    name: "Proof points that are quantified"
+    target: 0.6
+    unit: "ratio"
+
+sla:
+  max_tokens: 12000
+  max_latency_s: 300
+  max_cost_usd: 1.50
+
+failure_modes:
+  - mode: no_per_persona_block
+    detection: "any persona from audience_intelligence missing a per_persona entry"
+    auto_mitigation: redo
+  - mode: unquantified_proof
+    detection: "quantified_proof_ratio < 0.4"
+    auto_mitigation: redo
+  - mode: customer_named_no_legal_review
+    detection: "proof_points cite a named customer AND policy customer_named hasn't matched"
+    auto_mitigation: escalate_to_human
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

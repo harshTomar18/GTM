@@ -1,0 +1,64 @@
+slug: phase1.brief_intake
+phase: 1
+stage: 1
+mission: >
+  Capture a complete campaign brief from the user and generate 15-20 categorized
+  research questions for downstream Phase 1 agents to answer.
+
+inputs: []  # entrypoint agent — no upstream
+entrypoint: true
+
+profile_keys:
+  - profile.company.brand_name
+  - profile.company.description_short
+  - profile.industry.primary
+  - profile.icp_archetypes
+  - profile.lob
+  - profile.frameworks
+
+output_schema: "BriefIntake:v1.0.0"
+artifact_markdown_template: "agents/phase1_research/brief_intake/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+
+kpis:
+  - id: research_question_coverage
+    name: "Research question coverage"
+    target: 0.85
+    unit: "ratio"  # answered_by_phase1_end / total_questions
+  - id: brief_completeness
+    name: "Brief completeness score"
+    target: 0.90
+    unit: "ratio"  # required_fields_filled / total_required
+  - id: assumption_count_flagged
+    name: "Flagged assumptions"
+    target: 3
+    unit: "count"  # minimum count; under-counting hides risk
+
+sla:
+  max_tokens: 8192
+  max_latency_s: 180
+  max_cost_usd: 0.50
+
+failure_modes:
+  - mode: vague_objective
+    detection: "business_objective shorter than 40 chars OR no quantifiable success criterion"
+    auto_mitigation: redo_strict
+  - mode: missing_competitors_in_known_market
+    detection: "known_competitors is empty AND industry maturity != 'emerging'"
+    auto_mitigation: escalate_to_human
+  - mode: research_questions_below_floor
+    detection: "total research_questions < 15"
+    auto_mitigation: redo
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: false  # No cycle context yet at entrypoint
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

@@ -1,0 +1,125 @@
+rubric:
+  version: "1.0.0"
+  agent: phase5.competitive_pulse
+  pass_threshold: 0.80
+  note: >
+    Pass threshold is intentionally higher than other agents (0.80 vs 0.70)
+    because CompetitiveSignal[] feeds the reactive dispatcher — false signals
+    can trigger unnecessary downstream agent runs and waste budget.
+
+  criteria:
+
+    # -----------------------------------------------------------------------
+    # watchlist_coverage
+    # Every competitor entry in CompetitorMatrix (and profile.known_competitors)
+    # must have at least one source checked per run, even if no signal fires.
+    # -----------------------------------------------------------------------
+    - id: watchlist_coverage
+      label: "Watchlist coverage — every competitor checked"
+      weight: 0.30
+      description: >
+        For each competitor in the merged watchlist (CompetitorMatrix +
+        profile.known_competitors), confirm the run log shows at least one
+        source query was attempted. A competitor with zero queries must not
+        silently produce zero signals — it must produce an explicit
+        'no_new_signals' entry or a source_degraded note.
+      pass_condition: >
+        (competitors_with_at_least_one_query / total_competitors_in_watchlist) >= 1.0
+      failure_example: >
+        Three competitors are in the watchlist but only two appear in the
+        run log — the third was silently skipped.
+      remediation: >
+        Retry skipped competitors with the gather model before finalising the
+        report. If the source is unreachable, log a source_degraded signal
+        for that competitor instead of omitting them.
+
+    # -----------------------------------------------------------------------
+    # signal_specificity
+    # Generic signals ("Competitor X released something") are not acceptable.
+    # Each signal must have a traceable source.
+    # -----------------------------------------------------------------------
+    - id: signal_specificity
+      label: "Signal specificity — each signal has a verifiable source"
+      weight: 0.30
+      description: >
+        Every CompetitiveSignal in the output must include either a source_url
+        (preferred) or a source_description specific enough for a human analyst
+        to locate the original item independently. Signals that say only
+        "seen on the web" or omit source entirely fail this criterion.
+      pass_condition: >
+        (signals_with_specific_source / total_signals) >= 1.0
+      failure_example: >
+        A pricing-change signal lists source_url as null and
+        source_description as "competitor website" with no further detail.
+      remediation: >
+        Re-query the gather model for the specific page, article, or post URL.
+        If no URL is retrievable (e.g. paywalled), include a precise
+        source_description: publication name, date, and headline.
+
+    # -----------------------------------------------------------------------
+    # actionability_tagging
+    # Every signal must be tagged with one of: informational / actionable / urgent.
+    # Untagged or ambiguously tagged signals create noise in the dispatcher.
+    # -----------------------------------------------------------------------
+    - id: actionability_tagging
+      label: "Actionability tagging — every signal correctly classified"
+      weight: 0.25
+      description: >
+        Each CompetitiveSignal must carry exactly one actionability value from
+        the enum [informational, actionable, urgent]. The classification must
+        be consistent with the signal's intensity and event_type:
+          - critical intensity → actionable or urgent (never informational)
+          - low intensity     → informational or actionable (never urgent)
+        Signals with missing or mismatched tags must be corrected before the
+        report is emitted.
+      pass_condition: >
+        (signals_correctly_tagged / total_signals) >= 1.0
+      failure_example: >
+        A funding round of >$50M is tagged 'informational' instead of
+        'actionable'; a minor blog post is tagged 'urgent'.
+      remediation: >
+        Run the review model over all signals before final output.
+        Apply the intensity-to-actionability consistency rules above.
+
+    # -----------------------------------------------------------------------
+    # no_hallucinated_events
+    # Signals must not claim events that cannot be verified from the source.
+    # -----------------------------------------------------------------------
+    - id: no_hallucinated_events
+      label: "No hallucinated events — signals grounded in source material"
+      weight: 0.15
+      description: >
+        The synthesize model must not infer, extrapolate, or fabricate
+        competitive events that are not directly stated or strongly implied
+        by the retrieved source content. This is the minimum-weight criterion
+        because it is enforced structurally (sources required), but it must
+        still pass independently — a single hallucinated signal is an
+        automatic fail on this dimension.
+      pass_condition: >
+        zero signals where event_type or description contradicts or exceeds
+        the factual content of the linked source_url / source_description
+      failure_example: >
+        Signal claims "Competitor X raised Series B at $80M valuation" when
+        the source article only mentions they are "seeking funding".
+      remediation: >
+        Downgrade to the most conservative factual claim supported by the
+        source. If the source is ambiguous, set actionability to informational
+        and add a caveat in the description field.
+
+  # -------------------------------------------------------------------------
+  # Scoring formula
+  # Each criterion is scored 0.0–1.0, multiplied by its weight, summed.
+  # Overall score must reach pass_threshold to emit the report without a
+  # quality warning.
+  # -------------------------------------------------------------------------
+  scoring:
+    formula: >
+      score = (watchlist_coverage * 0.30)
+            + (signal_specificity  * 0.30)
+            + (actionability_tagging * 0.25)
+            + (no_hallucinated_events * 0.15)
+    on_fail: >
+      Attach a QUALITY_WARNING block to the CompetitivePulseReport.
+      Do NOT suppress the report — downstream consumers need the data
+      even if imperfect. The warning will trigger a human review flag
+      in the GTM team Slack digest.

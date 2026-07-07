@@ -1,0 +1,54 @@
+agent_slug: phase3.social_content
+
+criteria:
+  - id: posts_per_platform_met
+    weight: 0.15
+    hard_fail: true
+    description: "Post count per platform meets q_posts_per_platform spec."
+
+  - id: hook_diversity
+    weight: 0.15
+    description: "≤30% of hooks follow the same pattern. Stacking 'I learned X' / numbered lists / 'Stop doing X' all the same way = fail."
+
+  - id: pillar_coverage
+    weight: 0.10
+    hard_fail: true
+    description: "Every pillar from ContentPillarSet has ≥4 posts."
+
+  - id: format_mix_diversity
+    weight: 0.10
+    description: "≥4 distinct formats used across the bank (per q_format_mix)."
+
+  - id: executive_voice_safety
+    weight: 0.10
+    hard_fail: true
+    description: "Posts with author_voice_role != brand reference real executives from q_executive_voices_active. Inventing voices = fail."
+
+  - id: hashtag_discipline
+    weight: 0.05
+    description: "No generic clichés (#leadership #business #success #motivation). Hashtags niche + branded + topic-specific."
+
+  - id: engagement_bait_absent
+    weight: 0.10
+    description: "Zero 'comment YES if', 'share if you', 'tag a friend who' patterns."
+
+  - id: must_not_say_clean
+    weight: 0.10
+    hard_fail: true
+    description: "Zero narrative_lock.must_not_say phrases."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+  - id: platform_native_format
+    weight: 0.05
+    description: "LinkedIn posts use line breaks; X posts ≤280 chars per tweet; video briefs include duration; carousels have ≥6 slides."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag|game[-\\s]?chang)"
+  - "\\b(comment YES if|share if you|tag a friend who)\\b"
+  - "\\b#(leadership|business|success|motivation|inspiration)\\b"
+
+auto_redo_threshold: 0.75

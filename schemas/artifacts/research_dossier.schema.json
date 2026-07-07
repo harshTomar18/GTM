@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/research_dossier.schema.json",
+  "title": "ResearchDossier",
+  "description": "Output of phase1.research_synthesis. 7-section synthesis that gates Phase 2.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "campaign_brief_summary",
+    "market_context",
+    "competitive_landscape",
+    "audience_intelligence",
+    "keyword_content_intelligence",
+    "strategic_recommendations",
+    "open_questions_assumptions"
+  ],
+  "properties": {
+    "schema_version": { "const": "ResearchDossier:v1.0.0" },
+    "campaign_brief_summary": { "$ref": "#/$defs/Section" },
+    "market_context": { "$ref": "#/$defs/Section" },
+    "competitive_landscape": { "$ref": "#/$defs/Section" },
+    "audience_intelligence": { "$ref": "#/$defs/Section" },
+    "keyword_content_intelligence": { "$ref": "#/$defs/Section" },
+    "strategic_recommendations": { "$ref": "#/$defs/Section" },
+    "open_questions_assumptions": { "$ref": "#/$defs/Section" },
+    "pressure_test_passed": { "type": "boolean", "default": false }
+  },
+  "$defs": {
+    "Section": {
+      "type": "object",
+      "required": ["title", "body_markdown"],
+      "properties": {
+        "title": { "type": "string" },
+        "body_markdown": { "type": "string" },
+        "citations": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

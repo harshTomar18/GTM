@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/content_brief.schema.json",
+  "title": "ContentBrief",
+  "description": "One content asset specification. Many of these per cycle.",
+  "type": "object",
+  "required": ["schema_version", "brief_id", "title", "asset_type", "persona_id", "funnel_stage"],
+  "properties": {
+    "schema_version": { "const": "ContentBrief:v1.0.0" },
+    "brief_id": { "type": "string" },
+    "title": { "type": "string" },
+    "asset_type": { "type": "string", "description": "blog, longform, case_study, one_pager, email, social_post, ad, …" },
+    "persona_id": { "type": "string" },
+    "funnel_stage": { "enum": ["TOFU", "MOFU", "BOFU", "RETENTION", "EXPANSION"] },
+    "outline": { "type": "array", "items": { "type": "string" } },
+    "primary_keyword": { "type": ["string", "null"] },
+    "secondary_keywords": { "type": "array", "items": { "type": "string" } },
+    "word_count_target": { "type": ["integer", "null"] },
+    "sources_required": { "type": "integer", "default": 3 },
+    "voice_notes": { "type": "string" },
+    "success_metric": { "type": "string" },
+    "cta": { "type": "string" }
+  }
+}

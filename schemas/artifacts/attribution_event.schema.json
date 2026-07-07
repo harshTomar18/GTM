@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/attribution_event.schema.json",
+  "title": "AttributionEvent",
+  "description": "One touchpoint event in the attribution stream. Many per cycle.",
+  "type": "object",
+  "required": ["schema_version", "event_id", "timestamp", "source", "channel", "touchpoint_type"],
+  "properties": {
+    "schema_version": { "const": "AttributionEvent:v1.0.0" },
+    "event_id": { "type": "string", "format": "uuid" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "source": { "type": "string", "description": "Originating system (ga4, hubspot, linkedin_ads, …)" },
+    "channel": { "type": "string" },
+    "account_id": { "type": ["string", "null"] },
+    "persona_id": { "type": ["string", "null"] },
+    "campaign_id": { "type": ["string", "null"] },
+    "touchpoint_type": { "type": "string", "description": "page_view, form_fill, ad_click, demo_request, …" },
+    "weight": { "type": "number", "default": 1.0 },
+    "revenue_attributed_usd": { "type": "number", "default": 0.0 }
+  }
+}

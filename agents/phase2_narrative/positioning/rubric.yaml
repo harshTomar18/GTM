@@ -1,0 +1,43 @@
+agent_slug: phase2.positioning
+
+criteria:
+  - id: variant_count
+    weight: 0.10
+    hard_fail: true
+    description: "2-3 variants. 1 = redo. 4+ = scope creep."
+
+  - id: variants_meaningfully_distinct
+    weight: 0.20
+    hard_fail: true
+    description: "Variants represent genuinely different positioning shapes (owning vs challenging vs creating), not just rewordings. LLM-judge: 'If you removed the variant_label, could a reader tell them apart?'"
+
+  - id: differentiation_test
+    weight: 0.20
+    hard_fail: true
+    description: "Substitute brand name with each competitor's name. The statement no longer works (claims something only this brand can credibly make)."
+
+  - id: whitespace_alignment
+    weight: 0.10
+    description: "At least one variant aligns with positioning_whitespace.recommended_angles from market_research."
+
+  - id: persona_language
+    weight: 0.10
+    description: "Statement uses words/phrases the primary persona actually uses (per audience_intelligence.language_bank), not marketing-speak."
+
+  - id: quantified_value_where_possible
+    weight: 0.10
+    description: "primary_value field is quantified (number + unit) where research_dossier supplied numbers."
+
+  - id: recommendation_opinionated
+    weight: 0.10
+    description: "recommendation block picks one variant, explains why, names what could kill it. Hedging = fail."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|game[-\\s]?chang|customer[-\\s]?centric|best[-\\s]?in[-\\s]?class)\\b"
+
+auto_redo_threshold: 0.80

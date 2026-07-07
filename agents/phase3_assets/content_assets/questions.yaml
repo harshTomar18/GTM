@@ -1,0 +1,29 @@
+agent_slug: phase3.content_assets
+
+questions:
+  - id: q_assets_per_pillar_this_cycle
+    prompt: "How many assets per pillar this cycle? (Default: 1 flagship + 2 supporting per pillar = ~4-15 total depending on pillar count.)"
+    type: text
+    required_for: plan
+    default: "1 flagship + 2 supporting per pillar"
+
+  - id: q_word_count_per_asset_type
+    prompt: "Word-count targets? (Defaults: flagship_pillar=2500-4000; blog=1200-2000; case_study=800-1200; one_pager=400-600; whitepaper=4000-6000)"
+    type: long_text
+    required_for: write
+
+  - id: q_sme_interview_quotes_available
+    prompt: "SME interview quotes / transcripts available for direct quoting? Paste paths/URLs or 'none'."
+    type: long_text
+    required_for: gather
+
+  - id: q_gated_assets_list
+    prompt: "Which assets are GATED (require form fill)? List by title or 'none'."
+    type: long_text
+    required_for: plan
+
+  - id: q_original_data_or_research
+    prompt: "Original data / proprietary research we can cite (survey, product analytics, customer benchmarks)? Paste source paths or 'none'."
+    type: long_text
+    required_for: gather
+    reusable_key: profile.original_research_sources

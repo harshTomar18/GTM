@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/approval_record.schema.json",
+  "title": "ApprovalRecord",
+  "description": "Immutable record of an approval decision. Lives in tenants/<id>/approvals/<id>.json.",
+  "type": "object",
+  "required": ["schema_version", "approval_id", "artifact_ref", "artifact_version", "decision"],
+  "properties": {
+    "schema_version": { "const": "ApprovalRecord:v1.0.0" },
+    "approval_id": { "type": "string", "format": "uuid" },
+    "artifact_ref": { "type": "string" },
+    "artifact_version": { "type": "string" },
+    "policies_matched": { "type": "array", "items": { "type": "string" } },
+    "required_roles": { "type": "array", "items": { "type": "string" } },
+    "approvals_received": {
+      "type": "object",
+      "description": "Map of role → ISO timestamp when that role approved",
+      "additionalProperties": { "type": "string", "format": "date-time" }
+    },
+    "decision": { "enum": ["pending", "approved", "rejected", "revisions_requested"] },
+    "decided_at": { "type": ["string", "null"], "format": "date-time" },
+    "comment": { "type": ["string", "null"] },
+    "revision_iteration": { "type": "integer", "default": 0 }
+  }
+}

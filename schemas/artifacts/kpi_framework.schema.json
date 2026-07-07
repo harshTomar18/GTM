@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/kpi_framework.schema.json",
+  "title": "KPIFramework",
+  "description": "KPI tree. Output of phase5.measurement.",
+  "type": "object",
+  "required": ["schema_version", "north_star"],
+  "properties": {
+    "schema_version": { "const": "KPIFramework:v1.0.0" },
+    "north_star": { "$ref": "#/$defs/KPI" },
+    "input_metrics": { "type": "array", "items": { "$ref": "#/$defs/KPI" } },
+    "leading_indicators": { "type": "array", "items": { "$ref": "#/$defs/KPI" } },
+    "system_health": { "type": "array", "items": { "$ref": "#/$defs/KPI" } }
+  },
+  "$defs": {
+    "KPI": {
+      "type": "object",
+      "required": ["id", "name", "target", "unit", "source"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "target": { "type": "number" },
+        "unit": { "type": "string" },
+        "source": { "type": "string", "description": "Tool/system the metric reads from" },
+        "cadence": { "type": "string", "default": "weekly" },
+        "parent_kpi": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

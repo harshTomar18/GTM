@@ -1,0 +1,74 @@
+questions:
+
+  - id: q_next_cycle_primary_objective
+    label: "What is the primary objective for the next cycle?"
+    required: true
+    type: text
+    reusable_key: next_cycle.objective.primary
+    hint: >
+      State the single most important outcome the next cycle must achieve.
+    example: "Accelerate enterprise pipeline velocity — target 3 new F500 logos"
+    validation:
+      min_length: 10
+      max_length: 300
+
+  - id: q_reopen_narrative_lock
+    label: "Should the NarrativeLockDoc be re-opened for the next cycle?"
+    required: true
+    type: select
+    reusable_key: next_cycle.narrative_lock.reopen
+    hint: >
+      Select yes_full_reopen if value proposition or primary message needs a
+      significant overhaul. Select yes_minor_update_only for targeted copy or
+      positioning tweaks that do not change the underlying narrative architecture.
+      Select no_lock_holds to carry the existing NarrativeLockDoc forward unchanged.
+    options:
+      - value: yes_full_reopen
+        label: "Yes — full re-open (narrative architecture changes required)"
+      - value: yes_minor_update_only
+        label: "Yes — minor update only (targeted copy or positioning tweaks)"
+      - value: no_lock_holds
+        label: "No — lock holds (carry existing NarrativeLockDoc forward)"
+
+  - id: q_budget_direction
+    label: "Next-cycle budget direction vs. this cycle?"
+    required: true
+    type: select
+    reusable_key: next_cycle.budget.direction
+    hint: >
+      Choose the directional budget signal for the next cycle. This will appear
+      in the NextCycleBriefDraft and be confirmed or adjusted during
+      phase1.brief_intake.
+    options:
+      - value: increase_10_to_25pct
+        label: "Increase 10–25% above this cycle"
+      - value: maintain_flat
+        label: "Maintain flat (same total as this cycle)"
+      - value: decrease_10_to_25pct
+        label: "Decrease 10–25% below this cycle"
+      - value: reallocate_same_total
+        label: "Reallocate same total — shift spend across channels"
+      - value: tbd_awaiting_cfo
+        label: "TBD — awaiting CFO / finance sign-off"
+
+  - id: q_channels_to_discontinue
+    label: "Any channels to drop from the next cycle?"
+    required: false
+    type: text
+    hint: >
+      List any channels to explicitly remove from the next cycle's plan,
+      with a brief evidence-based reason for each.
+    example: "Reddit ads — CPL was 4x target with no quality MQLs"
+    validation:
+      max_length: 500
+
+  - id: q_new_motions_to_test
+    label: "Any new GTM motions to add next cycle?"
+    required: false
+    type: text
+    hint: >
+      Describe any new channels, tactics, or GTM motions to trial in the next
+      cycle. These will be logged as experiment candidates in the NextCycleBriefDraft.
+    example: "Partner co-sell with 3 system integrators, community-led with Slack community launch"
+    validation:
+      max_length: 500

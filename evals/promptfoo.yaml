@@ -1,0 +1,251 @@
+# =============================================================================
+# evals/promptfoo.yaml — Workstream D Eval Harness Scaffold
+# =============================================================================
+#
+# PURPOSE
+#   Prompt regression suite for all 27 Universal GTM OS agents.
+#   This file is a SCAFFOLD — it is not executable as-is.
+#   Operators must populate golden sets before running evals:
+#     - Add per-agent test cases under evals/golden_sets/<agent_slug>/
+#     - See the comment block at the bottom of this file for run instructions.
+#
+# COVERAGE
+#   27 agents across 5 phases:
+#     Phase 1 (5):  brief_intake, market_research, audience_intelligence,
+#                   keyword_intent, research_synthesis
+#     Phase 2 (5):  positioning, value_proposition, messaging_matrix,
+#                   content_pillars, narrative_lock
+#     Phase 3 (6):  website_copy, content_assets, email_sequences,
+#                   social_content, paid_ad_creative, sales_enablement
+#     Phase 4 (6):  channel_strategy, campaign_calendar, seo_activation,
+#                   paid_media, outbound_partner, community_activation
+#     Phase 5 (5):  measurement, experiment_review, executive_brief,
+#                   competitive_pulse, iteration_planner
+#
+# SCHEMA REFERENCE
+#   schemas/artifacts/ — all output artifact schemas (JSON Schema 2020-12)
+#   prompts/_registry.yaml — model pinning + changelog references
+#
+# =============================================================================
+
+version: 1
+description: "Universal GTM OS — prompt regression suite"
+
+# =============================================================================
+# PROVIDERS
+# Mirrors the model assignments in prompts/_registry.yaml.
+# plan/synth/review stages use Sonnet (cost-efficient); write stage uses Opus.
+# =============================================================================
+
+providers:
+  - id: anthropic:claude-sonnet-4-6
+    label: "sonnet-4-6 (plan / synth / review)"
+    config:
+      temperature: 0.3
+      max_tokens: 4096
+
+  - id: anthropic:claude-opus-4-7
+    label: "opus-4-7 (write)"
+    config:
+      temperature: 0.4
+      max_tokens: 8192
+
+# =============================================================================
+# PROMPTS
+# One entry per agent. Paths are relative to the repo root.
+# Each prompt.md is Jinja-templated — promptfoo renders with vars from each
+# test case's `vars:` block.
+# =============================================================================
+
+prompts:
+  # ── Phase 1: Research & Market Intelligence ───────────────────────────────
+  - file://agents/phase1_research/brief_intake/prompt.md
+  - file://agents/phase1_research/market_research/prompt.md
+  - file://agents/phase1_research/audience_intelligence/prompt.md
+  - file://agents/phase1_research/keyword_intent/prompt.md
+  - file://agents/phase1_research/research_synthesis/prompt.md
+
+  # ── Phase 2: Narrative & Messaging Architecture ───────────────────────────
+  - file://agents/phase2_narrative/positioning/prompt.md
+  - file://agents/phase2_narrative/value_proposition/prompt.md
+  - file://agents/phase2_narrative/messaging_matrix/prompt.md
+  - file://agents/phase2_narrative/content_pillars/prompt.md
+  - file://agents/phase2_narrative/narrative_lock/prompt.md
+
+  # ── Phase 3: Asset Creation ───────────────────────────────────────────────
+  - file://agents/phase3_assets/website_copy/prompt.md
+  - file://agents/phase3_assets/content_assets/prompt.md
+  - file://agents/phase3_assets/email_sequences/prompt.md
+  - file://agents/phase3_assets/social_content/prompt.md
+  - file://agents/phase3_assets/paid_ad_creative/prompt.md
+  - file://agents/phase3_assets/sales_enablement/prompt.md
+
+  # ── Phase 4: Distribution & Activation ───────────────────────────────────
+  - file://agents/phase4_distribution/channel_strategy/prompt.md
+  - file://agents/phase4_distribution/campaign_calendar/prompt.md
+  - file://agents/phase4_distribution/seo_activation/prompt.md
+  - file://agents/phase4_distribution/paid_media/prompt.md
+  - file://agents/phase4_distribution/outbound_partner/prompt.md
+  - file://agents/phase4_distribution/community_activation/prompt.md
+
+  # ── Phase 5: Measurement & Iteration ─────────────────────────────────────
+  - file://agents/phase5_measurement/measurement/prompt.md
+  - file://agents/phase5_measurement/experiment_review/prompt.md
+  - file://agents/phase5_measurement/executive_brief/prompt.md
+  - file://agents/phase5_measurement/competitive_pulse/prompt.md
+  - file://agents/phase5_measurement/iteration_planner/prompt.md
+
+# =============================================================================
+# DEFAULT TEST — applied to every test unless overridden
+# =============================================================================
+
+defaultTest:
+  assert:
+    # Every artifact must carry a schema_version field.
+    - type: javascript
+      value: |
+        let parsed;
+        try { parsed = JSON.parse(output); } catch(e) { return false; }
+        return typeof parsed.schema_version === "string" && parsed.schema_version.length > 0;
+      threshold: 1.0
+      description: "Output must be valid JSON with a non-empty schema_version field"
+
+    # LLM-graded rubric — minimum overall quality threshold.
+    - type: llm-rubric
+      value: |
+        Score the response on: (1) structural completeness — all required sections
+        present; (2) brand-neutrality — no hardcoded company/product names outside
+        Jinja placeholders; (3) actionability — outputs contain concrete, operator-
+        usable content rather than instructions to operators. Return a score 0–1.
+      threshold: 0.80
+      description: "Rubric score must be ≥ 0.80"
+
+# =============================================================================
+# TESTS
+# Per-agent golden test cases live in evals/golden_sets/<agent_slug>/.
+# The section below contains ONE fully-specified example for phase1.brief_intake
+# to serve as a structural reference for all other agents.
+#
+# Operators: add your per-agent cases in the golden_sets directories and either
+# import them here with `!include` directives or extend this list directly.
+# =============================================================================
+
+tests:
+
+  # ---------------------------------------------------------------------------
+  # EXAMPLE — phase1.brief_intake
+  # Tenant:    _example  (tenants/_example/)
+  # Objective: Validate that brief_intake produces a structurally sound
+  #            BriefIntake artifact for a mid-market B2B SaaS product launch.
+  # ---------------------------------------------------------------------------
+  - description: "phase1.brief_intake — _example tenant / SaaS product launch"
+
+    # Jinja variables injected into prompt.md at render time.
+    vars:
+      profile: "tenants/_example/tenant_profile.yaml"
+      tenant_id: "_example"
+      cycle_id: "cycle_001"
+      objective: >
+        Launch a new mid-market B2B SaaS product targeting VP-level buyers in the
+        financial services vertical. Goal: generate 200 MQLs within 90 days via
+        organic search, LinkedIn outreach, and a 3-part email nurture sequence.
+        Budget envelope is $40K for the quarter. No existing brand presence in
+        this segment.
+
+    # Provider to use for this test (write stage → Opus).
+    provider: anthropic:claude-opus-4-7
+
+    assert:
+      # 1. research_questions array must contain ≥ 15 distinct questions.
+      - type: javascript
+        value: |
+          let parsed;
+          try { parsed = JSON.parse(output); } catch(e) { return false; }
+          return Array.isArray(parsed.research_questions) &&
+                 parsed.research_questions.length >= 15;
+        threshold: 1.0
+        description: "research_questions array must have at least 15 items"
+
+      # 2. campaign_id must be present and non-empty.
+      - type: javascript
+        value: |
+          let parsed;
+          try { parsed = JSON.parse(output); } catch(e) { return false; }
+          return typeof parsed.campaign_id === "string" &&
+                 parsed.campaign_id.trim().length > 0;
+        threshold: 1.0
+        description: "campaign_id must be present and non-empty"
+
+      # 3. schema_version must match the BriefIntake artifact schema identifier.
+      - type: javascript
+        value: |
+          let parsed;
+          try { parsed = JSON.parse(output); } catch(e) { return false; }
+          return parsed.schema_version === "BriefIntake:v1.0.0";
+        threshold: 1.0
+        description: "schema_version must equal 'BriefIntake:v1.0.0'"
+
+      # 4. LLM rubric — overall quality ≥ 0.80.
+      - type: llm-rubric
+        value: |
+          Evaluate the brief_intake output on:
+          (1) Completeness — strategic_objective, audience_hypothesis,
+              success_metrics, constraints, and research_questions all present;
+          (2) Depth — research_questions are specific and independently answerable,
+              not generic placeholders;
+          (3) Neutrality — no hardcoded brand/company names outside Jinja tokens.
+          Score 0–1.
+        threshold: 0.80
+        description: "brief_intake rubric score must be ≥ 0.80"
+
+# =============================================================================
+# GOLDEN SETS
+# Per-agent test cases (beyond the example above) belong in:
+#
+#   evals/golden_sets/<agent_slug>/
+#
+# Naming convention inside each directory:
+#   case_<nnn>_<short_description>.yaml
+#
+# Each case file uses the same schema as a single entry in the `tests:` list
+# above. Reference examples:
+#   evals/golden_sets/phase1.brief_intake/case_001_saas_midmarket.yaml
+#   evals/golden_sets/phase2.positioning/case_001_competitive_displacement.yaml
+#
+# To include a golden set directory automatically, use:
+#   tests:
+#     - !include evals/golden_sets/phase1.brief_intake/*.yaml
+#
+# (Requires promptfoo ≥ 0.70 with directory glob support.)
+# =============================================================================
+
+# =============================================================================
+# HOW TO RUN
+#
+# Prerequisites:
+#   npm install -g promptfoo          # or: npx promptfoo
+#   export ANTHROPIC_API_KEY=sk-...
+#
+# Run full suite (all 27 agents, example test only until golden sets added):
+#   promptfoo eval --config evals/promptfoo.yaml
+#
+# Run a single agent:
+#   promptfoo eval --config evals/promptfoo.yaml \
+#     --filter-description "phase1.brief_intake"
+#
+# View results in the browser UI:
+#   promptfoo view
+#
+# Check for regressions (CI mode — exits non-zero if any assert fails):
+#   promptfoo eval --config evals/promptfoo.yaml --no-cache --ci
+#
+# Output results to JSON (for delta reports in PRs):
+#   promptfoo eval --config evals/promptfoo.yaml \
+#     --output evals/results/run_$(date +%Y%m%d_%H%M%S).json
+#
+# REGRESSION POLICY (from prompts/_registry.yaml preamble):
+#   - Any rubric score regression > 1σ vs. baseline blocks merge.
+#   - Structural assert failures (schema_version, required fields) are
+#     always hard blocks regardless of magnitude.
+#   - Baseline is the most recent passing run stored in evals/results/.
+# =============================================================================

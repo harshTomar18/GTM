@@ -1,0 +1,44 @@
+agent_slug: phase2.narrative_lock
+
+criteria:
+  - id: upstream_all_approved
+    weight: 0.20
+    hard_fail: true
+    description: "All 4 referenced upstream artifacts (positioning, value_prop, messaging_matrix, content_pillars) have approved_at != null."
+
+  - id: narrative_arc_complete
+    weight: 0.20
+    hard_fail: true
+    description: "All 5 acts (context, tension, shift, resolution, proof) have non-empty 1-2 sentence content."
+
+  - id: must_say_meets_floor
+    weight: 0.15
+    hard_fail: true
+    description: "must_say has ≥5 entries, each referencing a real phrase from approved upstream artifacts."
+
+  - id: must_not_say_specific
+    weight: 0.15
+    hard_fail: true
+    description: "must_not_say has ≥3 cycle-specific traps (not just profile.brand_voice.banned_phrases duplicates)."
+
+  - id: no_invented_positioning
+    weight: 0.10
+    description: "Lock doesn't introduce positioning angles, value props, or differentiators not in the approved upstream artifacts."
+
+  - id: reopen_conditions_specific
+    weight: 0.10
+    description: "lock_conditions_to_reopen are specific events, not vague 'if needed' fallbacks."
+
+  - id: expires_at_set_correctly
+    weight: 0.05
+    description: "expires_at = locked_at + q_lock_duration. Past dates = fail."
+
+  - id: brand_voice_compliance
+    weight: 0.05
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+
+auto_redo_threshold: 0.80   # high bar — this is the Phase 2 exit

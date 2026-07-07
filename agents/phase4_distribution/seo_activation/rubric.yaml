@@ -1,0 +1,51 @@
+agent_slug: phase4.seo_activation
+
+criteria:
+  - id: asset_coverage
+    weight: 0.15
+    hard_fail: true
+    description: "Every input content_asset AND website_page has an asset_seo_specs entry."
+
+  - id: title_meta_within_limits
+    weight: 0.15
+    hard_fail: true
+    description: "Every spec has title_tag ≤60 AND meta_description ≤160."
+
+  - id: keyword_in_h1
+    weight: 0.10
+    hard_fail: true
+    description: "Every spec with primary_keyword has that exact phrase in h1."
+
+  - id: internal_links_present
+    weight: 0.10
+    description: "Avg ≥3 internal_links_in AND ≥3 internal_links_out per asset."
+
+  - id: schema_jsonld_present
+    weight: 0.10
+    description: "≥80% of specs have schema_jsonld populated with valid schema.org JSON-LD."
+
+  - id: ai_overview_targets_flagged
+    weight: 0.10
+    description: "≥3 assets flagged ai_overview_target: true when q_aeo_priority ≠ skip."
+
+  - id: ai_faq_word_count
+    weight: 0.10
+    description: "Every ai_search_faqs.concise_answer_40_60_words is 40-60 words. Overflow = no AI citation."
+
+  - id: bidirectional_link_consistency
+    weight: 0.10
+    description: "Internal link graph is bidirectionally consistent (A→B implies B↔A in graph)."
+
+  - id: redirects_valid
+    weight: 0.05
+    description: "All redirects from q_redirect_pairs included with code 301 default."
+
+  - id: brand_voice_compliance
+    weight: 0.05
+    hard_fail: true
+    description: "Zero banned phrases in title_tag, meta_description, h1."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag|game[-\\s]?chang)"
+
+auto_redo_threshold: 0.80

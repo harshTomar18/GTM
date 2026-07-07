@@ -1,0 +1,371 @@
+{
+  "schema_version": "email_sequences.Output:v1.0.0",
+  "written_by_agent": "email_sequences",
+  "written_at": "2026-07-05T14:38:29.186Z",
+  "tenant_id": "Absliq",
+  "cycle_id": "2026-Q3",
+  "payload": [
+    {
+      "sequence_id": "nurture_asset_download",
+      "purpose": "educate_and_convert",
+      "trigger": "form_fill_guide_to_ai",
+      "primary_persona_id": "1",
+      "channel": "email_nurture",
+      "suppression_rules": [
+        "exclude_current_customers",
+        "exclude_partners",
+        "exclude_opted_out"
+      ],
+      "frequency_cap_per_week": 1,
+      "deliverability_notes": "Ensure strong domain reputation for consistent delivery, especially for a high-volume nurture track. Monitor engagement rates.",
+      "regulatory_footer_required": true,
+      "steps": [
+        {
+          "step_number": 1,
+          "subject": "Your InnovateCo AI Guide: Process Automation",
+          "preheader": "Here's your guide to **unlock AI potential** and streamline operations.",
+          "body_markdown": "Hi {{first_name}},\n\nThanks for downloading \"Guide to AI-Powered Process Automation.\" You can access it here: [{{asset_link}}]({{asset_link}})\n\nThis guide offers practical insights to **streamline operations** within {{company_name}} and **unlock AI potential** for real efficiency gains. We've seen many operations leaders use these principles to overcome manual process inefficiencies.\n\nEnjoy the read, and let me know if any questions come up.\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Read the Guide: AI-Powered Process Automation",
+          "delay_after_prior_step_hours": null,
+          "branch_on": {
+            "opened": null,
+            "clicked": "step_3",
+            "replied": "exit",
+            "no_response": "step_2"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "asset_link",
+            "company_name"
+          ]
+        },
+        {
+          "step_number": 2,
+          "subject": "Quick thought on operational efficiency at {{company_name}}",
+          "preheader": "How do you currently measure process automation success?",
+          "body_markdown": "Hi {{first_name}},\n\nCircling back on the AI Process Automation Guide. Many leaders I speak with at companies like {{company_name}} are looking to **streamline operations** and get clearer insights into their automation ROI.\n\nI'm curious: what are your biggest challenges in measuring efficiency and **unlocking AI potential** within your current processes?\n\nJust a quick reply is fine.\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply to Share Your Insights",
+          "delay_after_prior_step_hours": 72,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "step_3"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name"
+          ]
+        },
+        {
+          "step_number": 3,
+          "subject": "Achieve 30% greater efficiency, like our manufacturing clients",
+          "preheader": "See how one InnovateCo AI client boosted efficiency by 30%.",
+          "body_markdown": "Hi {{first_name}},\n\nFollowing up on your interest in **AI-powered efficiency for modern enterprises**. We recently published a case study that might resonate.\n\nOne of our clients, a manufacturing leader similar to many in your **industry**, used InnovateCo AI to boost their operational efficiency by 30%. They were able to **streamline operations** significantly and **unlock AI potential** in critical areas.\n\nWould you be open to seeing how they did it? It's a quick read focused on tangible results.\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Read the Manufacturing Case Study",
+          "delay_after_prior_step_hours": 96,
+          "branch_on": {
+            "opened": null,
+            "clicked": "step_5",
+            "replied": "exit",
+            "no_response": "step_4"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "industry"
+          ]
+        },
+        {
+          "step_number": 4,
+          "subject": "Is your current automation strategy leaving gaps?",
+          "preheader": "Many companies overlook key areas when adopting AI. Are you?",
+          "body_markdown": "Hi {{first_name}},\n\nWe often see companies like {{company_name}} focus on basic automation, but miss the deeper opportunities that truly **unlock AI potential**. This often results in a patchwork of solutions that don't fully **streamline operations**.\n\nWhat if there was a way to identify those hidden gaps and create a cohesive strategy that moves beyond simple task automation?\n\nOur approach helps leaders achieve comprehensive **AI-powered efficiency for modern enterprises**, ensuring every operational area contributes to the overall goal.\n\nLet me know if you're curious about a different perspective.\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Explore Advanced Automation Strategies",
+          "delay_after_prior_step_hours": 168,
+          "branch_on": {
+            "opened": null,
+            "clicked": "step_5",
+            "replied": "exit",
+            "no_response": "step_5"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name"
+          ]
+        },
+        {
+          "step_number": 5,
+          "subject": "Discover how InnovateCo AI transforms operations",
+          "preheader": "See a live demo of how our platform can streamline your business.",
+          "body_markdown": "Hi {{first_name}},\n\nYou've shown interest in how AI can **streamline operations** and **unlock AI potential**.\n\nWe specialize in helping companies like {{company_name}} implement intelligent automation solutions that deliver measurable ROI.\n\nInstead of more reading, how about a quick 15-minute demo to see exactly how InnovateCo AI could benefit your specific needs?\n\nChoose a time that works for you. No pressure, just a clear look at what's possible.\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Book 15 min to see InnovateCo AI in action",
+          "delay_after_prior_step_hours": 168,
+          "branch_on": {
+            "opened": null,
+            "clicked": "exit",
+            "replied": "exit",
+            "no_response": "step_6"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name"
+          ]
+        },
+        {
+          "step_number": 6,
+          "subject": "Should I close your file, {{first_name}}?",
+          "preheader": "It seems like now might not be the right time to discuss **AI-powered efficiency**.",
+          "body_markdown": "Hi {{first_name}},\n\nIt looks like my emails about **unlocking AI potential** and how we help **streamline operations** haven't quite landed at the right time. That's perfectly fine.\n\nI don't want to clutter your inbox, so I'll assume that now isn't the right moment for you or {{company_name}} to explore **AI-powered efficiency for modern enterprises**.\n\nUnless I hear back, I'll close your file for now. If anything changes, you know where to find us.\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply if Timing is Better",
+          "delay_after_prior_step_hours": 216,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "exit"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name"
+          ]
+        }
+      ]
+    },
+    {
+      "sequence_id": "prospecting_outbound_ai_solution",
+      "purpose": "generate_qualified_leads",
+      "trigger": "cold_outreach_list_upload",
+      "primary_persona_id": "1",
+      "channel": "email_outbound",
+      "suppression_rules": [
+        "exclude_current_customers",
+        "exclude_partners",
+        "exclude_opted_out"
+      ],
+      "frequency_cap_per_week": 1,
+      "deliverability_notes": "Use a dedicated IP pool for cold outbound. Focus on high personalization to bypass spam filters. Monitor reply rates closely.",
+      "regulatory_footer_required": true,
+      "steps": [
+        {
+          "step_number": 1,
+          "subject": "Quick thought on {{company_name}} and AI for operations",
+          "preheader": "Seeing your recent [specific company fact] made me think about operational efficiency.",
+          "body_markdown": "Hi {{first_name}},\n\nSaw that {{company_name}} recently [specific company fact, e.g., expanded into a new market / released a new product]. This often means new operational challenges and a need to **streamline operations**.\n\nMany companies in the {{industry}} sector are looking to **unlock AI potential** to improve their process efficiency and reduce costs.\n\nIs {{job_title}} at {{company_name}} currently exploring ways to **automate more, achieve more** with AI?\n\nBest,\n{{sender_name}}\n{{sender_title}}\nInnovateCo AI\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply with Your Insights",
+          "delay_after_prior_step_hours": null,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "step_2"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name",
+            "job_title",
+            "industry",
+            "sender_name",
+            "sender_title"
+          ]
+        },
+        {
+          "step_number": 2,
+          "subject": "How {{industry}} peers are **streamlining operations**",
+          "preheader": "70% of {{industry}} leaders plan to increase AI investment this year.",
+          "body_markdown": "Hi {{first_name}},\n\nFollowing up on my last email. Research shows 70% of {{industry}} leaders are planning increased investment in AI to **streamline operations** this year.\n\nThis trend highlights a clear focus on **AI-powered efficiency for modern enterprises**. We're seeing companies like {{company_name}} benefit greatly by proactively identifying bottlenecks and leveraging AI for smarter process automation.\n\nWhat's your current priority for operational improvements?\n\nBest,\n{{sender_name}}\n{{sender_title}}\nInnovateCo AI\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply: What are Your Priorities?",
+          "delay_after_prior_step_hours": 96,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "step_3"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name",
+            "industry",
+            "sender_name",
+            "sender_title"
+          ]
+        },
+        {
+          "step_number": 3,
+          "subject": "Case Study: 30% efficiency boost in manufacturing",
+          "preheader": "Thought you might find this relevant to {{company_name}}'s operational goals.",
+          "body_markdown": "Hi {{first_name}},\n\nNo pitch here, just a resource. Based on your {{job_title}} role at {{company_name}}, I thought you might find this case study interesting.\n\nIt details how a manufacturing company achieved a 30% efficiency boost using AI to **streamline operations**. It’s a good example of how to **unlock AI potential** for significant impact.\n\n[Link to Case Study: InnovateCo AI Boosts Manufacturing Efficiency by 30%]\n\nHope it's helpful.\n\nBest,\n{{sender_name}}\n{{sender_title}}\nInnovateCo AI\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Read the Case Study",
+          "delay_after_prior_step_hours": 96,
+          "branch_on": {
+            "opened": null,
+            "clicked": "step_5",
+            "replied": "exit",
+            "no_response": "step_4"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "job_title",
+            "company_name",
+            "sender_name",
+            "sender_title"
+          ]
+        },
+        {
+          "step_number": 4,
+          "subject": "Scaling AI for operations at {{company_name}}?",
+          "preheader": "My team mentioned you might be exploring advanced AI for operations.",
+          "body_markdown": "Hi {{first_name}},\n\nMy team alerted me that we've reached out about **AI-powered efficiency for modern enterprises** and how InnovateCo AI can help **streamline operations**.\n\nAs {{sender_title_escalation}}, I often connect with {{job_title}}s who are looking to **unlock AI potential** at a strategic level within their organizations.\n\nAre you currently exploring advanced AI solutions that can significantly impact {{company_name}}'s operational scale?\n\nRegards,\n{{sender_name_escalation}}\n{{sender_title_escalation}}\nInnovateCo AI\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply to Discuss Strategic AI",
+          "delay_after_prior_step_hours": 96,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "step_5"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name",
+            "job_title",
+            "sender_name_escalation",
+            "sender_title_escalation"
+          ]
+        },
+        {
+          "step_number": 5,
+          "subject": "{{first_name}}, are you the right person?",
+          "preheader": "If you're not the best fit for AI operational efficiency, who is?",
+          "body_markdown": "Hi {{first_name}},\n\nMy apologies if my previous emails haven't been relevant. I'm reaching out to leaders in operations at companies like {{company_name}} who are focused on **AI-powered efficiency for modern enterprises**.\n\nSpecifically, we help organizations **streamline operations** and **unlock AI potential** for tangible results.\n\nIf that's not your area, could you point me to the right person on your team who champions operational excellence and AI adoption?\n\nBest,\n{{sender_name}}\n{{sender_title}}\nInnovateCo AI\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply: Who is the Right Person?",
+          "delay_after_prior_step_hours": 144,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "step_6"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name",
+            "sender_name",
+            "sender_title"
+          ]
+        },
+        {
+          "step_number": 6,
+          "subject": "Connecting about {{company_name}}",
+          "preheader": "It seems now isn't the best time for a conversation about operational AI.",
+          "body_markdown": "Hi {{first_name}},\n\nIt seems my messages regarding how InnovateCo AI can help **streamline operations** and **unlock AI potential** haven't caught you at the right moment.\n\nI understand you're busy. I'll take this as a sign that the timing isn't right for {{company_name}} to discuss **AI-powered efficiency for modern enterprises**.\n\nI'll close my outreach for now. If priorities shift or you'd like to revisit, feel free to reach out.\n\nBest,\n{{sender_name}}\n{{sender_title}}\nInnovateCo AI\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply if Timing Changes",
+          "delay_after_prior_step_hours": 168,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "step_7"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name",
+            "sender_name",
+            "sender_title"
+          ]
+        },
+        {
+          "step_number": 7,
+          "subject": "Q{{quarter_number}} planning: Are you optimizing operations with AI?",
+          "preheader": "Re-engaging as new quarter planning begins.",
+          "body_markdown": "Hi {{first_name}},\n\nAs Q{{quarter_number}} planning gets underway, many {{job_title}}s are evaluating technologies to **streamline operations** for the year ahead.\n\nThought it might be a good time to revisit how InnovateCo AI helps companies like {{company_name}} to **unlock AI potential** and achieve significant operational gains. Our focus is on **automating more, achieving more**.\n\nIs {{company_name}}'s strategic planning involving AI for operational efficiency this quarter?\n\nBest,\n{{sender_name}}\n{{sender_title}}\nInnovateCo AI\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply: Discuss Q{{quarter_number}} AI Planning",
+          "delay_after_prior_step_hours": 480,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "exit"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "quarter_number",
+            "job_title",
+            "company_name",
+            "sender_name",
+            "sender_title"
+          ]
+        }
+      ]
+    },
+    {
+      "sequence_id": "reengagement_dormant_lead",
+      "purpose": "reactivate_dormant_leads",
+      "trigger": "dormant_90_days",
+      "primary_persona_id": "1",
+      "channel": "email_lifecycle",
+      "suppression_rules": [
+        "exclude_current_customers",
+        "exclude_partners",
+        "exclude_opted_out"
+      ],
+      "frequency_cap_per_week": 1,
+      "deliverability_notes": "Monitor open rates to avoid further damage to sender reputation. Re-permission campaigns may be considered if engagement is consistently low.",
+      "regulatory_footer_required": true,
+      "steps": [
+        {
+          "step_number": 1,
+          "subject": "What you've missed: InnovateCo AI updates & customer stories",
+          "preheader": "We've been busy **unlocking AI potential** for companies like yours.",
+          "body_markdown": "Hi {{first_name}},\n\nIt's been a while since we last connected. Since then, we've rolled out some exciting updates to our platform, designed to help companies like {{company_name}} **streamline operations** even further.\n\nFor example, our new {{product_feature_name}} functionality is helping customers achieve [specific outcome, e.g., 20% faster data processing]. We also have a new case study showing how a {{industry}} client used our solution to significantly improve their operational efficiency.\n\nAre you open to seeing how these advancements could benefit you?\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "See Our Latest Innovations",
+          "delay_after_prior_step_hours": null,
+          "branch_on": {
+            "opened": null,
+            "clicked": "exit",
+            "replied": "exit",
+            "no_response": "step_2"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name",
+            "product_feature_name",
+            "industry"
+          ]
+        },
+        {
+          "step_number": 2,
+          "subject": "Is now the right time to revisit AI-powered operations?",
+          "preheader": "A quick question about **streamlining operations** at {{company_name}}.",
+          "body_markdown": "Hi {{first_name}},\n\nChecking in one last time regarding **unlocking AI potential** for operational excellence at {{company_name}}.\n\nCircumstances and priorities change, and sometimes a solution that wasn't a fit before becomes highly relevant later. Our goal is to help you **automate more, achieve more**.\n\nIs now a better time for a quick conversation about how InnovateCo AI could help **streamline operations** for your team?\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Reply if Timing is Right",
+          "delay_after_prior_step_hours": 120,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "step_3"
+          },
+          "personalization_tokens": [
+            "first_name",
+            "company_name"
+          ]
+        },
+        {
+          "step_number": 3,
+          "subject": "Respecting your inbox: Goodbye from InnovateCo AI",
+          "preheader": "We'll stop sending updates unless you tell us otherwise.",
+          "body_markdown": "Hi {{first_name}},\n\nIt seems our previous messages about how InnovateCo AI helps to **streamline operations** haven't resonated, and that's completely okay.\n\nWe value your time and inbox space. We'll stop sending you updates about **AI-powered efficiency for modern enterprises** unless you choose to re-engage with us.\n\nIf you ever decide to **unlock AI potential** for your operations, we'll be here. Otherwise, we wish you all the best.\n\nBest,\n[Your Name]\n\n---\nInnovateCo AI\n123 Main St, Anytown, USA 12345\n[Unsubscribe](https://innovateco.ai/unsubscribe)\n\nYou're receiving this email because you've engaged with InnovateCo AI. We respect your privacy.",
+          "cta": "Unsubscribe from InnovateCo AI",
+          "delay_after_prior_step_hours": 240,
+          "branch_on": {
+            "opened": null,
+            "clicked": null,
+            "replied": "exit",
+            "no_response": "exit"
+          },
+          "personalization_tokens": [
+            "first_name"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/policies.schema.json",
+  "title": "PolicySet",
+  "description": "Approval policies — matched against artifact attributes at submission time. Loaded from governance/approval_policies.yaml.",
+  "type": "object",
+  "required": ["version", "policies"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "policies": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ApprovalPolicy" }
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "unmatched_artifact": {
+          "type": "object",
+          "properties": {
+            "requires": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "ApprovalPolicy": {
+      "type": "object",
+      "required": ["id", "when", "requires"],
+      "properties": {
+        "id": { "type": "string" },
+        "priority": { "type": "integer", "default": 100, "description": "Lower = higher priority when multiple match" },
+        "when": { "$ref": "#/$defs/PolicyMatchCondition" },
+        "requires": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Role names matching tenant_profile.approval_roles[].role"
+        },
+        "sla_hours": { "type": "integer", "default": 48 },
+        "escalate_after_hours": { "type": ["integer", "null"] },
+        "escalate_to": { "type": "array", "items": { "type": "string" } },
+        "revision_loop": {
+          "type": "object",
+          "properties": {
+            "max_iterations": { "type": "integer", "default": 3 },
+            "on_exceed": { "type": "string", "default": "escalate_to_CEO" }
+          }
+        },
+        "blocks_downstream": { "type": "boolean", "default": false }
+      }
+    },
+    "PolicyMatchCondition": {
+      "type": "object",
+      "description": "All non-null fields must match (AND).",
+      "properties": {
+        "artifact_types": { "type": "array", "items": { "type": "string" } },
+        "content_contains_any": { "type": "array", "items": { "type": "string" } },
+        "content_contains_any_from": { "type": "string", "description": "Reference into TenantProfile, e.g. 'profile.frameworks'" },
+        "content_contains_pattern": { "type": "string", "description": "Regex" },
+        "author_voice_role": { "type": "array", "items": { "type": "string" } },
+        "total_spend_usd_gt": { "type": "number" },
+        "profile_flag": { "type": "string", "description": "TenantProfile path that must be truthy" }
+      }
+    }
+  }
+}

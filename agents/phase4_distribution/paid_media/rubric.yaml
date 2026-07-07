@@ -1,0 +1,53 @@
+agent_slug: phase4.paid_media
+
+criteria:
+  - id: platform_coverage
+    weight: 0.15
+    hard_fail: true
+    description: "Every paid channel in channel_plan has a corresponding platform_setups entry."
+
+  - id: budget_sums
+    weight: 0.20
+    hard_fail: true
+    description: "Per platform: sum(campaigns.budget_total_usd) = channel_plan allocation ±5%."
+
+  - id: utm_template_present
+    weight: 0.10
+    hard_fail: true
+    description: "Every campaign has a populated utm_template with variant + ad_group params."
+
+  - id: creative_refs_resolve
+    weight: 0.10
+    hard_fail: true
+    description: "Every ad_group.creative_refs maps to a real variant in paid_ad_creative."
+
+  - id: audience_specificity
+    weight: 0.10
+    description: "Audiences have named source_layer + specific definition (no '1st-party data' generic)."
+
+  - id: bid_objective_alignment
+    weight: 0.10
+    description: "Every campaign's bid_strategy matches its objective (per playbook). Mismatches = fail."
+
+  - id: lp_match_validated
+    weight: 0.10
+    description: "≥80% of campaigns have lp_match_validated: true with the LP resolvable in website_copy_pack."
+
+  - id: experiment_matrix
+    weight: 0.05
+    description: "≥50% of campaigns have experiment_matrix with declared arms + dimension."
+
+  - id: kpi_benchmarks_calibrated
+    weight: 0.05
+    description: "kpi_benchmarks.target_cpl_usd / target_cac_usd reasonable (not zero, not unbounded) — calibrated from prior cycle data or industry benchmark citation."
+
+  - id: brand_voice_compliance
+    weight: 0.05
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+  - "\\b(decision makers in tech|business professionals)\\b"  # vague audiences
+
+auto_redo_threshold: 0.80

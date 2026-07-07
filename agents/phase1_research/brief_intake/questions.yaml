@@ -1,0 +1,80 @@
+agent_slug: phase1.brief_intake
+
+questions:
+  - id: q_campaign_objective
+    prompt: "What is the primary business objective of this cycle? Be specific and quantified — e.g., 'Generate $2M in net-new pipeline from mid-market healthcare ICPs in 90 days,' not 'grow the business.'"
+    type: long_text
+    required_for: plan
+    reusable_key: cycle.objective.primary
+    help_text: "If you can't express it as a measurable outcome, the cycle won't measure success either."
+
+  - id: q_primary_buyer
+    prompt: "Who is the primary buyer for this cycle? (Title + company size + industry — e.g., 'CFO at 250-2000 employee retail companies')"
+    type: text
+    required_for: plan
+    reusable_key: cycle.icp.primary_buyer
+    depends_on: []
+
+  - id: q_primary_user
+    prompt: "Who is the primary day-to-day user of the product? (Often different from the buyer)"
+    type: text
+    required_for: plan
+    reusable_key: cycle.icp.primary_user
+
+  - id: q_timeline
+    prompt: "Timeline for this cycle? (e.g., 'July 1 – September 30 2026, with a launch tentpole on August 15')"
+    type: text
+    required_for: plan
+    reusable_key: cycle.timeline
+
+  - id: q_budget_signal
+    prompt: "Budget envelope for the full cycle (paid media, content production, tools)?"
+    type: text
+    required_for: plan
+    reusable_key: cycle.budget.total_usd
+    help_text: "A rough number is fine. If you don't know yet, write 'unbounded for content; <$X for paid' or similar."
+
+  - id: q_known_competitors
+    prompt: "List 3-6 direct competitors you'll be measured against this cycle (one per line, with URLs if you have them)."
+    type: long_text
+    required_for: plan
+    reusable_key: profile.known_competitors
+
+  - id: q_why_we_win
+    prompt: "When you win against those competitors, why? (3-5 reasons in customer language, not feature lists)"
+    type: long_text
+    required_for: plan
+
+  - id: q_why_we_lose
+    prompt: "When you lose, why? (3-5 honest reasons. Hidden ones do the most damage.)"
+    type: long_text
+    required_for: plan
+
+  - id: q_known_facts
+    prompt: "What do you ALREADY KNOW about this market that the research shouldn't have to rediscover? (Bullet list of solid, citable facts.)"
+    type: long_text
+    required_for: plan
+    help_text: "If you write 'we have 47 customers in BFSI with avg ACV $72k' here, downstream agents won't waste tokens rediscovering it."
+
+  - id: q_unknowns
+    prompt: "What's the most important thing you DON'T know that this cycle needs to figure out?"
+    type: long_text
+    required_for: plan
+    help_text: "Be specific. 'How big is the market?' is bad. 'Which 3 sub-segments of mid-market retail show highest intent for X right now?' is good."
+
+  - id: q_recent_lost_deal
+    prompt: "Describe one specific deal you lost in the last 90 days that's representative. Why did it fall apart?"
+    type: long_text
+    required_for: gather
+    help_text: "This anchors audience_intelligence on real pain, not assumed pain."
+
+  - id: q_recent_won_deal
+    prompt: "Describe one specific deal you WON in the last 90 days that's representative. What clicked?"
+    type: long_text
+    required_for: gather
+
+  - id: q_stakeholders_briefed
+    prompt: "Who at the company needs to sign off on this cycle? (Names + roles)"
+    type: long_text
+    required_for: optional
+    reusable_key: cycle.stakeholders

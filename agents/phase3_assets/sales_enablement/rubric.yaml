@@ -1,0 +1,55 @@
+agent_slug: phase3.sales_enablement
+
+criteria:
+  - id: battlecard_per_competitor
+    weight: 0.20
+    hard_fail: true
+    description: "Every CompetitorProfile in inputs has a corresponding battlecard."
+
+  - id: discovery_questions_count
+    weight: 0.10
+    hard_fail: true
+    description: "discovery_questions has ≥8 entries (target 12)."
+
+  - id: objection_responses_count
+    weight: 0.10
+    hard_fail: true
+    description: "objection_responses has ≥6 entries (target 8), including the top lost-deal reasons from q_top_lost_deal_reasons."
+
+  - id: differentiators_proof_cited
+    weight: 0.10
+    description: "Every battlecard.differentiator references a specific proof — customer outcome, proof_point_id, or quantified claim."
+
+  - id: trap_questions_unnamed
+    weight: 0.10
+    description: "Battlecard trap_setting_questions reference competitor weakness WITHOUT naming the competitor (per sales hygiene)."
+
+  - id: talk_tracks_verbatim_deliverable
+    weight: 0.10
+    description: "objection_responses[].response_talk_track reads as something a rep can deliver verbatim on a call — not a marketing paragraph."
+
+  - id: persona_cheat_sheet_completeness
+    weight: 0.10
+    hard_fail: true
+    description: "Every persona from audience_intelligence has a persona_cheat_sheet entry."
+
+  - id: demo_script_buyer_outcome_oriented
+    weight: 0.05
+    description: "Demo script act_structure maps to buyer outcomes, not features."
+
+  - id: must_not_say_clean
+    weight: 0.10
+    hard_fail: true
+    description: "Zero narrative_lock.must_not_say phrases."
+
+  - id: brand_voice_compliance
+    weight: 0.05
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+  - "\\b(Don't you (think|agree))\\b"  # leading discovery question
+  - "\\bsuper (excited|easy|powerful)\\b"  # weak language
+
+auto_redo_threshold: 0.78

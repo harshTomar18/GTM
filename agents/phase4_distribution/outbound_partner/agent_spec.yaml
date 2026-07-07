@@ -1,0 +1,77 @@
+slug: phase4.outbound_partner
+phase: 4
+stage: 5
+mission: >
+  Operationalize named-account outbound (SDR-led) + partner co-sell — tier-1
+  account list with assigned sequences + multi-thread personas + partner kits +
+  co-marketing calendar + SDR↔AE handoff SLA.
+
+inputs:
+  - key: phase4.campaign_calendar.output
+    schema_version: "CampaignCalendar:v1"
+    required: true
+    require_approved: true
+  - key: phase3.email_sequences.output
+    schema_version: "EmailSequencePack:v1"
+    required: true
+  - key: phase3.sales_enablement.output
+    schema_version: "SalesEnablementPack:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+
+profile_keys:
+  - profile.icp_archetypes
+  - profile.tech_stack.crm
+
+output_schema: "OutboundPartnerPack:v1.0.0"
+artifact_markdown_template: "agents/phase4_distribution/outbound_partner/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+
+kpis:
+  - id: tier_1_accounts_listed
+    name: "Tier-1 accounts listed"
+    target: 25
+    unit: "count"
+  - id: multi_thread_depth
+    name: "Avg multi-thread personas per tier-1 account"
+    target: 3
+    unit: "count"
+  - id: sequence_assigned
+    name: "Tier-1 accounts with assigned_sequence_id"
+    target: 1.0
+    unit: "ratio"
+  - id: sla_defined
+    name: "SDR↔AE handoff SLA defined"
+    target: 1.0
+    unit: "ratio"
+
+sla:
+  max_tokens: 16000
+  max_latency_s: 400
+  max_cost_usd: 2.00
+
+failure_modes:
+  - mode: account_orphan
+    detection: "tier-1 accounts without assigned_sequence_id"
+    auto_mitigation: redo
+  - mode: single_thread_only
+    detection: "tier-1 account multi_thread_personas count = 1"
+    auto_mitigation: redo
+  - mode: sla_missing
+    detection: "sdr_ae_handoff_sla.acceptance_criteria empty OR response_time_hours unrealistic (>72h)"
+    auto_mitigation: redo
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

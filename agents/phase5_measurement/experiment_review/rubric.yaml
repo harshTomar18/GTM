@@ -1,0 +1,43 @@
+agent_slug: phase5.experiment_review
+
+criteria:
+  - id: completeness
+    weight: 0.30
+    hard_fail: true
+    description: >
+      Every experiment file present in tenants/<id>/cycles/<cycle>/experiments/
+      is addressed in the findings[] array. No experiment is silently omitted.
+
+  - id: statistical_integrity
+    weight: 0.30
+    hard_fail: true
+    description: >
+      No winner is declared for any experiment where impressions <
+      sample_size_target OR where the reported confidence_level is below the
+      q_significance_threshold answer. Underpowered experiments must carry
+      the [UNDERPOWERED] tag and have winner_arm_id set to null.
+
+  - id: learning_quality
+    weight: 0.25
+    description: >
+      Every experiment in findings[] has a learning.summary field containing
+      a non-trivial explanation of what the result tells us about the
+      audience, message, channel, or timing. Minimum 30 words per summary.
+      Generic phrases like "this variant performed better" do not pass.
+
+  - id: rollout_actionability
+    weight: 0.15
+    description: >
+      Every finding where winner_arm_id is non-null includes a rollout_action
+      object with all three fields populated: action (roll_out | hold |
+      discard), scope (target_artifact_ref + audience percentage), and notes
+      (rationale and any approval or dependency flags).
+
+banned_patterns:
+  - "\\b(this variant performed better)\\b"
+  - "\\b(results were inconclusive)\\b(?! — because)"
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge)"
+  - "\\b(TBD|TBA|to be determined)\\b"
+
+auto_redo_threshold: 0.75
+pass_threshold: 0.75

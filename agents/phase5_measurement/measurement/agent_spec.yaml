@@ -1,0 +1,131 @@
+slug: phase5.measurement
+phase: 5
+stage: 1
+version: "1.0.0"
+
+mission: >
+  Define and instrument the cycle's success metrics, attribution model, and dashboard
+  spec. Produce a KPIFramework that downstream agents and the executive brief consume.
+
+# ---------------------------------------------------------------------------
+# Inputs
+# ---------------------------------------------------------------------------
+inputs:
+  - id: campaign_calendar
+    source: phase4.campaign_calendar.output
+    schema: CampaignCalendar:v1
+    required: true
+    require_approved: true
+
+  - id: research_dossier
+    source: phase1.research_synthesis.output
+    schema: ResearchDossier:v1
+    required: true
+
+  - id: brief_intake
+    source: phase1.brief_intake.output
+    schema: BriefIntake:v1
+    required: true
+
+# ---------------------------------------------------------------------------
+# Profile keys consumed
+# ---------------------------------------------------------------------------
+profile_keys:
+  - profile.tech_stack
+  - profile.operating_calendar
+
+# ---------------------------------------------------------------------------
+# Output
+# ---------------------------------------------------------------------------
+output:
+  schema: KPIFramework:v1.0.0
+  stored_as: phase5.measurement.output
+
+# ---------------------------------------------------------------------------
+# Approval
+# ---------------------------------------------------------------------------
+approval_policies:
+  - policy: brand_impacting
+    rationale: >
+      KPI framework drives executive reporting; CMO + CFO must sign off to
+      ensure alignment between marketing performance narrative and financial
+      targets.
+    required_approvers:
+      - CMO
+      - CFO
+
+# ---------------------------------------------------------------------------
+# Quality KPIs (agent self-assessment)
+# ---------------------------------------------------------------------------
+quality_kpis:
+  - id: dashboard_freshness
+    description: >
+      Dashboard spec contains datasource_ids for every channel present in
+      the upstream channel_plan.
+    measurement: ratio of channels covered / total channels in channel_plan
+    target: 1.0
+
+  - id: kpi_tree_depth
+    description: >
+      Output includes a north_star metric, at least 3 input_metrics, and
+      at least 5 leading_indicators.
+    measurement: boolean — true when all three thresholds are met
+    target: true
+
+  - id: attribution_model_declared
+    description: >
+      The attribution_model field in attribution_config is non-null and
+      contains a recognized model name.
+    measurement: boolean
+    target: true
+
+  - id: cohort_definition_present
+    description: >
+      cohort_definition in attribution_config is a non-empty string with
+      a specific time window and touchpoint definition.
+    measurement: boolean
+    target: true
+
+# ---------------------------------------------------------------------------
+# SLA
+# ---------------------------------------------------------------------------
+sla:
+  max_tokens: 24000
+  max_latency_s: 480
+  max_cost_usd: 2.50
+
+# ---------------------------------------------------------------------------
+# Failure modes
+# ---------------------------------------------------------------------------
+failure_modes:
+  - id: kpi_tree_incomplete
+    condition: north_star or input_metrics missing from output
+    action: redo
+
+  - id: attribution_model_missing
+    condition: attribution_model is null or absent
+    action: redo
+
+  - id: channel_coverage_gap
+    condition: >
+      A channel present in campaign_calendar has no KPI mapped in
+      leading_indicators
+    action: redo
+
+# ---------------------------------------------------------------------------
+# Model routing
+# ---------------------------------------------------------------------------
+models:
+  plan: claude-sonnet-4-6
+  gather: claude-haiku-4-5-20251001
+  synthesize: claude-sonnet-4-6
+  write: claude-opus-4-7
+  review: claude-sonnet-4-6
+
+# ---------------------------------------------------------------------------
+# Prompt cache blocks
+# ---------------------------------------------------------------------------
+cache:
+  block1: true   # system / role context
+  block2: true   # upstream inputs (campaign calendar, research dossier, brief)
+  block3: false  # live task instructions + self-review (must stay fresh)

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/brief_intake.schema.json",
+  "title": "BriefIntake",
+  "description": "Output of phase1.brief_intake. Structured campaign brief + research-question list.",
+  "type": "object",
+  "required": ["schema_version", "campaign_id", "product_summary", "primary_buyer", "business_objective", "timeline", "research_questions"],
+  "properties": {
+    "schema_version": { "const": "BriefIntake:v1.0.0" },
+    "campaign_id": { "type": "string" },
+    "product_summary": { "type": "string", "description": "One sentence" },
+    "primary_buyer": { "type": "string" },
+    "primary_user": { "type": ["string", "null"] },
+    "business_objective": { "type": "string" },
+    "timeline": { "type": "string" },
+    "budget_signal": { "type": ["string", "null"] },
+    "known_facts": { "type": "array", "items": { "type": "string" } },
+    "unknowns": { "type": "array", "items": { "type": "string" } },
+    "known_competitors": { "type": "array", "items": { "type": "string" } },
+    "why_we_win": { "type": "array", "items": { "type": "string" } },
+    "why_we_lose": { "type": "array", "items": { "type": "string" } },
+    "research_questions": {
+      "type": "object",
+      "required": ["market", "competitor", "audience", "language"],
+      "properties": {
+        "market": { "type": "array", "items": { "type": "string" } },
+        "competitor": { "type": "array", "items": { "type": "string" } },
+        "audience": { "type": "array", "items": { "type": "string" } },
+        "language": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

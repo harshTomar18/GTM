@@ -1,0 +1,48 @@
+agent_slug: phase4.outbound_partner
+
+criteria:
+  - id: account_count_realistic
+    weight: 0.10
+    description: "tier_1_accounts count is roughly ≤ 30 × q_sdr_capacity. Overloaded lists fail."
+
+  - id: multi_thread_depth
+    weight: 0.15
+    hard_fail: true
+    description: "Every tier_1 account has ≥3 multi_thread_personas. Single-thread = redo."
+
+  - id: sequence_assignment
+    weight: 0.15
+    hard_fail: true
+    description: "Every tier_1 account has a valid assigned_sequence_id referencing a real email_sequences entry."
+
+  - id: sla_realistic
+    weight: 0.15
+    hard_fail: true
+    description: "sdr_ae_handoff_sla has specific acceptance_criteria, response_time_hours ≤ 48, actionable kickback_policy."
+
+  - id: no_fabricated_accounts
+    weight: 0.10
+    description: "If q_target_account_source was 'manual hand-curated' and a list was provided, accounts come from that list. If 'no list', accounts are clearly labeled as ICP archetype placeholders, not real-sounding fabrications."
+
+  - id: account_research_specific
+    weight: 0.10
+    description: "research_brief_summary names specific signals (event, hire, news, intent surge) — not generic 'good fit' language."
+
+  - id: partner_section_honest
+    weight: 0.10
+    description: "If q_partner_roster = 'none', partner_kits + co_marketing_calendar are empty arrays. No invented partners."
+
+  - id: co_marketing_no_conflicts
+    weight: 0.05
+    description: "co_marketing_calendar dates don't fall on campaign_calendar tentpole conflict zones."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+  - "\\b(decision makers in (tech|healthcare|finance))\\b"  # too generic
+
+auto_redo_threshold: 0.80

@@ -1,0 +1,50 @@
+agent_slug: phase3.content_assets
+
+criteria:
+  - id: pillar_coverage
+    weight: 0.15
+    hard_fail: true
+    description: "Every pillar in ContentPillarSet has ≥1 flagship asset in this pack."
+
+  - id: citation_density
+    weight: 0.20
+    hard_fail: true
+    description: "Average ≥1.5 citations per 500 words across flagships; ≥0.8 for supporting. Below = redo."
+
+  - id: framework_claims_cited
+    weight: 0.15
+    hard_fail: true
+    description: "Every mention of a profile.frameworks item has a paired citation. Uncited framework mention = redo_strict."
+
+  - id: pov_opinionated
+    weight: 0.10
+    description: "Each flagship has a stance (verifiable in opening_section + thesis-confirming closing). Topic-shape essays auto-fail."
+
+  - id: faq_aeo_format
+    weight: 0.10
+    description: "Assets ≥1000 words have FAQ section with ≥5 pairs; answers 40-60 words each."
+
+  - id: internal_links
+    weight: 0.10
+    description: "Each asset has ≥3 internal links."
+
+  - id: persona_language_used
+    weight: 0.05
+    description: "Persona verbatim phrases appear ≥2 times per flagship."
+
+  - id: must_not_say_clean
+    weight: 0.10
+    hard_fail: true
+    description: "Zero occurrences of any narrative_lock.must_not_say phrase."
+
+  - id: brand_voice_compliance
+    weight: 0.05
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|game[-\\s]?chang|leverag|streamline|paradigm|holistic)\\b"
+  - "\\bbest[-\\s]practices?\\s+for\\b"
+  - "\\bin (today's|this) (digital|fast[-\\s]?paced|modern)\\b"
+
+auto_redo_threshold: 0.78

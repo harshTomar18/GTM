@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/competitor_profile.schema.json",
+  "title": "CompetitorProfile",
+  "description": "Per-competitor card. Output of phase1.market_research.",
+  "type": "object",
+  "required": ["schema_version", "name"],
+  "properties": {
+    "schema_version": { "const": "CompetitorProfile:v1.0.0" },
+    "name": { "type": "string" },
+    "url": { "type": ["string", "null"] },
+    "positioning": { "type": "string" },
+    "target_icp": { "type": "string" },
+    "key_differentiator": { "type": "string" },
+    "pricing_model": { "type": ["string", "null"] },
+    "weaknesses": { "type": "array", "items": { "type": "string" } },
+    "praise_points": { "type": "array", "items": { "type": "string" } },
+    "review_rating": { "type": ["number", "null"], "minimum": 0, "maximum": 5 },
+    "review_source": { "type": ["string", "null"] },
+    "recent_news": { "type": "array", "items": { "type": "string" } },
+    "our_differentiation_angle": { "type": "string" }
+  }
+}

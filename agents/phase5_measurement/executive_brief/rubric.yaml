@@ -1,0 +1,111 @@
+# rubric.yaml — phase5.executive_brief
+# Self-review rubric applied by the review model before output is returned.
+# Each dimension is scored 0.0–1.0. Weighted average must meet pass_threshold.
+
+rubric:
+  pass_threshold: 0.75
+
+  dimensions:
+
+    executive_readability:
+      weight: 0.25
+      description: >
+        The brief is free of marketing jargon and internal acronyms unexplained
+        to a senior non-specialist audience. Prose is concise (short sentences,
+        active voice). Structure is scannable: section headers, bullet points
+        for lists, and tables for comparisons. No walls of dense paragraph text.
+      scoring_guide:
+        1.0: >
+          All sections use plain language. Every acronym is defined on first use
+          or replaced with plain English. Headers and bullets make it skimmable
+          in under 90 seconds.
+        0.75: >
+          Mostly readable; one or two jargon terms present but don't obscure
+          meaning. Structure is generally good.
+        0.50: >
+          Several jargon-heavy passages. Narrative prose dominates over bullets
+          or tables in sections where structure would help.
+        0.25: >
+          Dense, jargon-laden, or structured like an internal analyst report
+          rather than an executive deliverable.
+        0.0: >
+          Unreadable for the declared audience seniority.
+
+    objective_traceability:
+      weight: 0.30
+      description: >
+        Every objective stated in phase1.brief_intake.output appears in the
+        Objective vs. Actuals table with a result. No objective is silently
+        omitted — misses must be reported as misses, not hidden.
+      scoring_guide:
+        1.0: >
+          All original objectives are present in the table. Each has a target,
+          an actual, and a delta (positive or negative).
+        0.75: >
+          All objectives present; one delta missing or expressed vaguely.
+        0.50: >
+          One objective is missing from the table but addressed narratively.
+        0.25: >
+          Multiple objectives absent from the table.
+        0.0: >
+          No Objective vs. Actuals table, or fewer than half of objectives
+          appear.
+
+    asks_clarity:
+      weight: 0.25
+      description: >
+        Every ask in the Asks & Decisions Needed section is specific,
+        time-bound (decision_deadline present), and owner-attributed. Vague
+        asks like "consider increasing budget" do not score well.
+      scoring_guide:
+        1.0: >
+          Every ask has: (a) a clear action verb, (b) a named or role-attributed
+          owner, (c) an explicit decision deadline.
+        0.75: >
+          All asks have owners and actions; one is missing a deadline.
+        0.50: >
+          Asks are present but majority lack either an owner or a deadline.
+        0.25: >
+          Asks are vague or non-committal — no owners, no deadlines.
+        0.0: >
+          No asks section, or section is empty / placeholder.
+
+    data_grounding:
+      weight: 0.15
+      description: >
+        Every quantitative performance claim in the brief cites a specific KPI
+        metric sourced from phase5.measurement.output (KPIFramework). No
+        invented or estimated numbers. Qualitative wins must still reference
+        the KPI context that supports them.
+      scoring_guide:
+        1.0: >
+          All numbers traceable to named KPIs in the KPIFramework. No
+          unsourced statistics.
+        0.75: >
+          One claim is unsourced but plausibly inferred from the data provided.
+        0.50: >
+          Two or three unsourced claims.
+        0.25: >
+          Majority of claims lack KPI citations.
+        0.0: >
+          Numbers appear to be fabricated or no data grounding at all.
+
+    length_discipline:
+      weight: 0.05
+      description: >
+        Total word count of the brief body (excluding YAML frontmatter) is
+        at or below q_length_cap. Brevity is a feature for executive audiences.
+      scoring_guide:
+        1.0: Word count is at or below q_length_cap.
+        0.0: Word count exceeds q_length_cap by any amount.
+
+# ---------------------------------------------------------------------------
+# Remediation instructions (applied when score < pass_threshold)
+# ---------------------------------------------------------------------------
+remediation:
+  trigger: score < 0.75
+  action: redo
+  instructions: >
+    Report which dimensions scored below 0.75 and why. Then rewrite the brief
+    addressing those specific deficiencies. Do not change sections that already
+    scored 1.0. Re-score after revision before returning output.

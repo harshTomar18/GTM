@@ -1,0 +1,45 @@
+agent_slug: phase1.keyword_intent
+
+questions:
+  - id: q_volume_floor
+    prompt: "Minimum monthly search volume to include a keyword? (Default: 100 for B2C, 50 for B2B-targeted. Set lower for niche verticals.)"
+    type: number
+    required_for: plan
+    default: "50"
+    reusable_key: profile.seo.volume_floor
+
+  - id: q_kd_ceiling
+    prompt: "Keyword Difficulty (KD) ceiling for primary targets? (0-40 = quick wins, 40-70 = medium-term, 70+ = brand-only.)"
+    type: number
+    required_for: plan
+    default: "60"
+    reusable_key: profile.seo.kd_ceiling
+
+  - id: q_branded_keyword_strategy
+    prompt: "How should we handle branded keywords (our brand name + competitor brand names)? (Options: 'defend_only', 'compete_aggressively', 'ignore')"
+    type: enum
+    enum_options: ["defend_only", "compete_aggressively", "ignore"]
+    required_for: plan
+    default: "defend_only"
+
+  - id: q_locale_expansion
+    prompt: "Should we expand keywords per supported locale? (Profile supports: {{ profile.languages.supported | join(', ') if profile.languages else 'en-US only' }}.)"
+    type: enum
+    enum_options: ["primary_locale_only", "all_supported_locales"]
+    required_for: plan
+    default: "primary_locale_only"
+    reusable_key: profile.seo.locale_strategy
+
+  - id: q_existing_rankings
+    prompt: "Do we have current Ahrefs/SEMrush/GSC data export to anchor on? Paste path or URL. (If 'none', we start cold.)"
+    type: text
+    required_for: gather
+    reusable_key: profile.seo.current_rankings_doc
+
+  - id: q_ai_search_priority
+    prompt: "How aggressive should we be on AI-search-optimized keywords (Perplexity, ChatGPT, Gemini, Google AI Overview)? ('aggressive' = front-load FAQ-style questions; 'balanced' = mix; 'skip' = traditional SEO only.)"
+    type: enum
+    enum_options: ["aggressive", "balanced", "skip"]
+    required_for: plan
+    default: "balanced"
+    reusable_key: profile.seo.aeo_priority

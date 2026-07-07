@@ -1,0 +1,37 @@
+agent_slug: phase3.website_copy
+
+questions:
+  - id: q_pages_in_scope
+    prompt: "Which pages do we write this cycle? List by type + URL slug. (e.g., 'homepage /, solution /platform/finance-ops, landing /demo, comparison /vs/competitor-x')"
+    type: long_text
+    required_for: plan
+
+  - id: q_conversion_path_per_page
+    prompt: "Primary conversion path per page? (demo_request | trial_signup | gated_download | book_call | newsletter_signup)"
+    type: long_text
+    required_for: plan
+    default: "demo_request"
+
+  - id: q_word_count_targets
+    prompt: "Word-count caps per section? (Default: hero 30, subhead 50, body sections 200-400, FAQ answer 40-60.)"
+    type: long_text
+    required_for: write
+    default: "hero=30; subhead=50; body=300; faq_answer=50"
+
+  - id: q_ab_variants
+    prompt: "Should we generate A/B variants for hero/CTA? ('none' | 'hero_only' | 'hero_and_cta' | 'full_page')"
+    type: enum
+    enum_options: ["none", "hero_only", "hero_and_cta", "full_page"]
+    required_for: plan
+    default: "hero_only"
+
+  - id: q_named_customers_for_proof
+    prompt: "Customers we can name in proof sections? (Comma-separated; must match profile.legally_cleared_logos. Anything not on the list becomes a descriptive reference.)"
+    type: long_text
+    required_for: gather
+    reusable_key: profile.legally_cleared_logos
+
+  - id: q_existing_url_redirects
+    prompt: "Any existing URLs being replaced by new pages? (List old → new pairs for redirect planning.)"
+    type: long_text
+    required_for: optional

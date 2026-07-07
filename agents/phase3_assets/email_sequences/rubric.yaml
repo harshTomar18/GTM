@@ -1,0 +1,51 @@
+agent_slug: phase3.email_sequences
+
+criteria:
+  - id: sequences_in_scope_produced
+    weight: 0.15
+    hard_fail: true
+    description: "Every sequence in q_sequences_in_scope is produced with the requested step count."
+
+  - id: subject_line_diversity
+    weight: 0.15
+    description: "≤40% of subject lines start with same word/phrase pattern. Stacking 'Quick question' / 'Following up' / 'Re:' = fail."
+
+  - id: branch_logic_present
+    weight: 0.10
+    description: "Any sequence with ≥4 steps has branch_on logic with at least clicked + replied paths."
+
+  - id: regulatory_footer
+    weight: 0.15
+    hard_fail: true
+    description: "If profile.regulatory_constraints non-empty, every step has a footer with required disclosures."
+
+  - id: personalization_token_safety
+    weight: 0.10
+    hard_fail: true
+    description: "Every token used in subject/body appears in step.personalization_tokens AND in q_personalization_tokens. No invented tokens."
+
+  - id: cta_imperative_specific
+    weight: 0.10
+    description: "CTAs are imperative + specific outcome. Generic 'Learn more' or 'Schedule a call' = fail."
+
+  - id: must_not_say_clean
+    weight: 0.10
+    hard_fail: true
+    description: "Zero narrative_lock.must_not_say phrases."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases. No 'hope this finds you well' style fluff."
+
+  - id: send_logic_sane
+    weight: 0.05
+    description: "delay_after_prior_step_hours follows reasonable cadence (not 1h between cold-outbound steps)."
+
+banned_patterns:
+  - "\\b(I hope this (email|message) (finds you well|reaches you))\\b"
+  - "\\b(just wanted to (reach out|follow up|check in))\\b"
+  - "\\b(circle back|touch base|quick question)\\b"
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)\\b"
+
+auto_redo_threshold: 0.78

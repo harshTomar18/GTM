@@ -1,0 +1,43 @@
+agent_slug: phase1.market_research
+
+criteria:
+  - id: competitor_count
+    weight: 0.15
+    hard_fail: true
+    description: "competitors array has 4-6 entries (lower = redo; higher = scope creep)."
+
+  - id: citation_density
+    weight: 0.20
+    hard_fail: true
+    description: "Every factual claim has either a citation (URL, source name + date) OR a [RESEARCH NEEDED] marker. Citation density ≥ 0.80."
+
+  - id: no_invented_competitors
+    weight: 0.15
+    hard_fail: true
+    description: "Every competitor in the output appears in BriefIntake.known_competitors OR q_extra_competitors."
+
+  - id: whitespace_angle_specificity
+    weight: 0.15
+    description: "≥3 angles in positioning_whitespace.recommended_angles, each with specific rationale + 3+ supporting evidence items. Vague angles (be customer-centric, be faster) auto-fail this criterion."
+
+  - id: pricing_authorized_only
+    weight: 0.10
+    description: "Pricing fields respect q_pricing_research_depth — no speculation beyond what the user authorized."
+
+  - id: differentiation_grounded
+    weight: 0.10
+    description: "Each competitor's our_differentiation_angle traces back to BriefIntake.why_we_win — no invented differentiators."
+
+  - id: regulatory_addressed
+    weight: 0.05
+    description: "If profile.regulatory_constraints is non-empty, market_landscape.regulatory_shifts contains at least one entry (or explicitly notes 'no recent shifts')."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|game[-\\s]?chang)"
+
+auto_redo_threshold: 0.75

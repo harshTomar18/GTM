@@ -1,0 +1,78 @@
+slug: phase3.email_sequences
+phase: 3
+stage: 3
+mission: >
+  Build nurture, prospecting, lifecycle, and re-engagement sequences end-to-end —
+  subject lines, body, CTAs, branch logic, suppression rules, deliverability notes.
+
+inputs:
+  - key: phase2.narrative_lock.output
+    schema_version: "NarrativeLockDoc:v1"
+    required: true
+    require_approved: true
+  - key: phase2.messaging_matrix.output
+    schema_version: "MessagingMatrix:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase3.content_assets.output
+    schema_version: "ContentAssetPack:v1"
+    required: false   # nurture sequences benefit from content inventory; not strict
+
+profile_keys:
+  - profile.brand_voice
+  - profile.regulatory_constraints
+  - profile.languages.default
+
+output_schema: "EmailSequencePack:v1.0.0"
+artifact_markdown_template: "agents/phase3_assets/email_sequences/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - legal_regulated   # CAN-SPAM / GDPR / CASL footers
+
+kpis:
+  - id: sequences_produced
+    name: "Sequences produced"
+    target: 4
+    unit: "count"   # nurture + prospecting + lifecycle + reengagement minimum
+  - id: avg_steps_per_sequence
+    name: "Avg steps per sequence"
+    target: 5
+    unit: "count"
+  - id: subject_line_diversity
+    name: "Subject-line opening pattern diversity"
+    target: 0.80
+    unit: "ratio"
+  - id: regulatory_footer_present
+    name: "Sequences with regulatory_footer_required: true HAVE the footer"
+    target: 1.0
+    unit: "ratio"
+
+sla:
+  max_tokens: 32000
+  max_latency_s: 900
+  max_cost_usd: 4.00
+
+failure_modes:
+  - mode: subject_lines_homogeneous
+    detection: "≥40% of subject lines start with the same word/pattern"
+    auto_mitigation: redo
+  - mode: missing_branch_logic
+    detection: "Sequence has >3 steps but no branch_on logic anywhere"
+    auto_mitigation: redo
+  - mode: regulatory_footer_missing
+    detection: "regulatory tenant + sequence missing CAN-SPAM/GDPR footer"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

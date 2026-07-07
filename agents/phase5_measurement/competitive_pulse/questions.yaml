@@ -1,0 +1,113 @@
+questions:
+
+  # -------------------------------------------------------------------------
+  # q_watchlist_sources
+  # Which external sources should the agent monitor each run?
+  # -------------------------------------------------------------------------
+  - id: q_watchlist_sources
+    label: "Which sources should competitive_pulse monitor?"
+    type: multiselect
+    required: false
+    reusable_key: profile.competitive_pulse.sources
+    default: [perplexity_search, google_news, g2_reviews]
+    options:
+      - value: perplexity_search
+        label: "Perplexity Search (real-time web)"
+      - value: google_news
+        label: "Google News (news headlines)"
+      - value: crunchbase
+        label: "Crunchbase (funding & M&A)"
+      - value: linkedin_company_pages
+        label: "LinkedIn Company Pages (hiring & announcements)"
+      - value: g2_reviews
+        label: "G2 Reviews (review sentiment)"
+      - value: capterra
+        label: "Capterra (review sentiment)"
+      - value: product_hunt
+        label: "Product Hunt (product launches)"
+      - value: github_releases
+        label: "GitHub Releases (open-source feature signals)"
+      - value: job_boards
+        label: "Job Boards (roadmap investment signals via hiring)"
+    hint: >
+      Select all sources you want monitored. Sources that are unavailable at
+      runtime are marked source_degraded in the signal output rather than
+      failing the run.
+
+  # -------------------------------------------------------------------------
+  # q_alert_threshold
+  # Minimum signal intensity required before a Slack alert is sent.
+  # -------------------------------------------------------------------------
+  - id: q_alert_threshold
+    label: "Minimum signal intensity to trigger a Slack alert?"
+    type: select
+    required: false
+    reusable_key: profile.competitive_pulse.alert_threshold
+    default: actionable_only
+    options:
+      - value: all_signals
+        label: "All signals (informational, actionable, urgent)"
+      - value: high_intensity_only
+        label: "High-intensity signals only (high + critical intensity)"
+      - value: actionable_only
+        label: "Actionable + urgent signals only (recommended)"
+    hint: >
+      'actionable_only' is the recommended default to avoid alert fatigue.
+      Informational signals are always written to the signal bus and included
+      in the weekly CompetitivePulseReport regardless of this setting.
+
+  # -------------------------------------------------------------------------
+  # q_slack_channel
+  # Target Slack channel for competitive alert messages.
+  # -------------------------------------------------------------------------
+  - id: q_slack_channel
+    label: "Slack channel for competitive alerts?"
+    type: text
+    required: false
+    reusable_key: tenant.integrations.slack.channels.alerts
+    default: "#gtm-alerts"
+    hint: >
+      Must be a channel the GTM Slack integration has been invited to.
+      Leave blank to disable Slack delivery (signals still go to signal bus).
+
+  # -------------------------------------------------------------------------
+  # q_quiet_hours
+  # UTC window during which Slack alerts are suppressed (signals still queued).
+  # -------------------------------------------------------------------------
+  - id: q_quiet_hours
+    label: "Quiet hours for Slack alerts (UTC range)?"
+    type: text
+    required: false
+    reusable_key: profile.competitive_pulse.quiet_hours
+    default: ""
+    example: "22:00-07:00 UTC"
+    hint: >
+      Signals generated during quiet hours are held and delivered at the start
+      of the next active window. Use 24-hour format, e.g. '22:00-07:00 UTC'.
+      Leave blank to disable quiet hours.
+
+  # -------------------------------------------------------------------------
+  # q_cadence_hours
+  # How frequently competitive_pulse should run its full monitoring sweep.
+  # -------------------------------------------------------------------------
+  - id: q_cadence_hours
+    label: "How often should competitive_pulse run?"
+    type: select
+    required: false
+    reusable_key: profile.competitive_pulse.cadence_hours
+    default: 24
+    options:
+      - value: 4
+        label: "Every 4 hours (high-frequency, higher cost)"
+      - value: 8
+        label: "Every 8 hours"
+      - value: 12
+        label: "Every 12 hours"
+      - value: 24
+        label: "Every 24 hours / daily (recommended)"
+      - value: 48
+        label: "Every 48 hours / every other day"
+    hint: >
+      Daily (24h) is the recommended default balancing freshness and cost.
+      At 4h cadence, ensure your SLA budget (max_cost_usd: 1.50 per run)
+      is acceptable across the full billing period.

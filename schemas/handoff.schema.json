@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/handoff.schema.json",
+  "title": "Handoff",
+  "description": "Typed envelope wrapping every inter-agent artifact transfer. Receivers validate existence, schema_version, freshness, quality, and approval state before consuming.",
+  "type": "object",
+  "required": ["from_agent", "cycle_id", "tenant_id", "artifact_ref", "artifact_version", "schema_version"],
+  "properties": {
+    "handoff_id": { "type": "string", "format": "uuid" },
+    "from_agent": { "type": "string", "description": "Slug of the producing agent, e.g. 'phase1.audience_intelligence'" },
+    "to_agent": { "type": ["string", "null"], "description": "Specific consumer or null for broadcast" },
+    "cycle_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "artifact_ref": { "type": "string", "description": "ContextBus key or filesystem path" },
+    "artifact_version": { "type": "string", "default": "1.0.0", "description": "Semver of this artifact" },
+    "schema_version": { "type": "string", "description": "e.g. 'PersonaSpec:v2.1.0'" },
+    "payload_summary": {
+      "type": "object",
+      "description": "5–10 KV pairs receivers can inspect without loading the full artifact",
+      "additionalProperties": true
+    },
+    "quality_signals": {
+      "type": "object",
+      "properties": {
+        "self_review_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "citation_count": { "type": "integer", "minimum": 0 },
+        "unknown_count": { "type": "integer", "minimum": 0 },
+        "brand_validator_pass": { "type": "boolean" },
+        "claim_checker_pass": { "type": "boolean" },
+        "regulatory_lint_pass": { "type": "boolean" },
+        "pii_scan_pass": { "type": "boolean" },
+        "word_count": { "type": ["integer", "null"] }
+      }
+    },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "upstream_chain": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Slugs of agents whose outputs fed into this one (provenance)"
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "approved_at": { "type": ["string", "null"], "format": "date-time" },
+    "approval_record_id": { "type": ["string", "null"] }
+  }
+}

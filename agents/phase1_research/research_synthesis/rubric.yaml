@@ -1,0 +1,49 @@
+agent_slug: phase1.research_synthesis
+
+criteria:
+  - id: all_seven_sections_present
+    weight: 0.15
+    hard_fail: true
+    description: "All 7 sections present with non-empty body_markdown."
+
+  - id: strategic_recs_opinionated
+    weight: 0.20
+    hard_fail: true
+    description: "strategic_recommendations.body_markdown picks ONE positioning angle and 3 lead messages, ranked by expected impact. Hedging phrases like 'could consider' or 'multiple options' auto-fail."
+
+  - id: pressure_test_run
+    weight: 0.15
+    hard_fail: true
+    description: "pressure_test_passed: true AND open_questions_assumptions includes a 'Pressure Test' subsection covering all 5 challenge dimensions."
+
+  - id: names_specific_entities
+    weight: 0.10
+    description: "Strategic recs name specific competitors, specific personas (by id and title), specific keywords — never 'the audience' or 'competitors' generically."
+
+  - id: language_bank_referenced
+    weight: 0.10
+    description: "audience_intelligence section quotes 5-8 verbatim phrases from the upstream language bank."
+
+  - id: assumptions_surfaced
+    weight: 0.10
+    description: "open_questions_assumptions lists ≥3 specific assumptions the cycle is betting on."
+
+  - id: must_not_say_called_out
+    weight: 0.05
+    description: "strategic_recommendations explicitly names 2 things we must NOT say (positioning traps)."
+
+  - id: strategic_constraints_honored
+    weight: 0.05
+    description: "If user provided q_known_strategic_constraints, the dossier honors them (doesn't position against forbidden competitors, doesn't violate stated guardrails)."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|game[-\\s]?chang)"
+  - "\\bcould (consider|explore|investigate)\\b"   # hedging
+  - "\\bmultiple (options|paths|directions)\\b"     # indecision
+
+auto_redo_threshold: 0.80   # higher bar — this is the Phase 1 exit

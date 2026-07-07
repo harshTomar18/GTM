@@ -1,0 +1,35 @@
+agent_slug: phase3.sales_enablement
+
+questions:
+  - id: q_top_lost_deal_reasons
+    prompt: "Top 3 lost-deal reasons in the last 90 days? (Specific, with anecdote if possible. This drives objection-handling and battlecard angles.)"
+    type: long_text
+    required_for: plan
+    reusable_key: profile.sales.top_lost_reasons
+
+  - id: q_top_competitors_we_hit
+    prompt: "Which competitors do we hit MOST in real deals? (Comma-separated; we'll prioritize their battlecards.)"
+    type: long_text
+    required_for: plan
+
+  - id: q_stage_by_stage_gaps
+    prompt: "Where does the sales process struggle most? (discovery / demo / negotiation / close — pick one or rank top 2.)"
+    type: text
+    required_for: plan
+
+  - id: q_reps_wishlist
+    prompt: "Biggest 'I wish I had...' from the sales team? (What collateral or talk track do reps ask for?)"
+    type: long_text
+    required_for: plan
+
+  - id: q_demo_environment_status
+    prompt: "Demo environment / sandbox status? (e.g., 'pristine, customer-ready' / 'works but rough' / 'broken' — affects demo script realism.)"
+    type: text
+    required_for: gather
+    default: "works but rough"
+
+  - id: q_avg_deal_size_band
+    prompt: "Average deal size band for ROI talking points? (e.g., '$30k-150k ACV mid-market')"
+    type: text
+    required_for: gather
+    reusable_key: cycle.icp.deal_size_band

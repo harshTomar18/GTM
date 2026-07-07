@@ -1,0 +1,76 @@
+slug: phase1.keyword_intent
+phase: 1
+stage: 4
+mission: >
+  Generate 60-80 seed keywords, expand to 100-200, cluster into 8-12 themes,
+  map intent (TOFU/MOFU/BOFU/RETENTION), prioritize, and produce a content-opportunity
+  map.
+
+inputs:
+  - key: phase1.brief_intake.output
+    schema_version: "BriefIntake:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase1.market_research.output
+    schema_version: "CompetitorProfile:v1"
+    required: false  # competitor domains help; not strictly required
+
+profile_keys:
+  - profile.industry.primary
+  - profile.languages.default
+  - profile.geography.primary_markets
+
+output_schema: "KeywordCluster:v1.0.0"   # array of these + content_opportunity_map
+artifact_markdown_template: "agents/phase1_research/keyword_intent/prompt.md"
+
+approval_policy_ids: []
+
+kpis:
+  - id: clusters_count
+    name: "Keyword clusters"
+    target: 10
+    unit: "count"  # range 8-12
+  - id: total_keywords
+    name: "Total keywords across clusters"
+    target: 150
+    unit: "count"  # range 100-200
+  - id: priority_1_keywords
+    name: "Priority 1 keywords flagged"
+    target: 10
+    unit: "count"  # 10 primary landing-page targets
+  - id: question_keywords
+    name: "Question keywords (for blogs/FAQs)"
+    target: 15
+    unit: "count"
+
+sla:
+  max_tokens: 16000
+  max_latency_s: 600
+  max_cost_usd: 2.00
+
+failure_modes:
+  - mode: clusters_outside_range
+    detection: "cluster count < 8 OR > 12"
+    auto_mitigation: redo
+  - mode: keywords_below_floor
+    detection: "total keywords < 100"
+    auto_mitigation: redo
+  - mode: english_only_for_multi_locale
+    detection: "tenant supports multi-locale but only en-US keywords produced"
+    auto_mitigation: redo_strict
+  - mode: no_priority_distribution
+    detection: "all keywords flagged P1 OR all P3"
+    auto_mitigation: redo
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-sonnet-4-6
+model_review: claude-sonnet-4-6

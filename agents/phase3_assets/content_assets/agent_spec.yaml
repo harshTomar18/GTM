@@ -1,0 +1,84 @@
+slug: phase3.content_assets
+phase: 3
+stage: 2
+mission: >
+  Produce flagship long-form articles (one per pillar), case studies, one-pagers,
+  whitepapers per the cycle's content plan. Each is grounded in pillar POV +
+  audience language + citation-rich research.
+
+inputs:
+  - key: phase2.narrative_lock.output
+    schema_version: "NarrativeLockDoc:v1"
+    required: true
+    require_approved: true
+  - key: phase2.content_pillars.output
+    schema_version: "ContentPillarSet:v1"
+    required: true
+    require_approved: true
+  - key: phase1.keyword_intent.output
+    schema_version: "KeywordCluster:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase1.research_synthesis.output
+    schema_version: "ResearchDossier:v1"
+    required: true
+
+profile_keys:
+  - profile.brand_voice
+  - profile.frameworks
+  - profile.regulatory_constraints
+
+output_schema: "ContentAssetPack:v1.0.0"
+artifact_markdown_template: "agents/phase3_assets/content_assets/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - framework_or_regulated_claims
+  - legal_regulated
+
+kpis:
+  - id: assets_produced
+    name: "Assets produced"
+    target: 4
+    unit: "count"   # one flagship per pillar (3-5 pillars)
+  - id: citation_density
+    name: "Citations per 500 words"
+    target: 1.5
+    unit: "ratio"
+  - id: internal_links_per_asset
+    name: "Internal links per asset"
+    target: 3
+    unit: "count"
+  - id: faq_section_present
+    name: "Assets with AEO-format FAQ"
+    target: 1.0
+    unit: "ratio"
+
+sla:
+  max_tokens: 64000
+  max_latency_s: 1800
+  max_cost_usd: 8.00
+
+failure_modes:
+  - mode: pillar_uncovered
+    detection: "any pillar has zero flagship assets"
+    auto_mitigation: redo
+  - mode: citation_density_low
+    detection: "citations per 500 words < 0.8"
+    auto_mitigation: redo
+  - mode: framework_claim_uncited
+    detection: "Mentions a profile.frameworks item without a citation"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

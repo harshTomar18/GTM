@@ -1,0 +1,46 @@
+agent_slug: phase1.keyword_intent
+
+criteria:
+  - id: cluster_count
+    weight: 0.15
+    hard_fail: true
+    description: "clusters array has 8-12 entries."
+
+  - id: keyword_volume
+    weight: 0.15
+    hard_fail: true
+    description: "Total keywords across clusters is 100-200."
+
+  - id: priority_distribution
+    weight: 0.10
+    description: "Priority labels reasonably distributed: not all P1, not all P3. Roughly 30/50/20 P1/P2/P3."
+
+  - id: intent_labels_present
+    weight: 0.10
+    description: "Every cluster has a TOFU/MOFU/BOFU/RETENTION/EXPANSION label, not blank."
+
+  - id: persona_anchored
+    weight: 0.10
+    description: "content_opportunity_map references primary_persona_id from the input PersonaSpec[]; clusters cover all primary personas."
+
+  - id: ai_search_questions
+    weight: 0.10
+    description: "ai_search_question_keywords has ≥15 entries, each a full natural-language question (≥5 words)."
+
+  - id: language_bank_reuse
+    weight: 0.10
+    description: "Seed keywords include verbatim phrases from the persona language bank, not invented terms."
+
+  - id: locale_handling
+    weight: 0.05
+    description: "If user chose 'all_supported_locales', clusters span the supported locales. Otherwise primary only."
+
+  - id: brand_voice_compliance
+    weight: 0.15
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|game[-\\s]?chang)"
+
+auto_redo_threshold: 0.75

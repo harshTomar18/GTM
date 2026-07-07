@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/messaging_matrix.schema.json",
+  "title": "MessagingMatrix",
+  "description": "Persona × channel × funnel-stage messaging grid. Output of phase2.messaging_matrix.",
+  "type": "object",
+  "required": ["schema_version", "cells"],
+  "properties": {
+    "schema_version": { "const": "MessagingMatrix:v1.0.0" },
+    "cells": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["persona_id", "channel", "funnel_stage", "message"],
+        "properties": {
+          "persona_id": { "type": "string" },
+          "channel": { "type": "string" },
+          "funnel_stage": { "enum": ["TOFU", "MOFU", "BOFU", "RETENTION", "EXPANSION"] },
+          "message": { "type": "string" },
+          "proof_points": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "taglines": { "type": "array", "items": { "type": "string" } },
+    "differentiators": { "type": "array", "items": { "type": "string" } }
+  }
+}

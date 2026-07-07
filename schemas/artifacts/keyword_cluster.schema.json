@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/keyword_cluster.schema.json",
+  "title": "KeywordCluster",
+  "description": "One thematic keyword cluster + intent + priority. Output of phase1.keyword_intent (produces 8–12 per cycle).",
+  "type": "object",
+  "required": ["schema_version", "cluster_id", "name", "intent"],
+  "properties": {
+    "schema_version": { "const": "KeywordCluster:v1.0.0" },
+    "cluster_id": { "type": "string" },
+    "name": { "type": "string" },
+    "intent": { "enum": ["TOFU", "MOFU", "BOFU", "RETENTION", "EXPANSION"] },
+    "priority": { "enum": ["P1", "P2", "P3"], "default": "P2" },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term"],
+        "properties": {
+          "term": { "type": "string" },
+          "volume": { "type": ["integer", "null"], "minimum": 0 },
+          "difficulty": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+          "intent": { "enum": ["TOFU", "MOFU", "BOFU", "RETENTION", "EXPANSION", null] }
+        }
+      }
+    },
+    "recommended_content_type": { "type": ["string", "null"] },
+    "serp_features": { "type": "array", "items": { "type": "string" } }
+  }
+}

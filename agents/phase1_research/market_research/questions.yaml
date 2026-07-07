@@ -1,0 +1,31 @@
+agent_slug: phase1.market_research
+
+questions:
+  - id: q_primary_research_reports
+    prompt: "Are there primary research reports we should ground this in? (Gartner, Forrester, IDC, McKinsey, vertical-specific analysts.) Paste URLs or titles — or 'none' if we're starting cold."
+    type: long_text
+    required_for: gather
+    reusable_key: profile.preferred_analyst_sources
+
+  - id: q_geography_focus
+    prompt: "Focus geographies for this cycle? (Default: tenant primary_markets. Override if this cycle targets only one region.)"
+    type: text
+    required_for: plan
+    default: "use_profile_default"
+
+  - id: q_subsegments_to_ignore
+    prompt: "Any sub-segments of the industry to explicitly IGNORE? (e.g., 'skip SMB <100 employees', 'skip APAC for this cycle')"
+    type: long_text
+    required_for: plan
+
+  - id: q_extra_competitors
+    prompt: "Beyond the competitors named in the BriefIntake, are there indirect or emerging competitors we should research too? (e.g., DIY alternatives, in-house builds, adjacent categories)"
+    type: long_text
+    required_for: gather
+
+  - id: q_pricing_research_depth
+    prompt: "How deep should pricing research go? ('Public tiers only' / 'public + reported deal sizes from G2' / 'full investigation including LinkedIn outreach to ex-employees')"
+    type: enum
+    enum_options: ["public_tiers_only", "public_plus_g2", "full_investigation"]
+    required_for: plan
+    default: "public_plus_g2"

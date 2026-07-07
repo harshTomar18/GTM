@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/campaign_calendar.schema.json",
+  "title": "CampaignCalendar",
+  "description": "Time-phased plan. Output of phase4.campaign_calendar.",
+  "type": "object",
+  "required": ["schema_version", "cycle_id", "items"],
+  "properties": {
+    "schema_version": { "const": "CampaignCalendar:v1.0.0" },
+    "cycle_id": { "type": "string" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["item_id", "asset_ref", "channel", "scheduled_date", "owner"],
+        "properties": {
+          "item_id": { "type": "string" },
+          "asset_ref": { "type": "string" },
+          "channel": { "type": "string" },
+          "scheduled_date": { "type": "string", "format": "date" },
+          "owner": { "type": "string" },
+          "depends_on": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "risk_callouts": { "type": "array", "items": { "type": "string" } }
+  }
+}

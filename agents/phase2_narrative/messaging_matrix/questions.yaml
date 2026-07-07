@@ -1,0 +1,21 @@
+agent_slug: phase2.messaging_matrix
+
+questions:
+  - id: q_channels_in_scope
+    prompt: "Which channels are in scope for this cycle? (Comma-separated. Common: website, linkedin_organic, linkedin_ads, google_ads, email_nurture, email_outbound, sales_calls, content_blog, podcast.)"
+    type: long_text
+    required_for: plan
+    reusable_key: cycle.channels_in_scope
+    default: "website, linkedin_organic, linkedin_ads, email_nurture, email_outbound, sales_calls, content_blog"
+
+  - id: q_funnel_stages_definition
+    prompt: "Use the standard 4-stage funnel (TOFU/MOFU/BOFU/RETENTION) or a custom funnel? If custom, paste the stages."
+    type: long_text
+    required_for: plan
+    default: "standard_4"
+    reusable_key: profile.funnel_definition
+
+  - id: q_tagline_constraints
+    prompt: "Any tagline constraints? (e.g., 'must work in 7 words or less', 'must not include a verb', 'must be parseable by AI search')"
+    type: long_text
+    required_for: write

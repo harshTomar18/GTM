@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/value_proposition_set.schema.json",
+  "title": "ValuePropositionSet",
+  "description": "Core value prop + per-persona value props + proof points. Output of phase2.value_proposition.",
+  "type": "object",
+  "required": ["schema_version", "core_value_prop", "per_persona"],
+  "properties": {
+    "schema_version": { "const": "ValuePropositionSet:v1.0.0" },
+    "core_value_prop": {
+      "type": "object",
+      "required": ["headline", "subhead", "for_audience", "primary_value"],
+      "properties": {
+        "headline": { "type": "string", "description": "10-12 word lead" },
+        "subhead": { "type": "string", "description": "1-2 sentence amplifier" },
+        "for_audience": { "type": "string" },
+        "primary_value": { "type": "string", "description": "The outcome the audience gets" },
+        "vs_alternatives": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "per_persona": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["persona_id", "headline", "key_benefits"],
+        "properties": {
+          "persona_id": { "type": "string" },
+          "headline": { "type": "string" },
+          "subhead": { "type": "string" },
+          "key_benefits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["benefit", "outcome"],
+              "properties": {
+                "benefit": { "type": "string", "description": "Feature framed as a benefit" },
+                "outcome": { "type": "string", "description": "Measurable business result" },
+                "supporting_proof": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "objections_addressed": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "proof_points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "source_type"],
+        "properties": {
+          "claim": { "type": "string", "description": "Specific, citable assertion" },
+          "source_type": { "enum": ["customer_outcome", "third_party_study", "case_study", "logo_array", "analyst_quote", "metric", "regulatory_alignment"] },
+          "source_ref": { "type": ["string", "null"], "description": "URL, doc id, or attribution string" },
+          "quantified": { "type": "boolean", "default": false },
+          "expires_on": { "type": ["string", "null"], "format": "date" }
+        }
+      }
+    }
+  }
+}

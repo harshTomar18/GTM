@@ -1,0 +1,189 @@
+slug: phase5.iteration_planner
+phase: 5
+stage: 5
+
+mission: >
+  Convert measurement outcomes, experiment learnings, and competitive signals into a
+  concrete next-cycle plan adjustment document. Produces a NextCycleBriefDraft that
+  becomes the seed input for the next cycle's phase1.brief_intake.
+
+# ─── Inputs ────────────────────────────────────────────────────────────────────
+inputs:
+  - key: phase5.executive_brief.output
+    schema: ExecutiveBrief:v1.0.0
+    required: true
+    require_approved: true
+    description: >
+      CMO-approved executive brief from phase5.executive_brief. This agent is
+      blocked until CMO approval is recorded on that artifact. Provides
+      leadership framing and any strategic asks that must be addressed in the
+      next-cycle brief.
+
+  - key: phase5.measurement.output
+    schema: KPIFramework:v1.0.0
+    required: true
+    description: >
+      KPI actuals, target vs. actual deltas, and channel performance data
+      produced by phase5.measurement. Primary evidence source for all
+      channel and objective recommendations.
+
+  - key: phase5.experiment_review.output
+    schema: ExperimentReviewReport:v1.0.0
+    required: false
+    description: >
+      Experiment winners, losers, and inconclusive results from
+      phase5.experiment_review. When absent, carry-forward experiment logic
+      is skipped. When present, winning variants must be listed for rollout
+      as next-cycle defaults.
+
+  - key: phase5.competitive_pulse.output
+    schema: CompetitivePulseReport:v1.0.0
+    required: false
+    description: >
+      Competitive signals, messaging threats, and share-of-voice shifts from
+      phase5.competitive_pulse. When absent, competitive adjustment block is
+      skipped. When present, top 3 most actionable signals inform positioning
+      and battlecard updates.
+
+  - key: phase1.brief_intake.output
+    schema: BriefIntake:v1
+    required: true
+    description: >
+      The original brief from the current (ending) cycle. Closes the loop on
+      original objectives by providing prior-cycle targets, budget, ICP,
+      messaging lock, and known unknowns against which this cycle's results
+      are evaluated.
+
+# ─── Profile Keys ──────────────────────────────────────────────────────────────
+profile_keys:
+  - profile.operating_calendar
+  - profile.icp_archetypes
+  - profile.brand_voice
+
+# ─── Output ────────────────────────────────────────────────────────────────────
+output:
+  schema: NextCycleBriefDraft:v1.0.0
+  artifact_key: phase5.iteration_planner.output
+  description: >
+    NextCycleBriefDraft — a fully structured plan adjustment document containing
+    an objective decisions table, channel recommendations, experiment rollouts,
+    narrative lock decision, competitive adjustments, and a pre-filled
+    BriefIntake seed for the next cycle's phase1.brief_intake.
+  storage_path: "tenants/{tenant_id}/cycles/{cycle_id}/next_cycle_brief_draft.json"
+  frontmatter:
+    schema_version: "NextCycleBriefDraft:v1.0.0"
+    cycle_id: "{cycle_id}"
+    produced_at: "{now_iso}"
+    next_cycle_seed_ready: true  # signals phase1.brief_intake may consume this draft
+
+# ─── Approval Policies ─────────────────────────────────────────────────────────
+approval:
+  policy: phase_exit_gate
+  required_approvers:
+    - CMO
+    - CEO
+  notes: >
+    This is the Phase 5 exit gate AND the full-cycle exit gate. No next cycle
+    begins until both CMO and CEO have approved the NextCycleBriefDraft.
+    Rejection triggers a revision loop with reviewer feedback injected as an
+    additional input block. This agent completes the 27-agent full cycle
+    (Workstreams B + C + D).
+
+# ─── KPIs ──────────────────────────────────────────────────────────────────────
+kpis:
+  - key: objective_carryforward_decision
+    description: >
+      Ratio of original objectives (from phase1.brief_intake.output) that have
+      an explicit carry_forward, drop, or modify decision in the output.
+      Every objective must have a decision — no objective may be silently omitted.
+    target: 1.0
+    measurement_timing: output_validation
+
+  - key: channel_recommendations_grounded
+    description: >
+      Ratio of channel recommendations in the output that cite a specific KPI
+      result or experiment finding as the basis for the recommendation.
+      Ungrounded channel recommendations are flagged as failures.
+    target: 1.0
+    measurement_timing: output_validation
+
+  - key: carry_over_experiments_listed
+    description: >
+      When phase5.experiment_review is present: ratio of winning experiment
+      variants explicitly listed for rollout as defaults in the next cycle.
+      Skipped (null) when experiment_review input is absent.
+    target: 1.0
+    target_condition: "when experiment_review input is present"
+    measurement_timing: output_validation
+
+  - key: narrative_lock_reopen_recommendation
+    description: >
+      A single boolean (true/false) plus rationale must be present in the output
+      indicating whether the NarrativeLockDoc should be re-opened for the next
+      cycle. Absence of this field is a validation failure.
+    target: 1  # exactly 1 boolean present
+    measurement_timing: output_validation
+
+# ─── SLA ───────────────────────────────────────────────────────────────────────
+sla:
+  max_tokens: 28000
+  max_latency_s: 540
+  max_cost_usd: 3.00
+
+# ─── Failure Modes ─────────────────────────────────────────────────────────────
+failure_modes:
+  - id: objective_without_decision
+    description: >
+      Any prior objective from phase1.brief_intake.output is missing an explicit
+      carry_forward, drop, or modify status in the Objective Decisions table.
+    remediation: redo
+    redo_instruction: >
+      Re-run write stage. For each objective in the prior brief that lacks a
+      carry_forward/drop/modify decision, add an explicit decision row. No
+      objective may be omitted from the table.
+
+  - id: recommendation_without_evidence
+    description: >
+      Any channel or budget recommendation in the output does not cite a specific
+      KPI result, experiment finding, or competitive signal as its basis.
+    remediation: redo
+    redo_instruction: >
+      Re-run synthesis stage with explicit evidence requirement: every channel
+      or budget recommendation must include an evidence_citation field naming
+      the metric, experiment ID, or competitive signal that supports it.
+
+  - id: narrative_lock_opinion_missing
+    description: >
+      The output does not contain an explicit yes/no recommendation on whether
+      to re-open the NarrativeLockDoc, or the recommendation is present but
+      lacks a rationale string.
+    remediation: redo
+    redo_instruction: >
+      Re-run write stage. Add a Narrative Lock Decision section with an explicit
+      yes/no/minor_update recommendation and a specific rationale grounded in
+      measurement data, experiment results, or competitive signals.
+
+  - id: budget_delta_unspecified
+    description: >
+      The next-cycle budget direction (increase / maintain / decrease / reallocate /
+      tbd) is not indicated anywhere in the output.
+    remediation: redo
+    redo_instruction: >
+      Re-run write stage. Add a budget_direction field to the Channel Performance
+      section and the Next Cycle Brief Draft section using the operator's
+      q_budget_direction answer. If the operator answered tbd_awaiting_cfo,
+      carry the prior cycle budget as a placeholder and flag it as unconfirmed.
+
+# ─── Models ────────────────────────────────────────────────────────────────────
+models:
+  plan: claude-sonnet-4-6
+  gather: claude-haiku-4-5-20251001
+  synthesize: claude-sonnet-4-6
+  write: claude-opus-4-7
+  review: claude-sonnet-4-6
+
+# ─── Prompt Cache ──────────────────────────────────────────────────────────────
+cache:
+  block1: true    # system role + profile context
+  block2: true    # input artifacts (prior brief, measurement, experiment review, competitive pulse)
+  block3: false   # synthesis analysis + write task + self-review (dynamic per run)

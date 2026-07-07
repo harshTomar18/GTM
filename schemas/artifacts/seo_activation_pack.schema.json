@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/seo_activation_pack.schema.json",
+  "title": "SEOActivationPack",
+  "description": "Technical SEO + on-page + internal-linking + schema markup + AI Overview optimization. Output of phase4.seo_activation.",
+  "type": "object",
+  "required": ["schema_version", "asset_seo_specs"],
+  "properties": {
+    "schema_version": { "const": "SEOActivationPack:v1.0.0" },
+    "asset_seo_specs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["asset_ref", "url", "slug", "title_tag", "meta_description", "h1"],
+        "properties": {
+          "asset_ref": { "type": "string", "description": "ContextBus key of source asset" },
+          "url": { "type": "string" },
+          "slug": { "type": "string" },
+          "title_tag": { "type": "string", "maxLength": 60 },
+          "meta_description": { "type": "string", "maxLength": 160 },
+          "h1": { "type": "string" },
+          "primary_keyword": { "type": "string" },
+          "secondary_keywords": { "type": "array", "items": { "type": "string" } },
+          "internal_links_in": { "type": "array", "items": { "type": "string" }, "description": "Pages that should link TO this asset" },
+          "internal_links_out": { "type": "array", "items": { "type": "string" }, "description": "Pages this asset should link to" },
+          "schema_jsonld": {
+            "type": "object",
+            "properties": {
+              "type": { "enum": ["Article", "FAQPage", "HowTo", "Product", "Organization", "BreadcrumbList", "Review"] },
+              "jsonld_payload": { "type": "object", "additionalProperties": true }
+            }
+          },
+          "og_image_prompt": { "type": ["string", "null"] },
+          "hreflang_alternates": { "type": "array", "items": { "type": "string" } },
+          "ai_overview_target": { "type": "boolean", "default": false },
+          "featured_snippet_target": { "type": "boolean", "default": false },
+          "indexable": { "type": "boolean", "default": true }
+        }
+      }
+    },
+    "sitemap_updates": { "type": "array", "items": { "type": "string" } },
+    "robots_directives": { "type": "array", "items": { "type": "string" } },
+    "redirects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "code": { "enum": ["301", "302", "308"], "default": "301" }
+        }
+      }
+    },
+    "ai_search_faqs": {
+      "type": "array",
+      "description": "FAQs structured for AI Overview / Perplexity / ChatGPT citation",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": { "type": "string" },
+          "concise_answer_40_60_words": { "type": "string" },
+          "asset_ref": { "type": "string" }
+        }
+      }
+    }
+  }
+}

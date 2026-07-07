@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/tenant_profile.schema.json",
+  "title": "TenantProfile",
+  "description": "Root configuration for a single GTM tenant. One YAML file per tenant at tenants/<id>/tenant_profile.yaml.",
+  "type": "object",
+  "required": ["version", "profile_id", "company", "industry"],
+  "properties": {
+    "version": { "type": "integer", "const": 2 },
+    "profile_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Kebab/snake_case unique tenant identifier"
+    },
+    "extends": {
+      "type": ["string", "null"],
+      "description": "Path to a Vertical Pack whose profile_defaults.yaml provides inherited defaults, e.g. 'vertical_packs/saas_plg'"
+    },
+    "company": {
+      "type": "object",
+      "required": ["legal_name", "brand_name"],
+      "properties": {
+        "legal_name": { "type": "string" },
+        "brand_name": { "type": "string" },
+        "url": { "type": ["string", "null"] },
+        "founded": { "type": ["integer", "null"] },
+        "size_band": { "enum": ["micro", "smb", "mid", "large", "enterprise", "global"] },
+        "hq_country": { "type": "string", "default": "US" },
+        "description_short": { "type": "string" },
+        "description_long": { "type": "string" }
+      }
+    },
+    "industry": {
+      "type": "object",
+      "required": ["primary"],
+      "properties": {
+        "primary": { "type": "string" },
+        "secondary": { "type": "array", "items": { "type": "string" } },
+        "naics": { "type": "array", "items": { "type": "string" } },
+        "sic": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "lob": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "motion"],
+        "properties": {
+          "id": { "type": "string" },
+          "motion": { "enum": ["plg", "enterprise_abm", "outbound", "channel_led", "community_led", "partner_led", "hybrid"] },
+          "weight": { "type": "number", "minimum": 0, "maximum": 1, "default": 1 }
+        }
+      }
+    },
+    "icp_archetypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "industries": { "type": "array", "items": { "type": "string" } },
+          "company_size": { "type": "array", "items": { "type": "string" } },
+          "geos": { "type": "array", "items": { "type": "string" } },
+          "buying_committee": {
+            "type": "object",
+            "properties": {
+              "economic_buyer": { "type": ["string", "null"] },
+              "technical_buyer": { "type": ["string", "null"] },
+              "user_buyer": { "type": ["string", "null"] },
+              "influencers": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "committee_complexity": { "enum": ["low", "medium", "high", "extreme"] },
+          "deal_size_band": { "type": ["string", "null"] },
+          "sales_cycle_days": { "type": ["integer", "null"] }
+        }
+      }
+    },
+    "frameworks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Authority anchors the tenant can claim, e.g. industry frameworks, standards, or certifications relevant to the tenant's vertical"
+    },
+    "regulatory_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["jurisdiction"],
+        "properties": {
+          "jurisdiction": { "type": "string" },
+          "regimes": { "type": "array", "items": { "type": "string" } },
+          "content_review_required": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "brand_voice": {
+      "type": "object",
+      "properties": {
+        "archetype": { "type": ["string", "null"] },
+        "tone": { "type": "array", "items": { "type": "string" } },
+        "reading_level": { "type": "string", "default": "grade_10" },
+        "banned_phrases": { "type": "array", "items": { "type": "string" } },
+        "required_disclaimers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "trigger", "text"],
+            "properties": {
+              "id": { "type": "string" },
+              "trigger": { "type": "string" },
+              "text": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "geography": {
+      "type": "object",
+      "properties": {
+        "primary_markets": { "type": "array", "items": { "type": "string" } },
+        "expansion_markets": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "languages": {
+      "type": "object",
+      "properties": {
+        "default": { "type": "string", "default": "en-US" },
+        "supported": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "currency": {
+      "type": "object",
+      "properties": {
+        "default": { "type": "string", "default": "USD" },
+        "reporting": { "type": "string", "default": "USD" }
+      }
+    },
+    "tech_stack": {
+      "type": "object",
+      "properties": {
+        "crm": { "type": ["string", "null"] },
+        "marketing_automation": { "type": ["string", "null"] },
+        "analytics": { "type": ["string", "null"] },
+        "seo": { "type": ["string", "null"] },
+        "social": { "type": ["string", "null"] },
+        "ad_platforms": { "type": "array", "items": { "type": "string" } },
+        "data_warehouse": { "type": ["string", "null"] }
+      }
+    },
+    "approval_roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role"],
+        "properties": {
+          "role": { "type": "string", "description": "Arbitrary role name; matched against approval_policies.requires" },
+          "name": { "type": ["string", "null"] },
+          "email": { "type": ["string", "null"] },
+          "scope": { "type": "array", "items": { "type": "string" } },
+          "notification": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "operating_calendar": {
+      "type": "object",
+      "properties": {
+        "cycle_length": { "enum": ["weekly", "biweekly", "monthly", "quarterly", "custom"], "default": "monthly" },
+        "fiscal_year_start": { "type": "string", "default": "01-01" },
+        "blackout_dates": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

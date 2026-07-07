@@ -1,0 +1,247 @@
+{
+  "schema_version": "paid_ad_creative.Output:v1.0.0",
+  "written_by_agent": "paid_ad_creative",
+  "written_at": "2026-07-06T07:46:57.811Z",
+  "tenant_id": "microsoft",
+  "cycle_id": "2026-Q3",
+  "payload": {
+    "ad_creatives": [
+      {
+        "platform": "google_search",
+        "campaign_id": "azure_cloud_platform_enterprise",
+        "utm_template": "?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+        "ad_groups": [
+          {
+            "ad_group_id": "azure_enterprise_cloud_platform",
+            "target_persona_id": "enterprise_it_decision_maker",
+            "target_lob_id": "azure_cloud",
+            "keywords": [
+              {
+                "term": "azure cloud platform",
+                "match_type": "exact"
+              },
+              {
+                "term": "microsoft azure cloud",
+                "match_type": "phrase"
+              },
+              {
+                "term": "azure for enterprise",
+                "match_type": "exact"
+              },
+              {
+                "term": "cloud solutions microsoft",
+                "match_type": "phrase"
+              },
+              {
+                "term": "azure enterprise cloud",
+                "match_type": "exact"
+              }
+            ],
+            "negative_keywords": [
+              "free",
+              "jobs",
+              "career",
+              "support",
+              "personal",
+              "consumer",
+              "training"
+            ],
+            "landing_url": "https://microsoft.com/azure",
+            "ad_variants": [
+              {
+                "variant_label": "outcome_lead_scalable_growth",
+                "experiment_id": null,
+                "headlines": [
+                  "Azure: Cloud for All",
+                  "Scale Your Enterprise",
+                  "Empower IT Leaders"
+                ],
+                "primary_text": null,
+                "description": "Accelerate innovation with a trusted, flexible cloud platform. Achieve more with Microsoft Azure.",
+                "cta": "Get started",
+                "image_prompt": null,
+                "video_brief": null,
+                "emotional_trigger": "mastery"
+              },
+              {
+                "variant_label": "pain_lead_efficiency_cost",
+                "experiment_id": null,
+                "headlines": [
+                  "Modernize Your IT",
+                  "Boost Operational Efficiency",
+                  "Azure Cloud Solutions"
+                ],
+                "primary_text": null,
+                "description": "Optimize resources & reduce costs. Azure delivers secure, high-performance cloud infrastructure.",
+                "cta": "Learn more",
+                "image_prompt": null,
+                "video_brief": null,
+                "emotional_trigger": "safety"
+              },
+              {
+                "variant_label": "trust_innovation_lead",
+                "experiment_id": null,
+                "headlines": [
+                  "Trusted Cloud Platform",
+                  "Drive Enterprise Innovation",
+                  "Microsoft Azure Power"
+                ],
+                "primary_text": null,
+                "description": "Built for growth, security, and global scale. Empower IT leaders with leading cloud capabilities.",
+                "cta": "Explore solutions",
+                "image_prompt": null,
+                "video_brief": null,
+                "emotional_trigger": "aspiration"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "platform": "google_search",
+        "campaign_id": "azure_ai_innovation",
+        "utm_template": "?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+        "ad_groups": [
+          {
+            "ad_group_id": "azure_ai_solutions_enterprise",
+            "target_persona_id": "enterprise_it_decision_maker",
+            "target_lob_id": "azure_cloud",
+            "keywords": [
+              {
+                "term": "azure ai services",
+                "match_type": "exact"
+              },
+              {
+                "term": "microsoft ai platform",
+                "match_type": "phrase"
+              },
+              {
+                "term": "azure machine learning",
+                "match_type": "exact"
+              },
+              {
+                "term": "ai solutions azure",
+                "match_type": "phrase"
+              },
+              {
+                "term": "cognitive services azure",
+                "match_type": "exact"
+              }
+            ],
+            "negative_keywords": [
+              "free",
+              "jobs",
+              "career",
+              "support",
+              "personal",
+              "consumer",
+              "training"
+            ],
+            "landing_url": "https://microsoft.com/azure/ai",
+            "ad_variants": [
+              {
+                "variant_label": "outcome_lead_ai_transformation",
+                "experiment_id": null,
+                "headlines": [
+                  "Unlock AI Innovation",
+                  "Azure AI for Enterprise",
+                  "Transform with Intelligence"
+                ],
+                "primary_text": null,
+                "description": "Empowering IT leaders to build smarter apps & drive insights. Discover Azure AI services.",
+                "cta": "Get started",
+                "image_prompt": null,
+                "video_brief": null,
+                "emotional_trigger": "mastery"
+              },
+              {
+                "variant_label": "pain_lead_data_insights",
+                "experiment_id": null,
+                "headlines": [
+                  "AI Challenges Solved",
+                  "Gain Deeper Insights",
+                  "Seamless AI Integration"
+                ],
+                "primary_text": null,
+                "description": "Leverage integrated AI/ML to automate & innovate. Microsoft Azure makes AI accessible.",
+                "cta": "Learn more",
+                "image_prompt": null,
+                "video_brief": null,
+                "emotional_trigger": "curiosity"
+              },
+              {
+                "variant_label": "feature_lead_comprehensive_ai",
+                "experiment_id": null,
+                "headlines": [
+                  "Comprehensive Azure AI",
+                  "Machine Learning Platform",
+                  "Build Intelligent Apps"
+                ],
+                "primary_text": null,
+                "description": "From cognitive services to custom ML, Azure has it all. Empower IT leaders with powerful AI.",
+                "cta": "Explore solutions",
+                "image_prompt": null,
+                "video_brief": null,
+                "emotional_trigger": "aspiration"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "platform": "linkedin_ads",
+        "campaign_id": "azure_it_leaders_ai_cloud",
+        "utm_template": "?utm_source={{platform}}&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content={{variant_label}}&utm_term={{ad_group_id}}",
+        "ad_groups": [
+          {
+            "ad_group_id": "azure_ai_it_leaders",
+            "target_persona_id": "enterprise_it_decision_maker",
+            "target_lob_id": "azure_cloud",
+            "landing_url": "https://microsoft.com/azure/ai",
+            "ad_variants": [
+              {
+                "variant_label": "aspiration_lead_ai_leadership",
+                "experiment_id": null,
+                "headlines": [
+                  "Unlock AI Innovation with Azure for Enterprise"
+                ],
+                "primary_text": "IT Leaders, elevate your enterprise with AI innovation. Microsoft Azure provides the integrated, secure platform you need to build intelligent applications, automate processes, and derive deeper insights from your data. Empowering IT leaders to drive the future of technology.",
+                "description": "Leading AI solutions trusted by businesses globally. Accelerate your digital transformation.",
+                "cta": "Learn more",
+                "image_prompt": "A diverse group of confident IT leaders in a modern, well-lit office collaborating around a large interactive screen displaying complex AI models and data visualizations. Soft blue and green accents. Professional and innovative tone.",
+                "video_brief": null,
+                "emotional_trigger": "aspiration"
+              },
+              {
+                "variant_label": "outcome_lead_efficiency_insights",
+                "experiment_id": null,
+                "headlines": [
+                  "Azure AI: Powering Intelligent Enterprises"
+                ],
+                "primary_text": "Drive operational efficiency and gain unparalleled insights with Azure AI. Empowering IT leaders to seamlessly integrate advanced machine learning and cognitive services, transforming data into strategic advantage. Modernize your enterprise with intelligent solutions.",
+                "description": "From intelligent apps to automation, Azure AI delivers scalable, secure capabilities.",
+                "cta": "Get started",
+                "image_prompt": "Mid-40s male IT Director looking thoughtfully at a holographic interface showing AI workflow automation metrics, demonstrating control and innovation. Clean, futuristic office setting with Microsoft blue as a subtle highlight.",
+                "video_brief": null,
+                "emotional_trigger": "mastery"
+              },
+              {
+                "variant_label": "trust_capability_lead",
+                "experiment_id": null,
+                "headlines": [
+                  "Trusted AI for Enterprise: Build Smarter with Azure"
+                ],
+                "primary_text": "Microsoft Azure offers a comprehensive suite of AI & Machine Learning services, built on a foundation of enterprise-grade security and compliance. Empowering IT leaders with the tools to innovate responsibly and confidently. Discover scalable AI that delivers real business value.",
+                "description": "Leverage pre-built AI services or develop custom ML models with Azure's secure platform.",
+                "cta": "Explore solutions",
+                "image_prompt": "A cybersecurity expert, diverse gender and ethnicity, mid-30s, confidently monitoring a secure network dashboard on a large screen, with an Azure logo subtly visible. Emphasize data protection and trustworthiness, warm, professional lighting.",
+                "video_brief": null,
+                "emotional_trigger": "safety"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

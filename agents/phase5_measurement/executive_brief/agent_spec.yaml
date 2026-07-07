@@ -1,0 +1,161 @@
+slug: phase5.executive_brief
+phase: 5
+stage: 3
+mission: >
+  Render a board/CMO/CEO-ready performance brief — narrative + numbers + asks —
+  suitable for the audience seniority declared by the user. Produces markdown source
+  that can be rendered to PDF or PPTX via downstream skills.
+
+# ---------------------------------------------------------------------------
+# Input contracts
+# ---------------------------------------------------------------------------
+inputs:
+  - key: phase5.measurement.output
+    schema: KPIFramework:v1.0.0
+    required: true
+    require_approved: true
+    description: >
+      Approved KPI framework with actuals populated. All performance claims in
+      the brief must trace back to metrics defined here.
+
+  - key: phase5.experiment_review.output
+    schema: ExperimentReviewReport:v1.0.0
+    required: false
+    description: >
+      Optional. When present, experiment winners are surfaced in a dedicated
+      section of the brief. When absent, that section is omitted gracefully.
+
+  - key: phase4.campaign_calendar.output
+    schema: CampaignCalendar:v1
+    required: true
+    description: >
+      Used to anchor the brief to the correct cycle timeline and campaign scope.
+
+  - key: phase1.brief_intake.output
+    schema: BriefIntake:v1
+    required: true
+    description: >
+      Original campaign objectives. Every objective must appear in the
+      Objective vs. Actuals comparison table — no gaps allowed.
+
+# ---------------------------------------------------------------------------
+# Profile keys consumed
+# ---------------------------------------------------------------------------
+profile_keys:
+  - profile.brand_voice
+  - profile.approval_roles
+
+# ---------------------------------------------------------------------------
+# Output contract
+# ---------------------------------------------------------------------------
+output:
+  schema: ExecutiveBrief:v1.0.0
+  format: markdown
+  description: >
+    Markdown source document with YAML frontmatter. Structured for direct
+    rendering to PDF or PPTX via downstream skills. Word count must not
+    exceed the q_length_cap answer provided by the user.
+
+# ---------------------------------------------------------------------------
+# Approval policies
+# ---------------------------------------------------------------------------
+approval_policies:
+  - brand_impacting
+  - phase_exit_gate  # CMO must approve before C-suite delivery
+
+# ---------------------------------------------------------------------------
+# Quality KPIs (self-assessed before handoff)
+# ---------------------------------------------------------------------------
+quality_kpis:
+  narrative_arc_present:
+    description: >
+      Intro, results, insights, and asks sections are all populated (not empty
+      or placeholder).
+    target: true   # boolean — all four sections must be present
+    type: boolean
+
+  objective_vs_actual_gap:
+    description: >
+      Ratio of original brief objectives that have a corresponding result
+      entry in the Objective vs. Actuals table.
+    target: 1.0    # 1.0 = every objective covered
+    type: ratio
+
+  asks_specificity:
+    description: >
+      Ratio of asks that carry both an owner and a decision_deadline field.
+    target: 1.0
+    type: ratio
+
+  length_compliance:
+    description: >
+      Total word count of the brief body is within q_length_cap.
+    target: true
+    type: boolean
+
+# ---------------------------------------------------------------------------
+# SLA
+# ---------------------------------------------------------------------------
+sla:
+  max_tokens: 32000
+  max_latency_s: 600
+  max_cost_usd: 4.00
+
+# ---------------------------------------------------------------------------
+# Failure modes → remediation
+# ---------------------------------------------------------------------------
+failure_modes:
+  missing_asks:
+    condition: >
+      Executive brief contains no explicit asks or decisions-needed section,
+      or the section is empty.
+    remediation: redo
+    note: >
+      Briefs without asks give the audience nothing to act on. Always required.
+
+  objective_gap_missing:
+    condition: >
+      One or more objectives from phase1.brief_intake.output are not addressed
+      in the Objective vs. Actuals table.
+    remediation: redo
+    note: >
+      Every stated objective must be closed out — even if the result was a miss.
+
+  word_count_over:
+    condition: >
+      Brief body word count exceeds q_length_cap.
+    remediation: redo
+    note: >
+      Re-run with length constraint made prominent in the prompt header. Cut
+      narrative prose first; preserve tables and asks.
+
+  brand_voice_fail:
+    condition: >
+      Automated reviewer scores brand voice alignment below 0.75.
+    remediation: redo
+    note: >
+      Reference profile.brand_voice guidelines and rewrite narrative sections.
+
+# ---------------------------------------------------------------------------
+# Model assignments
+# ---------------------------------------------------------------------------
+models:
+  plan: claude-sonnet-4-6
+  gather: claude-haiku-4-5-20251001
+  synthesize: claude-sonnet-4-6
+  write: claude-opus-4-7
+  review: claude-sonnet-4-6
+
+# ---------------------------------------------------------------------------
+# Prompt caching
+# ---------------------------------------------------------------------------
+cache:
+  block1: true   # static system instruction block
+  block2: true   # profile + input schemas block
+  block3: false  # live KPI actuals block — changes per run; do not cache
+
+# ---------------------------------------------------------------------------
+# Downstream
+# ---------------------------------------------------------------------------
+downstream:
+  - phase5.iteration_planner

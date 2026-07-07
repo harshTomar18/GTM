@@ -1,0 +1,281 @@
+{
+  "schema_version": "email_sequences.Output:v1.0.0",
+  "written_by_agent": "email_sequences",
+  "written_at": "2026-07-06T08:23:50.024Z",
+  "tenant_id": "microsoft",
+  "cycle_id": "2026-Q3",
+  "payload": {
+    "email_sequences": [
+      {
+        "sequence_id": "azure_hybrid_cloud_nurture",
+        "purpose": "Lead Nurture",
+        "trigger": "form_fill_azure_hybrid_cloud_guide",
+        "primary_persona_id": "enterprise_it_decision_maker",
+        "channel": "email_nurture",
+        "suppression_rules": [
+          "has_open_opportunity",
+          "customer_of_lob_x"
+        ],
+        "frequency_cap_per_week": 2,
+        "deliverability_notes": "Monitor engagement for domain reputation. Utilize dedicated IP pool for marketing sends.",
+        "regulatory_footer_required": true,
+        "steps": [
+          {
+            "step_number": 1,
+            "subject": "Your Azure Hybrid Cloud Strategy Guide is here, {{first_name}}",
+            "preheader": "Unlock the full potential of your hybrid environment with intelligent cloud solutions.",
+            "body_markdown": "Hi {{first_name}},\n\nThank you for downloading the Azure Hybrid Cloud Strategy Guide. We're committed to helping organizations like {{company_name}} navigate complex IT landscapes and **achieve more with less**.\n\nThis guide provides a comprehensive framework for integrating your on-premises and cloud environments seamlessly, ensuring consistent management, robust security, and unparalleled flexibility. It's a critical step in your **digital transformation** journey.\n\nOur goal is to empower your team to build a truly **intelligent cloud** strategy that drives innovation and efficiency.\n\nWe hope you find the insights valuable.\n\nBest regards,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Read Your Guide Now",
+            "delay_after_prior_step_hours": null,
+            "branch_on": {
+              "opened": null,
+              "clicked": "step_2",
+              "replied": "exit",
+              "no_response": "step_2"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          },
+          {
+            "step_number": 2,
+            "subject": "Quick question on your hybrid cloud goals, {{first_name}}",
+            "preheader": "Are you maximizing efficiency across your IT infrastructure?",
+            "body_markdown": "Hi {{first_name}},\n\nFollowing up on the Azure Hybrid Cloud Strategy Guide you recently downloaded. Many IT leaders at companies similar to {{company_name}} are focused on optimizing their current infrastructure while preparing for future innovation.\n\nWhat's the biggest challenge you're currently facing in optimizing your hybrid environment?\n\nJust a one-line reply is fine. Your insights help us understand how to best support your **digital transformation**.\n\nThanks,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Reply to this Email",
+            "delay_after_prior_step_hours": 72,
+            "branch_on": {
+              "opened": null,
+              "clicked": null,
+              "replied": "exit",
+              "no_response": "step_3"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          },
+          {
+            "step_number": 3,
+            "subject": "Cost Optimization with Azure: Insights for {{company_name}}",
+            "preheader": "Discover strategies to achieve more with less in your cloud spend.",
+            "body_markdown": "Hi {{first_name}},\n\nWhen we talk about an **intelligent cloud**, cost efficiency is often a top priority. After reviewing the Hybrid Cloud Strategy Guide, you might be interested in practical ways to optimize your Azure spend.\n\nMany organizations are finding success by leveraging Azure's built-in tools and best practices to **achieve more with less**. This webinar shares actionable strategies used by our customers to reduce operational costs without compromising performance or security.\n\nFor example, a global enterprise recently optimized its Azure consumption by 20% by implementing the principles shared here. Could {{company_name}} see similar gains?\n\nBest,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Watch the Cost Optimization Webinar",
+            "delay_after_prior_step_hours": 96,
+            "branch_on": {
+              "opened": null,
+              "clicked": "step_4",
+              "replied": "exit",
+              "no_response": "step_4"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          },
+          {
+            "step_number": 4,
+            "subject": "Is your hybrid strategy built for future growth, {{first_name}}?",
+            "preheader": "The demands of modern IT require more than just integrated servers.",
+            "body_markdown": "Hi {{first_name}},\n\nBuilding a robust hybrid cloud isn't just about connecting your data centers to the cloud; it's about creating an agile, secure, and scalable foundation for your entire business. Is your current approach truly prepared for the evolving demands of AI, IoT, and advanced analytics?\n\nMicrosoft Azure provides an **intelligent cloud** platform designed to empower your **digital transformation** with unmatched capabilities. We see companies in the {{industry}} sector facing unique challenges, and a truly integrated hybrid approach can provide a significant competitive advantage.\n\nWe believe in empowering organizations to unlock new possibilities, not just maintain existing infrastructure. How do you see {{company_name}}'s strategy evolving over the next 12-18 months?\n\nRegards,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Explore Azure Hybrid Solutions",
+            "delay_after_prior_step_hours": 168,
+            "branch_on": {
+              "opened": null,
+              "clicked": "step_5",
+              "replied": "exit",
+              "no_response": "step_5"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}",
+              "{{industry}}"
+            ]
+          },
+          {
+            "step_number": 5,
+            "subject": "Discussing hybrid cloud solutions for {{company_name}}",
+            "preheader": "Let's explore how Azure can support your strategic objectives.",
+            "body_markdown": "Hi {{first_name}},\n\nI understand that optimizing your hybrid environment is a strategic imperative for {{company_name}}.\n\nMany IT leaders find a brief conversation beneficial to explore how Azure's **intelligent cloud** capabilities can directly address their specific challenges – from streamlining operations to enhancing security and driving **digital transformation**.\n\nWould you be open to a 20-minute discussion to map out how Azure can help {{company_name}} **achieve more with less** across your hybrid landscape?\n\nBest regards,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Schedule 20 Minutes to Discuss Azure",
+            "delay_after_prior_step_hours": 168,
+            "branch_on": {
+              "opened": null,
+              "clicked": "exit",
+              "replied": "exit",
+              "no_response": "step_6"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          },
+          {
+            "step_number": 6,
+            "subject": "Regarding your interest in Azure — last check-in?",
+            "preheader": "Should I close your file on Azure hybrid cloud resources for now?",
+            "body_markdown": "Hi {{first_name}},\n\nIt seems my previous emails regarding Azure hybrid cloud solutions for {{company_name}} might not have caught you at the right time, or perhaps your priorities have shifted.\n\nIf you're still exploring ways to build an **intelligent cloud** strategy and **achieve more with less**, I'm here to help. Otherwise, I'll assume this isn't a priority right now and close your file for future communications on this topic.\n\nPlease let me know if you'd like me to keep sending relevant updates, or if I should follow up at a later date. Your feedback is valuable.\n\nSincerely,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Let Me Know Your Preference",
+            "delay_after_prior_step_hours": 216,
+            "branch_on": {
+              "opened": null,
+              "clicked": "exit",
+              "replied": "exit",
+              "no_response": "exit"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          }
+        ]
+      },
+      {
+        "sequence_id": "m365_e5_prospecting_outbound",
+        "purpose": "New Business Development",
+        "trigger": "cold_outbound",
+        "primary_persona_id": "enterprise_it_decision_maker",
+        "channel": "email_outbound",
+        "suppression_rules": [
+          "has_open_opportunity",
+          "customer_of_lob_x"
+        ],
+        "frequency_cap_per_week": 2,
+        "deliverability_notes": "Utilize warm IP pool for new domains. Monitor bounce rates closely. Personalization relies on accurate data for {{company_name}} and {{industry}}.",
+        "regulatory_footer_required": true,
+        "steps": [
+          {
+            "step_number": 1,
+            "subject": "Enhancing {{company_name}}'s security posture with Microsoft 365 E5",
+            "preheader": "Are you exploring ways to unify security, compliance, and productivity?",
+            "body_markdown": "Hi {{first_name}},\n\nI'm reaching out from Microsoft, specifically focusing on how organizations in the {{industry}} sector, like {{company_name}}, are approaching **integrated security** and compliance in today's dynamic threat landscape.\n\nWe understand that managing cybersecurity risks while enabling **modern work** requires robust, unified solutions. Microsoft 365 E5 helps many enterprises simplify their security stack, enhance data protection, and empower employees to **achieve more with less**.\n\nWould you be open to a brief 15-minute conversation to explore how this approach could benefit {{company_name}}'s strategic objectives?\n\nRegards,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Book 15 Minutes to Discuss M365 E5",
+            "delay_after_prior_step_hours": null,
+            "branch_on": {
+              "opened": null,
+              "clicked": "exit",
+              "replied": "exit",
+              "no_response": "step_2"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}",
+              "{{industry}}"
+            ]
+          },
+          {
+            "step_number": 2,
+            "subject": "Your peers in {{industry}} are prioritizing security and compliance",
+            "preheader": "How does {{company_name}}'s strategy compare?",
+            "body_markdown": "Hi {{first_name}},\n\nI recently spoke with an IT leader in the {{industry}} sector who shared their focus on reducing complexity in their security operations while supporting hybrid work. This led them to consolidate tools using the **integrated security** capabilities of Microsoft 365 E5.\n\nFor many, the goal is to **achieve more with less** – securing the enterprise more effectively, reducing operational burden, and freeing up resources for innovation. This aligns directly with fostering **modern work** environments.\n\nAre these priorities for {{company_name}} as well? I’m curious about your perspective.\n\nBest,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Reply with Your Thoughts",
+            "delay_after_prior_step_hours": 96,
+            "branch_on": {
+              "opened": null,
+              "clicked": null,
+              "replied": "exit",
+              "no_response": "step_3"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}",
+              "{{industry}}"
+            ]
+          },
+          {
+            "step_number": 3,
+            "subject": "Ebook: Integrated Security in Microsoft 365 E5",
+            "preheader": "A concise guide to strengthening your security posture.",
+            "body_markdown": "Hi {{first_name}},\n\nI thought this might be helpful as {{company_name}} considers its **digital transformation** and **modern work** initiatives. We've compiled an ebook on how Microsoft 365 E5 delivers **integrated security** across endpoints, identity, data, and apps.\n\nIt's not a sales pitch, but a guide on unifying your security posture and achieving better outcomes with fewer tools. Many find this useful for understanding how to **achieve more with less** by leveraging their existing Microsoft investments.\n\nI hope this resource proves valuable for your team.\n\nRegards,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Download the Security Ebook",
+            "delay_after_prior_step_hours": 96,
+            "branch_on": {
+              "opened": null,
+              "clicked": "step_4",
+              "replied": "exit",
+              "no_response": "step_4"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          },
+          {
+            "step_number": 4,
+            "subject": "Perspective from a Microsoft Executive on Modern Work",
+            "preheader": "Insights on how leading enterprises are empowering their teams.",
+            "body_markdown": "Hi {{first_name}},\n\nI wanted to share a recent article from one of our executives on the evolving landscape of **modern work**. It touches on how top organizations are driving **digital transformation** by prioritizing seamless collaboration and robust security – often with a unified platform.\n\nThe insights might resonate with {{company_name}}'s strategic direction, particularly around how to **achieve more with less** while empowering your employees.\n\nThought it would be a valuable perspective.\n\nBest,\n[Sender's Manager/Executive Name] (Microsoft)\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Read the Executive Article",
+            "delay_after_prior_step_hours": 96,
+            "branch_on": {
+              "opened": null,
+              "clicked": "step_5",
+              "replied": "exit",
+              "no_response": "step_5"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          },
+          {
+            "step_number": 5,
+            "subject": "Who oversees security strategy at {{company_name}}?",
+            "preheader": "Are you the best person to discuss integrated security solutions?",
+            "body_markdown": "Hi {{first_name}},\n\nMy apologies if my previous messages haven't been directly relevant to your role. I've been trying to connect regarding how Microsoft 365 E5 helps organizations like {{company_name}} **achieve more with less** by providing **integrated security** and compliance capabilities.\n\nTo ensure I'm reaching the right person, could you kindly point me to the individual at {{company_name}} who leads the strategy for enterprise security and productivity tools, especially in the context of **modern work** and **digital transformation**?\n\nThank you for your guidance.\n\nSincerely,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Help Me Connect with the Right Person",
+            "delay_after_prior_step_hours": 144,
+            "branch_on": {
+              "opened": null,
+              "clicked": null,
+              "replied": "exit",
+              "no_response": "step_6"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          },
+          {
+            "step_number": 6,
+            "subject": "Closing the loop on Microsoft 365 for {{company_name}}",
+            "preheader": "Should I pause our outreach for now?",
+            "body_markdown": "Hi {{first_name}},\n\nI haven't heard back regarding the value of Microsoft 365 E5's **integrated security** and **modern work** capabilities for {{company_name}}.\n\nI understand priorities shift, and timing is everything. If now isn't the right time for a conversation about how to **achieve more with less** through our solutions, I'll close our outreach for the time being.\n\nIf you'd like to reconnect in the future, please don't hesitate to reach out. We're here to support your **digital transformation** when you are ready.\n\nAll the best,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Reply if Timing is Better Later",
+            "delay_after_prior_step_hours": 168,
+            "branch_on": {
+              "opened": null,
+              "clicked": "exit",
+              "replied": "exit",
+              "no_response": "step_7"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}"
+            ]
+          },
+          {
+            "step_number": 7,
+            "subject": "Checking in for Q{{quarter_number}} Planning: Integrated Security for {{company_name}}",
+            "preheader": "Revisiting priorities for a more secure and productive future.",
+            "body_markdown": "Hi {{first_name}},\n\nAs organizations like {{company_name}} look ahead to Q{{quarter_number}} planning, the topics of **integrated security** and empowering **modern work** often come to the forefront.\n\nI wanted to gently reconnect to see if the strategic advantages of Microsoft 365 E5, specifically its ability to help you **achieve more with less** through a unified platform, might align with any emerging priorities for your team.\n\nIf it makes sense, I'd appreciate a quick 15-minute chat to discuss how we can support {{company_name}}'s **digital transformation** goals for the upcoming quarter.\n\nSincerely,\nThe Microsoft Team\n\n© 2024 Microsoft. One Microsoft Way, Redmond, WA 98052, USA. You are receiving this email because you have engaged with Microsoft. To manage your preferences or unsubscribe, please click here.",
+            "cta": "Schedule a Q{{quarter_number}} Discussion",
+            "delay_after_prior_step_hours": 480,
+            "branch_on": {
+              "opened": null,
+              "clicked": "exit",
+              "replied": "exit",
+              "no_response": "exit"
+            },
+            "personalization_tokens": [
+              "{{first_name}}",
+              "{{company_name}}",
+              "{{quarter_number}}"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

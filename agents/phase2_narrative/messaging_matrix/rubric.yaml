@@ -1,0 +1,37 @@
+agent_slug: phase2.messaging_matrix
+
+criteria:
+  - id: cell_coverage
+    weight: 0.20
+    hard_fail: true
+    description: "cells[] covers ≥50% of (in-scope persona × channel × funnel_stage) combinations. Below 50% = redo."
+
+  - id: persona_language_used
+    weight: 0.15
+    description: "Per-cell messages quote or echo phrases from PersonaSpec.language_phrases (not invented marketing-speak)."
+
+  - id: funnel_discipline
+    weight: 0.15
+    description: "TOFU cells avoid product mention; BOFU cells include decision aids/ROI; channel-funnel pairing is sensible."
+
+  - id: channel_specificity
+    weight: 0.15
+    description: "LinkedIn organic / LinkedIn ad / sales call cells have meaningfully different shapes — not copy-pasted."
+
+  - id: tagline_diversity
+    weight: 0.10
+    description: "5-8 taglines spanning lengths AND angles (challenge / promise / outcome / question). Five variants of the same angle = fail."
+
+  - id: differentiators_sales_ready
+    weight: 0.10
+    description: "Each of the 5 differentiators is a complete sentence a salesperson can deliver verbatim, with proof_point references."
+
+  - id: brand_voice_compliance
+    weight: 0.15
+    hard_fail: true
+    description: "Zero banned phrases. Tone adjectives reflected in copy choices."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|game[-\\s]?chang|leverag|streamline)"
+
+auto_redo_threshold: 0.75

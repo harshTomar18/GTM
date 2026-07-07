@@ -1,0 +1,147 @@
+slug: phase5.experiment_review
+phase: 5
+stage: 2
+version: "1.0.0"
+
+mission: >
+  Review concluded experiments from the experiment engine, declare statistically
+  valid winners, produce rollout proposals, and document learnings for the next cycle.
+
+# ---------------------------------------------------------------------------
+# Inputs
+# ---------------------------------------------------------------------------
+inputs:
+  - id: kpi_framework
+    source: phase5.measurement.output
+    schema: KPIFramework:v1.0.0
+    required: true
+    require_approved: true
+
+  - id: experiments
+    source: "tenants/<id>/cycles/<cycle>/experiments/*.json"
+    schema: Experiment:v1.0.0
+    required: false
+    notes: >
+      May be empty on the first cycle or if no experiments were run. Agent
+      produces an empty report (not a hard failure) when this input is absent.
+
+  - id: campaign_calendar
+    source: phase4.campaign_calendar.output
+    schema: CampaignCalendar:v1
+    required: false
+
+# ---------------------------------------------------------------------------
+# Profile keys consumed
+# ---------------------------------------------------------------------------
+profile_keys:
+  - profile.operating_calendar
+
+# ---------------------------------------------------------------------------
+# Output
+# ---------------------------------------------------------------------------
+output:
+  schema: ExperimentReviewReport:v1.0.0
+  stored_as: phase5.experiment_review.output
+  format: >
+    Markdown report with structured JSON blocks embedded. No separate schema
+    file yet — the ExperimentReviewReport envelope is defined in this spec.
+
+# ---------------------------------------------------------------------------
+# Approval
+# ---------------------------------------------------------------------------
+approval_policies:
+  - policy: brand_impacting
+    condition: >
+      rollout affects >20% of total traffic OR rollout targets the primary
+      acquisition channel
+    rationale: >
+      Winning variants rolled out at scale alter the brand experience at
+      significant reach. Marketing lead must approve before full deployment.
+    required_approvers:
+      - Marketing Lead
+
+# ---------------------------------------------------------------------------
+# Quality KPIs (agent self-assessment)
+# ---------------------------------------------------------------------------
+quality_kpis:
+  - id: experiments_reviewed
+    description: >
+      Count of concluded experiments reviewed. Target: all experiments present
+      in the cycle directory.
+    measurement: count — all in cycle
+    target: all_in_cycle
+
+  - id: winner_declared_rate
+    description: >
+      Percentage of experiments with sufficient sample size (impressions >=
+      sample_size_target) that have a declared winner or explicit
+      "no significant difference" conclusion.
+    measurement: ratio of concluded + powered experiments with verdict
+    target: 0.5
+
+  - id: learnings_documented
+    description: >
+      Every experiment — regardless of powered status — has a non-empty
+      learning.summary field.
+    measurement: ratio of experiments with learning.summary present
+    target: 1.0
+
+  - id: rollout_proposals_filed
+    description: >
+      Every experiment whose winner_arm_id is declared has a rollout_action
+      field with action, scope, and notes populated.
+    measurement: ratio of winner-declared experiments with rollout_action
+    target: 1.0
+
+# ---------------------------------------------------------------------------
+# SLA
+# ---------------------------------------------------------------------------
+sla:
+  max_tokens: 20000
+  max_latency_s: 360
+  max_cost_usd: 2.00
+
+# ---------------------------------------------------------------------------
+# Failure modes
+# ---------------------------------------------------------------------------
+failure_modes:
+  - id: underpowered_conclusion
+    condition: >
+      experiment.impressions < experiment.sample_size_target at the time of
+      review
+    action: >
+      Flag experiment with [UNDERPOWERED] tag. Do not declare a winner.
+      Still document learning.summary with available signal. Do not redo —
+      this is an expected outcome for short cycles.
+
+  - id: no_source_data
+    condition: >
+      No experiment JSON files found in
+      tenants/<id>/cycles/<cycle>/experiments/
+    action: >
+      Produce an empty ExperimentReviewReport with note:
+      "No experiments ran this cycle." Not a blocker — cycle continues.
+
+  - id: missing_learning
+    condition: >
+      Any experiment object in the findings[] array lacks a learning.summary
+      field or has summary with fewer than 30 words
+    action: redo
+
+# ---------------------------------------------------------------------------
+# Model routing
+# ---------------------------------------------------------------------------
+models:
+  plan: claude-sonnet-4-6
+  gather: claude-haiku-4-5-20251001
+  synthesize: claude-sonnet-4-6
+  write: claude-opus-4-7
+  review: claude-sonnet-4-6
+
+# ---------------------------------------------------------------------------
+# Prompt cache blocks
+# ---------------------------------------------------------------------------
+cache:
+  block1: true   # system / role context
+  block2: true   # upstream inputs (kpi_framework, experiments, campaign_calendar)
+  block3: false  # live task instructions + self-review (must stay fresh)

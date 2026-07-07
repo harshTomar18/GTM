@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/social_content_pack.schema.json",
+  "title": "SocialContentPack",
+  "description": "Platform-native posts and series. Output of phase3.social_content.",
+  "type": "object",
+  "required": ["schema_version", "posts"],
+  "properties": {
+    "schema_version": { "const": "SocialContentPack:v1.0.0" },
+    "posts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["post_id", "platform", "format", "hook", "body", "cta"],
+        "properties": {
+          "post_id": { "type": "string" },
+          "platform": { "enum": ["linkedin", "x_twitter", "threads", "instagram", "tiktok", "youtube_shorts", "youtube_long", "reddit"] },
+          "format": { "enum": ["text", "carousel", "image", "video_short", "video_long", "poll", "live", "story"] },
+          "author_voice_role": { "enum": ["brand", "CEO", "CFO", "CMO", "CISO", "founder", "subject_matter_expert", "employee_advocate"], "default": "brand" },
+          "author_voice_name": { "type": ["string", "null"] },
+          "primary_persona_id": { "type": "string" },
+          "pillar_id": { "type": ["string", "null"] },
+          "hook": { "type": "string", "description": "First 1-2 lines — drives scroll-stop" },
+          "body": { "type": "string" },
+          "cta": { "type": "string" },
+          "hashtags": { "type": "array", "items": { "type": "string" } },
+          "tags_mentions": { "type": "array", "items": { "type": "string" } },
+          "scheduled_at": { "type": ["string", "null"], "format": "date-time" },
+          "attached_asset_ref": { "type": ["string", "null"] },
+          "carousel_slides": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slide_number": { "type": "integer" },
+                "headline": { "type": "string" },
+                "body": { "type": "string" },
+                "image_prompt": { "type": ["string", "null"] }
+              }
+            }
+          },
+          "video_brief": {
+            "type": "object",
+            "properties": {
+              "script": { "type": "string" },
+              "shot_list": { "type": "array", "items": { "type": "string" } },
+              "duration_seconds": { "type": "integer" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

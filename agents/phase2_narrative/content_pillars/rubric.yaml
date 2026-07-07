@@ -1,0 +1,43 @@
+agent_slug: phase2.content_pillars
+
+criteria:
+  - id: pillar_count
+    weight: 0.15
+    hard_fail: true
+    description: "3-5 pillars. Outside range = redo."
+
+  - id: capacity_matched
+    weight: 0.15
+    description: "pillar count × content_cadence is within stated capacity (q_publishing_cadence_capacity). Over-committing = fail."
+
+  - id: pov_opinionated
+    weight: 0.20
+    hard_fail: true
+    description: "Each pillar's pov_statement is a STANCE, not a topic. Topic-shaped pillars ('Marketing automation,' 'AI in finance') auto-fail."
+
+  - id: authority_anchored
+    weight: 0.15
+    description: "Each pillar's why_we_own_it cites a specific authority — internal expertise, unique data, customer outcomes, or framework alignment — not 'we know this space well'."
+
+  - id: keyword_coverage
+    weight: 0.10
+    description: "≥80% of keyword clusters from keyword_intent are mapped to at least one pillar's supporting_keyword_clusters."
+
+  - id: topic_cluster_map_complete
+    weight: 0.10
+    description: "Every pillar appears in topic_cluster_map with a hub_topic + 5-10 spoke_topics."
+
+  - id: off_limits_honored
+    weight: 0.05
+    description: "q_pillars_off_limits topics appear only in pillars_avoided[] with reasons."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\bthought leadership\\b"
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+
+auto_redo_threshold: 0.75

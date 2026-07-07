@@ -1,0 +1,38 @@
+agent_slug: phase3.social_content
+
+questions:
+  - id: q_platforms_in_scope
+    prompt: "Platforms in scope this cycle? (Comma-separated. e.g., 'linkedin, x_twitter, youtube_shorts')"
+    type: long_text
+    required_for: plan
+    reusable_key: cycle.social.platforms
+    default: "linkedin"
+
+  - id: q_posts_per_platform
+    prompt: "Post count per platform this cycle? (Format: 'linkedin=30, x_twitter=20, ...')"
+    type: long_text
+    required_for: plan
+    default: "linkedin=30"
+
+  - id: q_executive_voices_active
+    prompt: "Which executives are actively posting (employee advocacy)? (List names + roles. If none, all posts are brand voice.) Example: 'Jane Doe (CMO), John Smith (CEO)'"
+    type: long_text
+    required_for: plan
+    reusable_key: cycle.social.executive_advocates
+
+  - id: q_format_mix
+    prompt: "Format mix target? (text vs carousel vs video vs poll percentages). e.g., 'text=50%, carousel=20%, video_short=20%, poll=10%'"
+    type: long_text
+    required_for: plan
+    default: "text=60%, carousel=20%, video_short=15%, poll=5%"
+
+  - id: q_tags_mentions_approved
+    prompt: "Accounts we're approved to tag/mention? (Comma-separated. Don't tag without explicit approval.)"
+    type: long_text
+    required_for: gather
+
+  - id: q_repurpose_source_assets
+    prompt: "Should we repurpose flagship content_assets into social? (true = pull from content_assets[]; false = original posts only)"
+    type: boolean
+    required_for: plan
+    default: "true"

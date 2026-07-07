@@ -1,0 +1,113 @@
+version: "1.0.0"
+agent: phase5.measurement
+
+questions:
+
+  - id: q_primary_kpi
+    label: "What is the single north-star KPI for this cycle?"
+    schema: required
+    reusable_key: cycle.kpi.north_star
+    type: single_select
+    options:
+      - value: pipeline_generated_usd
+        label: "Pipeline generated (USD)"
+      - value: mqls_created
+        label: "MQLs created"
+      - value: demos_booked
+        label: "Demos booked"
+      - value: arr_influenced
+        label: "ARR influenced"
+      - value: brand_awareness_lift
+        label: "Brand awareness lift"
+      - value: other
+        label: "Other (specify in notes)"
+    hint: >
+      Choose the single metric that the entire GTM cycle will be judged
+      against. All input metrics and leading indicators must roll up to this
+      north star.
+
+  - id: q_attribution_model
+    label: "Which attribution model should be used?"
+    schema: required
+    reusable_key: cycle.attribution.model
+    type: single_select
+    options:
+      - value: first_touch
+        label: "First touch — 100% credit to first marketing touchpoint"
+      - value: last_touch
+        label: "Last touch — 100% credit to touchpoint immediately before conversion"
+      - value: linear
+        label: "Linear — equal credit distributed across all touchpoints"
+      - value: position_based_40_20_40
+        label: "Position-based (40/20/40) — first, middle, and last touchpoints weighted"
+      - value: data_driven
+        label: "Data-driven — algorithmic weighting based on historical conversion data"
+    hint: >
+      The model chosen here will govern how pipeline and revenue credit is
+      allocated in the KPIFramework and executive brief.
+
+  - id: q_cohort_definition
+    label: "How should a marketing-influenced opportunity be defined?"
+    schema: required
+    reusable_key: cycle.attribution.cohort_definition
+    type: free_text
+    example: "Any opp touched by marketing activity within 90 days of creation"
+    hint: >
+      Be specific: include the lookback window (e.g., 90 days), the touchpoint
+      types that qualify (e.g., email click, webinar attendance, paid ad
+      impression), and the opportunity stage at which influence is measured.
+
+  - id: q_dashboard_tooling
+    label: "Which BI/dashboard tool will be used for GTM reporting?"
+    schema: required
+    reusable_key: tenant.tech_stack.bi_tool
+    type: single_select
+    options:
+      - value: looker
+        label: "Looker"
+      - value: tableau
+        label: "Tableau"
+      - value: metabase
+        label: "Metabase"
+      - value: google_data_studio
+        label: "Google Looker Studio (formerly Data Studio)"
+      - value: powerbi
+        label: "Microsoft Power BI"
+      - value: notion
+        label: "Notion (embedded charts)"
+      - value: other
+        label: "Other (specify in notes)"
+    hint: >
+      The dashboard spec will be written for this tool. Datasource connector
+      names and refresh cadence will be tailored to the selected platform.
+
+  - id: q_baseline_available
+    label: "Are prior-cycle baseline metrics available for benchmarking?"
+    schema: optional
+    reusable_key: cycle.measurement.has_baseline
+    type: boolean
+    default: false
+    hint: >
+      If yes, the KPIFramework will include a baseline column and
+      cycle-over-cycle delta targets. If no, targets will be set as
+      absolute values without a delta comparison.
+
+  - id: q_reporting_cadence
+    label: "What is the reporting cadence for GTM leaders?"
+    schema: optional
+    reusable_key: cycle.measurement.reporting_cadence
+    type: single_select
+    default: weekly
+    options:
+      - value: daily
+        label: "Daily"
+      - value: weekly
+        label: "Weekly"
+      - value: bi_weekly
+        label: "Bi-weekly"
+      - value: monthly
+        label: "Monthly"
+    hint: >
+      This cadence will be applied to dashboard refresh scheduling and
+      determines how frequently leading indicators are reviewed in standups
+      or leadership syncs.

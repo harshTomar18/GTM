@@ -1,0 +1,71 @@
+slug: phase1.audience_intelligence
+phase: 1
+stage: 3
+mission: >
+  Build 2-3 evidence-based personas from real audience signal (Reddit, forums, G2,
+  customer interviews). Produce per-persona pain/gain language bank with 40+ verbatim
+  phrases, citation-backed.
+
+inputs:
+  - key: phase1.brief_intake.output
+    schema_version: "BriefIntake:v1"
+    required: true
+  - key: phase1.market_research.output
+    schema_version: "CompetitorProfile:v1"
+    required: false   # personas can be built without market research; better with it
+
+profile_keys:
+  - profile.icp_archetypes
+  - profile.industry.primary
+  - profile.lob
+
+output_schema: "PersonaSpec:v1.0.0"  # array of these
+artifact_markdown_template: "agents/phase1_research/audience_intelligence/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting   # Personas drive every downstream messaging decision
+
+kpis:
+  - id: personas_produced
+    name: "Personas produced"
+    target: 2
+    unit: "count"    # 2-3 acceptable; 1 = redo, 4+ = scope creep
+  - id: evidence_density
+    name: "Verbatim quotes per persona"
+    target: 8
+    unit: "count"
+  - id: language_bank_size
+    name: "Language bank phrases (total across personas)"
+    target: 40
+    unit: "count"
+  - id: source_diversity
+    name: "Distinct sources cited"
+    target: 6
+    unit: "count"
+
+sla:
+  max_tokens: 32000
+  max_latency_s: 900    # mining real audience signal takes time
+  max_cost_usd: 4.00
+
+failure_modes:
+  - mode: fabricated_personas
+    detection: "any persona without ≥3 cited verbatim quotes"
+    auto_mitigation: redo_strict
+  - mode: language_bank_too_small
+    detection: "language_phrases total < 40 across all personas"
+    auto_mitigation: redo
+  - mode: personas_match_existing_archetypes_too_closely
+    detection: "persona is identical to profile.icp_archetypes[i] without adding texture"
+    auto_mitigation: escalate_to_human    # the user already defined this; we should add depth, not repeat
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

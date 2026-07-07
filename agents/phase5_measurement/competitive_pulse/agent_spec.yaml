@@ -1,0 +1,153 @@
+slug: phase5.competitive_pulse
+phase: 5
+stage: 4
+mission: >
+  Continuously monitor competitor pricing, positioning, content, hires, funding,
+  feature releases, and review sentiment. Emit CompetitiveSignal[] to the signal
+  bus and produce a weekly CompetitivePulseReport for the GTM team.
+entrypoint: false
+always_on: true          # runs on reactive/scheduled basis, not just cycle-start
+optional: true           # declared optional in cycle.yaml Phase 5 block
+
+# ---------------------------------------------------------------------------
+# Scheduling
+# ---------------------------------------------------------------------------
+schedule:
+  cadence_hours: "{{ profile.competitive_pulse.cadence_hours | default(24) }}"
+  quiet_hours: "{{ profile.competitive_pulse.quiet_hours | default('') }}"
+
+# ---------------------------------------------------------------------------
+# Inputs
+# ---------------------------------------------------------------------------
+inputs:
+  - id: competitor_matrix
+    source: phase1.market_research.output
+    schema: CompetitorMatrix:v1
+    required: true
+    description: >
+      Seeds the competitor watchlist. Each entry must be present for at least
+      one check per run (enforced by rubric criterion: watchlist_coverage).
+
+  - id: research_dossier
+    source: phase1.research_synthesis.output
+    schema: ResearchDossier:v1
+    required: false
+    description: >
+      Optional enrichment — provides TAM/ICP context that helps calibrate
+      signal intensity scoring.
+
+# ---------------------------------------------------------------------------
+# Profile keys consumed
+# ---------------------------------------------------------------------------
+profile_keys:
+  - profile.known_competitors        # supplemental list; merged with competitor_matrix
+  - profile.tech_stack               # used to flag competitor feature signals that directly overlap
+  - profile.competitive_pulse.sources
+  - profile.competitive_pulse.alert_threshold
+  - profile.competitive_pulse.quiet_hours
+  - profile.competitive_pulse.cadence_hours
+  - tenant.integrations.slack.channels.alerts
+
+# ---------------------------------------------------------------------------
+# Output
+# ---------------------------------------------------------------------------
+output:
+  schema: CompetitivePulseReport:v1.0.0
+  formats:
+    - markdown          # human-readable weekly/daily digest
+    - signal_bus_entries[]  # machine-readable signals for reactive dispatcher
+  destinations:
+    - signal_bus        # all signals (informational + actionable + urgent)
+    - slack             # actionable + urgent signals only (respects alert_threshold)
+
+# ---------------------------------------------------------------------------
+# Approval policies
+# ---------------------------------------------------------------------------
+approval_policies:
+  # Read-only intelligence agent — no external writes; no human-in-the-loop gate
+  require_human_approval: false
+  allow_external_writes: false
+
+# ---------------------------------------------------------------------------
+# KPIs
+# ---------------------------------------------------------------------------
+kpis:
+  signal_volume:
+    description: Signals emitted per run (both informational and actionable)
+    target_informational: "> 0"
+    target_actionable: "> 0"
+    note: A run with zero signals should trigger a staleness/watchlist alert.
+
+  false_positive_rate:
+    description: Fraction of emitted signals later marked irrelevant by the operator
+    target: "< 0.20"
+
+  time_to_alert_minutes:
+    description: Elapsed time from event publication to signal emission
+    target: "< 60"
+
+  report_freshness:
+    description: CompetitivePulseReport produced within cadence_hours of previous run
+    target: 1.0   # ratio (1.0 = 100% on-time)
+
+# ---------------------------------------------------------------------------
+# SLA
+# ---------------------------------------------------------------------------
+sla:
+  max_tokens: 20000
+  max_latency_s: 300
+  max_cost_usd: 1.50
+
+# ---------------------------------------------------------------------------
+# Model routing
+# NOTE: Opus is explicitly excluded — this agent runs high-frequency and is
+#       cost-sensitive.  All roles use Sonnet or Haiku.
+# ---------------------------------------------------------------------------
+models:
+  plan:      claude-sonnet-4-6
+  gather:    claude-haiku-4-5-20251001
+  synthesize: claude-sonnet-4-6
+  write:     claude-sonnet-4-6
+  review:    claude-haiku-4-5-20251001
+
+# ---------------------------------------------------------------------------
+# Prompt caching
+# ---------------------------------------------------------------------------
+cache:
+  block1: true    # system prompt / static context — safe to cache
+  block2: false   # live competitive data — must always be fresh
+  block3: false   # signal synthesis — must always be fresh
+
+# ---------------------------------------------------------------------------
+# Failure modes
+# ---------------------------------------------------------------------------
+failure_modes:
+  no_competitors_identified:
+    condition: competitor_matrix is empty AND profile.known_competitors is empty
+    action: >
+      Emit a single CompetitiveSignal with description "[WATCHLIST EMPTY]",
+      intensity: high, actionability: urgent.
+      Recommend operator runs phase1.market_research refresh to populate the
+      competitor matrix.
+
+  all_signals_stale:
+    condition: all emitted signals have emitted_at older than 7 days
+    action: >
+      Emit a staleness alert signal with intensity: medium, actionability: actionable.
+      Log warning in CompetitivePulseReport.summary_for_gtm_team.
+
+  source_unreachable:
+    condition: Perplexity / news MCP tool returns an error or timeout
+    action: >
+      Mark affected signals with source_degraded: true.
+      Continue run using remaining available sources.
+      Note degraded sources in CompetitivePulseReport.
+
+# ---------------------------------------------------------------------------
+# Reactive dispatch subscriptions (downstream agents that consume signals)
+# ---------------------------------------------------------------------------
+reactive_triggers:
+  - signal_actionability: [actionable, urgent]
+    may_trigger:
+      - phase1.market_research.refresh
+      - phase3.sales_enablement.battlecard_update

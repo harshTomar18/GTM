@@ -1,0 +1,81 @@
+slug: phase3.social_content
+phase: 3
+stage: 4
+mission: >
+  Generate platform-native social posts and series (LinkedIn primary; X/Threads/IG/
+  TikTok per profile + persona watering_holes). Author voices, formats, and posting
+  cadence calibrated per cycle.
+
+inputs:
+  - key: phase2.narrative_lock.output
+    schema_version: "NarrativeLockDoc:v1"
+    required: true
+    require_approved: true
+  - key: phase2.messaging_matrix.output
+    schema_version: "MessagingMatrix:v1"
+    required: true
+  - key: phase2.content_pillars.output
+    schema_version: "ContentPillarSet:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase3.content_assets.output
+    schema_version: "ContentAssetPack:v1"
+    required: false   # repurpose source when available
+
+profile_keys:
+  - profile.brand_voice
+  - profile.icp_archetypes
+
+output_schema: "SocialContentPack:v1.0.0"
+artifact_markdown_template: "agents/phase3_assets/social_content/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - executive_voice   # fires per post that has author_voice_role != "brand"
+
+kpis:
+  - id: posts_produced
+    name: "Posts produced"
+    target: 30
+    unit: "count"  # ~30-post LinkedIn bank baseline
+  - id: format_mix_diversity
+    name: "Distinct formats used"
+    target: 4
+    unit: "count"
+  - id: pillar_coverage
+    name: "Pillars covered by posts"
+    target: 1.0
+    unit: "ratio"
+  - id: hook_pattern_diversity
+    name: "Distinct hook patterns"
+    target: 0.70
+    unit: "ratio"
+
+sla:
+  max_tokens: 32000
+  max_latency_s: 900
+  max_cost_usd: 3.50
+
+failure_modes:
+  - mode: hook_homogeneous
+    detection: "≥50% of hooks follow the same pattern (e.g. 'I learned X' x15)"
+    auto_mitigation: redo
+  - mode: pillar_orphan
+    detection: "any pillar has zero posts"
+    auto_mitigation: redo
+  - mode: executive_voice_no_approval
+    detection: "post has author_voice_role != brand AND that executive isn't in approval_roles"
+    auto_mitigation: escalate_to_human
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

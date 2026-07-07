@@ -1,0 +1,26 @@
+agent_slug: phase2.content_pillars
+
+questions:
+  - id: q_publishing_cadence_capacity
+    prompt: "Realistically, how many flagship long-form pieces can we ship per pillar per month? (Drives whether we propose 3 pillars or 5 — capacity-matched.)"
+    type: number
+    required_for: plan
+    default: "2"
+
+  - id: q_pillars_we_already_own
+    prompt: "Are there pillars we ALREADY publish on that we want to keep? (List existing pillars/topics; we'll evaluate whether to retain, evolve, or sunset each.)"
+    type: long_text
+    required_for: gather
+    reusable_key: profile.existing_content_pillars
+
+  - id: q_pillars_off_limits
+    prompt: "Topics we should NOT pillar on this cycle? (e.g., 'no AI claims', 'avoid <regulated-topic> until audit cert lands', 'don't compete in <topic> — partner there')"
+    type: long_text
+    required_for: plan
+
+  - id: q_pillar_cadence_per_pillar
+    prompt: "Should each pillar have the same cadence, or should some be 'hot' (weekly) and some 'evergreen' (quarterly)? (Default: differentiated — some hot, some evergreen.)"
+    type: enum
+    enum_options: ["uniform", "differentiated"]
+    required_for: plan
+    default: "differentiated"

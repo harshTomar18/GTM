@@ -1,0 +1,88 @@
+rubric:
+  id: iteration_planner_self_review
+  description: >
+    Self-review rubric applied by the review stage (claude-sonnet-4-6) before
+    the NextCycleBriefDraft is submitted for CMO/CEO approval. The agent
+    re-runs the write stage if the weighted score falls below the pass threshold.
+    Maximum 3 auto-redo attempts before escalation to operator.
+
+  pass_threshold: 0.75
+  max_redo_attempts: 3
+
+  dimensions:
+
+    - id: evidence_grounding
+      label: Evidence Grounding
+      weight: 0.35
+      description: >
+        Every recommendation in the NextCycleBriefDraft traces to at least one
+        of: a named metric from phase5.measurement, an experiment ID from
+        phase5.experiment_review, or a named competitive signal from
+        phase5.competitive_pulse. Recommendations that cite no evidence source
+        are flagged as unsupported.
+      scoring_guide:
+        1.0: All recommendations have explicit evidence citations — metric names, experiment IDs, or signal references are present for every recommendation.
+        0.75: Most recommendations are grounded; 1–2 minor points lack explicit citation but are clearly inferable from the input data.
+        0.50: Several recommendations are partially grounded; some read as qualitative opinion without data backing.
+        0.25: Fewer than half of recommendations cite evidence; output reads primarily as opinion rather than data-driven analysis.
+        0.0: No recommendations are traceable to measurement data, experiment results, or competitive signals. Full redo required.
+
+    - id: completeness
+      label: Output Completeness
+      weight: 0.30
+      description: >
+        All prior objectives from phase1.brief_intake.output have an explicit
+        carry_forward / drop / modify decision. The output includes all required
+        sections: Objective Decisions table, Channel Performance and Recommendations,
+        Experiment Rollouts (or explicit skip if experiment_review absent), Narrative
+        Lock Decision (with boolean + rationale), Competitive Adjustments (or explicit
+        skip if competitive_pulse absent), Next Cycle Brief Draft, and Open Questions
+        for CMO + CEO Review. Budget direction is specified.
+      scoring_guide:
+        1.0: All required sections present; every prior objective has a decision; budget direction stated; narrative lock boolean + rationale both present.
+        0.75: All sections present; 1 minor omission (e.g., one objective decision thin, or rationale brief but present).
+        0.50: Most sections present; 1–2 objectives missing decisions, or narrative lock rationale absent, or budget direction missing.
+        0.25: Multiple sections missing or objectives without decisions; significant structural gaps.
+        0.0: Output is missing 3 or more required sections or multiple objectives have no decision. Redo required.
+
+    - id: actionability
+      label: Actionability
+      weight: 0.20
+      description: >
+        The Next Cycle Brief Draft section is specific enough that phase1.brief_intake
+        can run without re-asking most questions. Fields include: primary_objective,
+        secondary_objectives[], timeline, budget_signal, known_competitors (updated),
+        known_wins[], known_losses[], and research_questions_to_carry_forward[].
+        Vague or placeholder-only entries do not satisfy this criterion.
+      scoring_guide:
+        1.0: All brief draft fields populated with specific, actionable content; phase1.brief_intake could run immediately with minimal operator amendment.
+        0.75: Most fields specific; 1–2 fields have placeholder or thin content but the overall brief is usable.
+        0.50: Brief draft is directionally correct but several fields are vague; phase1.brief_intake would need significant operator amendment.
+        0.25: Brief draft is mostly placeholders or generic statements; provides little value to phase1.brief_intake.
+        0.0: Next Cycle Brief Draft section is absent or entirely non-actionable. Redo required.
+
+    - id: forward_focus
+      label: Forward Focus
+      weight: 0.15
+      description: >
+        The document is oriented toward the next cycle (what to do next) rather than
+        being a retrospective rehash of what already happened. Retrospective data is
+        used as evidence for forward recommendations, not as the primary narrative.
+        The Open Questions section surfaces decision points for the next cycle, not
+        unresolved questions about the current one.
+      scoring_guide:
+        1.0: Every section is framed around next-cycle action; retrospective data appears only as evidence citations; Open Questions are genuinely forward-looking.
+        0.75: Mostly forward-looking; 1 section reads more like a post-mortem than a planning document.
+        0.50: Mix of retrospective and forward content; reader must work to extract next-cycle guidance.
+        0.25: Document reads primarily as a retrospective; forward-looking guidance is sparse or buried.
+        0.0: Output is a cycle retrospective with no meaningful next-cycle planning content. Redo required.
+
+  redo_policy:
+    trigger: weighted_score < pass_threshold
+    max_redo_attempts: 3
+    redo_prompt_injection: >
+      Self-review score was {{ score }} (threshold: {{ threshold }}).
+      Failing dimensions: {{ failing_dimensions }}.
+      Revise the NextCycleBriefDraft to address each failing dimension before
+      resubmitting. Do not change sections that are already passing.
+      Provide the revised draft in full — do not use diff notation.

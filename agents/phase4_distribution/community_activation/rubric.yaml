@@ -1,0 +1,50 @@
+agent_slug: phase4.community_activation
+
+criteria:
+  - id: watering_hole_coverage
+    weight: 0.15
+    hard_fail: true
+    description: "≥80% of primary persona's named watering_holes have a corresponding community_program."
+
+  - id: community_id_named
+    weight: 0.15
+    hard_fail: true
+    description: "Every community_id names a SPECIFIC community ('FinOps Foundation Slack', 'r/CISO') — not 'LinkedIn'/'Reddit' generically."
+
+  - id: kpi_target_per_program
+    weight: 0.15
+    hard_fail: true
+    description: "Every program has kpi_target with metric + target number + measurement_window."
+
+  - id: disclosure_compliance
+    weight: 0.15
+    hard_fail: true
+    description: "Every paid creator has disclosure_required: true AND deliverables mention disclosure mechanism."
+
+  - id: escalation_paths_specific
+    weight: 0.10
+    description: "Escalation paths are specific — 'sentiment turns negative ≥3 days, escalate to CMO with response in 24h' — not 'handle sensitively'."
+
+  - id: owned_community_honest
+    weight: 0.10
+    description: "If q_owned_community_status = 'none', no programs typed as 'owned'."
+
+  - id: advocates_real
+    weight: 0.10
+    description: "moderators_or_advocates only pull from q_employee_advocacy_roster / q_approved_creators. No invented people."
+
+  - id: ama_dates_safe
+    weight: 0.05
+    description: "AMA dates don't fall on blackout_dates or in tentpole conflict zones."
+
+  - id: brand_voice_compliance
+    weight: 0.05
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+  - "\\b(handle sensitively|engage authentically|build community)\\b"  # community-platitudes
+  - "\\btrack engagement\\b"  # unmeasurable KPI
+
+auto_redo_threshold: 0.80

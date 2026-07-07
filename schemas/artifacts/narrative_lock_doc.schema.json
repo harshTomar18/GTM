@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/narrative_lock_doc.schema.json",
+  "title": "NarrativeLockDoc",
+  "description": "Frozen messaging architecture for the cycle. Output of phase2.narrative_lock — the Phase 2 exit gate artifact.",
+  "type": "object",
+  "required": ["schema_version", "lock_version", "locked_at", "expires_at", "summary"],
+  "properties": {
+    "schema_version": { "const": "NarrativeLockDoc:v1.0.0" },
+    "lock_version": { "type": "string", "description": "Semver of this lock" },
+    "locked_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time", "description": "When this lock auto-expires (default: end of cycle)" },
+    "approved_by": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "name", "approved_at"],
+        "properties": {
+          "role": { "type": "string" },
+          "name": { "type": "string" },
+          "approved_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "summary": { "type": "string", "description": "1-paragraph executive summary of the locked narrative" },
+    "referenced_artifacts": {
+      "type": "object",
+      "description": "Specific artifact_refs and versions this lock binds together",
+      "properties": {
+        "positioning_ref": { "type": "string" },
+        "positioning_version": { "type": "string" },
+        "value_proposition_ref": { "type": "string" },
+        "value_proposition_version": { "type": "string" },
+        "messaging_matrix_ref": { "type": "string" },
+        "messaging_matrix_version": { "type": "string" },
+        "content_pillars_ref": { "type": "string" },
+        "content_pillars_version": { "type": "string" }
+      }
+    },
+    "narrative_arc": {
+      "type": "object",
+      "description": "The story this cycle tells, in 5 acts",
+      "properties": {
+        "context": { "type": "string", "description": "What's happening in the market right now" },
+        "tension": { "type": "string", "description": "The pain audience feels that's getting worse" },
+        "shift": { "type": "string", "description": "What's changing — the inflection point" },
+        "resolution": { "type": "string", "description": "How we resolve it for the audience" },
+        "proof": { "type": "string", "description": "Why the audience can believe us" }
+      }
+    },
+    "must_say": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Phrases / framings every downstream artifact must include in some form"
+    },
+    "must_not_say": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Positioning traps to avoid (in addition to tenant brand_voice.banned_phrases)"
+    },
+    "lock_conditions_to_reopen": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Events that would justify breaking the lock mid-cycle (e.g. 'competitor acquisition by hyperscaler', 'regulatory ruling on X')"
+    }
+  }
+}

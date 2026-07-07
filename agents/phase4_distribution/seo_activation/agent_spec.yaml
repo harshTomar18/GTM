@@ -1,0 +1,82 @@
+slug: phase4.seo_activation
+phase: 4
+stage: 3
+mission: >
+  Operationalize SEO for the cycle's assets — technical setup, on-page optimization,
+  internal linking, schema markup, sitemap updates, AI Overview / featured snippet
+  targeting, redirects.
+
+inputs:
+  - key: phase4.campaign_calendar.output
+    schema_version: "CampaignCalendar:v1"
+    required: true
+    require_approved: true
+  - key: phase3.content_assets.output
+    schema_version: "ContentAssetPack:v1"
+    required: true
+  - key: phase3.website_copy.output
+    schema_version: "WebsiteCopyPack:v1"
+    required: false
+  - key: phase1.keyword_intent.output
+    schema_version: "KeywordCluster:v1"
+    required: true
+  - key: phase2.content_pillars.output
+    schema_version: "ContentPillarSet:v1"
+    required: false  # topic_cluster_map informs internal linking
+
+profile_keys:
+  - profile.languages.supported
+  - profile.company.url
+
+output_schema: "SEOActivationPack:v1.0.0"
+artifact_markdown_template: "agents/phase4_distribution/seo_activation/prompt.md"
+
+approval_policy_ids: []   # No mandatory CMO gate; SEO Lead sample-reviews
+
+kpis:
+  - id: assets_seo_specified
+    name: "Assets with full SEO spec"
+    target: 1.0
+    unit: "ratio"
+  - id: ai_overview_targets
+    name: "Assets flagged for AI Overview targeting"
+    target: 3
+    unit: "count"
+  - id: schema_jsonld_coverage
+    name: "Assets with schema_jsonld"
+    target: 0.80
+    unit: "ratio"
+  - id: internal_link_graph_density
+    name: "Avg internal_links_in per asset"
+    target: 3
+    unit: "count"
+
+sla:
+  max_tokens: 24000
+  max_latency_s: 600
+  max_cost_usd: 2.50
+
+failure_modes:
+  - mode: title_meta_overflow
+    detection: "title_tag > 60 OR meta_description > 160 chars"
+    auto_mitigation: redo
+  - mode: keyword_h1_drift
+    detection: "primary_keyword not in h1"
+    auto_mitigation: redo
+  - mode: orphan_asset
+    detection: "any asset from inputs missing from asset_seo_specs"
+    auto_mitigation: redo
+  - mode: internal_links_sparse
+    detection: "avg internal_links_in < 2 per asset"
+    auto_mitigation: redo
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-sonnet-4-6
+model_review: claude-sonnet-4-6

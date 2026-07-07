@@ -1,0 +1,86 @@
+version: "1.0.0"
+agent: phase5.measurement
+description: >
+  Self-review rubric applied by the model after producing the KPIFramework.
+  The model scores each criterion 0.0–1.0, computes the weighted average,
+  and re-runs the task if the score falls below the pass threshold.
+
+pass_threshold: 0.75
+max_auto_redo: 3
+
+criteria:
+
+  - id: kpi_tree_completeness
+    label: "KPI tree completeness"
+    description: >
+      Output contains a non-null north_star, at least 3 items in
+      input_metrics[], and at least 5 items in leading_indicators[].
+      Each item must include metric_id, name, definition, target,
+      unit, and source_system.
+    weight: 0.30
+    scoring_guide:
+      1.0: "All three levels present and fully populated."
+      0.5: "One level missing or fewer than minimum item counts."
+      0.0: "north_star absent or both input_metrics and leading_indicators empty."
+
+  - id: attribution_clarity
+    label: "Attribution model clarity"
+    description: >
+      The attribution_config.model field is populated with a recognized
+      model name AND a rationale field explains why this model was chosen
+      for the cycle context.
+    weight: 0.25
+    scoring_guide:
+      1.0: "Model named, rationale present, lookback_window_days set."
+      0.5: "Model named but rationale or lookback window absent."
+      0.0: "attribution_model null or unrecognized value."
+
+  - id: channel_coverage
+    label: "Channel coverage"
+    description: >
+      Every channel listed in the upstream CampaignCalendar has at least
+      one corresponding entry in leading_indicators[]. No channel may be
+      left without a KPI.
+    weight: 0.25
+    scoring_guide:
+      1.0: "All channels covered; coverage ratio = 1.0."
+      0.5: "One or two channels missing a KPI."
+      0.0: "More than two channels have no mapped KPI."
+
+  - id: cohort_precision
+    label: "Cohort definition precision"
+    description: >
+      attribution_config.cohort_definition is unambiguous: it specifies
+      a concrete time window (e.g., "within 90 days of opportunity creation"),
+      at least one qualifying touchpoint type, and the opportunity stage
+      at which influence is measured.
+    weight: 0.15
+    scoring_guide:
+      1.0: "Time window + touchpoint type + opportunity stage all present."
+      0.5: "One of the three elements is vague or missing."
+      0.0: "cohort_definition is absent, generic, or self-referential."
+
+  - id: dashboard_actionability
+    label: "Dashboard spec actionability"
+    description: >
+      dashboard_spec includes: the BI tool name, at least one datasource
+      entry per channel with a datasource_id, a refresh_cadence matching
+      the reporting cadence selected in q_reporting_cadence, and at least
+      two named sections (e.g., Executive Summary, Channel Breakdown).
+    weight: 0.05
+    scoring_guide:
+      1.0: "All elements present; datasource_ids cover all channels."
+      0.5: "Datasources listed but IDs missing or only one section defined."
+      0.0: "dashboard_spec absent or tool not specified."
+
+# ---------------------------------------------------------------------------
+# Redo instructions
+# ---------------------------------------------------------------------------
+redo_instructions: >
+  If weighted_score < pass_threshold:
+  1. Log the score and the failing criteria IDs.
+  2. Revisit only the sections of the KPIFramework that failed.
+  3. Do NOT alter passing sections.
+  4. Re-score after revision.
+  5. If max_auto_redo is reached without passing, emit the best attempt
+     and flag status: NEEDS_HUMAN_REVIEW in the output envelope.

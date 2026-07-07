@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/experiment.schema.json",
+  "title": "Experiment",
+  "description": "A/B or multi-arm bandit definition + running state.",
+  "type": "object",
+  "required": ["schema_version", "experiment_id", "artifact_ref", "arms", "success_metric"],
+  "properties": {
+    "schema_version": { "const": "Experiment:v1.0.0" },
+    "experiment_id": { "type": "string" },
+    "artifact_ref": { "type": "string" },
+    "arms": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["arm_id", "label"],
+        "properties": {
+          "arm_id": { "type": "string" },
+          "label": { "type": "string" },
+          "variant_payload": { "type": "object", "additionalProperties": true },
+          "impressions": { "type": "integer", "default": 0 },
+          "conversions": { "type": "integer", "default": 0 }
+        }
+      }
+    },
+    "assignment_strategy": { "enum": ["ab", "multivariate", "bandit_thompson"], "default": "ab" },
+    "sample_size_target": { "type": "integer", "default": 1000 },
+    "success_metric": { "type": "string" },
+    "status": { "enum": ["draft", "running", "concluded", "rolled_out"], "default": "draft" },
+    "winner_arm_id": { "type": ["string", "null"] }
+  }
+}

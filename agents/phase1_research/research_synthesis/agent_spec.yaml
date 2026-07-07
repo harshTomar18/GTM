@@ -1,0 +1,74 @@
+slug: phase1.research_synthesis
+phase: 1
+stage: 5
+mission: >
+  Synthesize all Phase 1 outputs (brief, market research, audience, keywords) into
+  the 7-section Research Dossier. Run the VP-Marketing pressure-test. This is the
+  Phase 1 exit gate artifact — every Phase 2/3/4 agent reads it.
+
+inputs:
+  - key: phase1.brief_intake.output
+    schema_version: "BriefIntake:v1"
+    required: true
+  - key: phase1.market_research.output
+    schema_version: "CompetitorProfile:v1"
+    required: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase1.keyword_intent.output
+    schema_version: "KeywordCluster:v1"
+    required: true
+
+profile_keys:
+  - profile.company.brand_name
+  - profile.industry.primary
+  - profile.icp_archetypes
+  - profile.frameworks
+
+output_schema: "ResearchDossier:v1.0.0"
+artifact_markdown_template: "agents/phase1_research/research_synthesis/prompt.md"
+
+approval_policy_ids:
+  - phase_exit_gate         # CMO + SalesLeader; blocks downstream
+
+kpis:
+  - id: dossier_completeness
+    name: "All 7 sections present"
+    target: 1.0
+    unit: "ratio"
+  - id: pressure_test_issues_raised
+    name: "Issues raised in pressure test"
+    target: 3
+    unit: "count"  # minimum — under-raising is suspicious
+  - id: redo_iterations
+    name: "Redo iterations to approval"
+    target: 1
+    unit: "count"  # lower is better; signal of upstream quality
+
+sla:
+  max_tokens: 32000
+  max_latency_s: 900
+  max_cost_usd: 4.00
+
+failure_modes:
+  - mode: section_missing
+    detection: "any of 7 dossier sections is empty or skipped"
+    auto_mitigation: redo_strict
+  - mode: pressure_test_not_run
+    detection: "pressure_test_passed: false AND no documented issues raised"
+    auto_mitigation: redo
+  - mode: strategic_recs_generic
+    detection: "strategic_recommendations.body_markdown reads like a template (no specific products/competitors/personas named)"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-opus-4-7   # pressure-test deserves the strong model

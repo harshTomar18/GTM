@@ -1,0 +1,167 @@
+# Prompt registry — pins each agent to a specific prompt version.
+#
+# gtm-agent-run validates this before every run (Workstream D enforcement):
+#   1. Agent slug must appear here.
+#   2. @version suffix must match the <!-- prompt_version: --> header inside prompt.md.
+#   3. model field must be a fully-pinned model ID (no aliases).
+#
+# Updating a prompt requires:
+#   1. Bump the prompt_version header inside prompt.md.
+#   2. Update this registry entry (@version + changelog_ref).
+#   3. Run: promptfoo eval --config evals/promptfoo.yaml --agent <slug>
+#   4. PR must include eval delta report — regression > 1σ blocks merge.
+#
+# See docs/PROMPT_CI_REFERENCE.md for full workflow.
+
+version: 1
+
+shared_fragments:
+  profile_header: "prompts/_shared/profile_header.md@1.0.0"
+  cycle_header: "prompts/_shared/cycle_header.md@1.0.0"
+
+agents:
+
+  # ── Phase 1: Research & Market Intelligence ──────────────────────────────
+
+  phase1.brief_intake:
+    prompt: "agents/phase1_research/brief_intake/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#brief_intake-1.0.0"
+
+  phase1.market_research:
+    prompt: "agents/phase1_research/market_research/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#market_research-1.0.0"
+
+  phase1.audience_intelligence:
+    prompt: "agents/phase1_research/audience_intelligence/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#audience_intelligence-1.0.0"
+
+  phase1.keyword_intent:
+    prompt: "agents/phase1_research/keyword_intent/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#keyword_intent-1.0.0"
+
+  phase1.research_synthesis:
+    prompt: "agents/phase1_research/research_synthesis/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#research_synthesis-1.0.0"
+
+  # ── Phase 2: Narrative & Messaging Architecture ──────────────────────────
+
+  phase2.positioning:
+    prompt: "agents/phase2_narrative/positioning/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#positioning-1.0.0"
+
+  phase2.value_proposition:
+    prompt: "agents/phase2_narrative/value_proposition/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#value_proposition-1.0.0"
+
+  phase2.messaging_matrix:
+    prompt: "agents/phase2_narrative/messaging_matrix/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#messaging_matrix-1.0.0"
+
+  phase2.content_pillars:
+    prompt: "agents/phase2_narrative/content_pillars/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#content_pillars-1.0.0"
+
+  phase2.narrative_lock:
+    prompt: "agents/phase2_narrative/narrative_lock/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#narrative_lock-1.0.0"
+
+  # ── Phase 3: Asset Creation ───────────────────────────────────────────────
+
+  phase3.website_copy:
+    prompt: "agents/phase3_assets/website_copy/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#website_copy-1.0.0"
+
+  phase3.content_assets:
+    prompt: "agents/phase3_assets/content_assets/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#content_assets-1.0.0"
+
+  phase3.email_sequences:
+    prompt: "agents/phase3_assets/email_sequences/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#email_sequences-1.0.0"
+
+  phase3.social_content:
+    prompt: "agents/phase3_assets/social_content/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#social_content-1.0.0"
+
+  phase3.paid_ad_creative:
+    prompt: "agents/phase3_assets/paid_ad_creative/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#paid_ad_creative-1.0.0"
+
+  phase3.sales_enablement:
+    prompt: "agents/phase3_assets/sales_enablement/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#sales_enablement-1.0.0"
+
+  # ── Phase 4: Distribution & Activation ───────────────────────────────────
+
+  phase4.channel_strategy:
+    prompt: "agents/phase4_distribution/channel_strategy/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#channel_strategy-1.0.0"
+
+  phase4.campaign_calendar:
+    prompt: "agents/phase4_distribution/campaign_calendar/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#campaign_calendar-1.0.0"
+
+  phase4.seo_activation:
+    prompt: "agents/phase4_distribution/seo_activation/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#seo_activation-1.0.0"
+
+  phase4.paid_media:
+    prompt: "agents/phase4_distribution/paid_media/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#paid_media-1.0.0"
+
+  phase4.outbound_partner:
+    prompt: "agents/phase4_distribution/outbound_partner/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#outbound_partner-1.0.0"
+
+  phase4.community_activation:
+    prompt: "agents/phase4_distribution/community_activation/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#community_activation-1.0.0"
+
+  # ── Phase 5: Measurement & Iteration ─────────────────────────────────────
+
+  phase5.measurement:
+    prompt: "agents/phase5_measurement/measurement/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#measurement-1.0.0"
+
+  phase5.experiment_review:
+    prompt: "agents/phase5_measurement/experiment_review/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#experiment_review-1.0.0"
+
+  phase5.executive_brief:
+    prompt: "agents/phase5_measurement/executive_brief/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#executive_brief-1.0.0"
+
+  phase5.competitive_pulse:
+    prompt: "agents/phase5_measurement/competitive_pulse/prompt.md@1.0.0"
+    model: "claude-sonnet-4-6"   # cost-sensitive: high-frequency always-on agent; Opus not used
+    changelog_ref: "CHANGELOG#competitive_pulse-1.0.0"
+
+  phase5.iteration_planner:
+    prompt: "agents/phase5_measurement/iteration_planner/prompt.md@1.0.0"
+    model: "claude-opus-4-7"
+    changelog_ref: "CHANGELOG#iteration_planner-1.0.0"

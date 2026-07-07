@@ -1,0 +1,49 @@
+agent_slug: phase3.paid_ad_creative
+
+criteria:
+  - id: platform_limits_compliance
+    weight: 0.20
+    hard_fail: true
+    description: "All headlines/primary_text within platform character limits. Single overflow = redo."
+
+  - id: variants_per_ad_group
+    weight: 0.15
+    hard_fail: true
+    description: "Every ad group has ≥2 variants (3 default). Single variant = redo."
+
+  - id: variants_meaningfully_distinct
+    weight: 0.10
+    description: "Variants within an ad group vary on a real dimension (pain/outcome/social-proof/contrarian), not rewording."
+
+  - id: lp_match
+    weight: 0.15
+    description: "If website_copy provided: every ad's landing_url maps to a real page; headline promise aligns with hero. Mismatches = fail."
+
+  - id: compliance_disclaimers
+    weight: 0.10
+    hard_fail: true
+    description: "If q_compliance_disclaimers_required set, every applicable variant includes the disclaimer."
+
+  - id: utm_present
+    weight: 0.05
+    description: "Every campaign has utm_template; ad-group-level UTMs propagate variant + ad_group identifiers."
+
+  - id: image_prompts_specific
+    weight: 0.05
+    description: "Image prompts describe persona + scene + brand cue. Stock-photo language = fail."
+
+  - id: must_not_say_clean
+    weight: 0.10
+    hard_fail: true
+    description: "Zero narrative_lock.must_not_say phrases."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag|game[-\\s]?chang)"
+  - "\\b(get a demo today|sign up now|learn more)!"  # generic CTAs
+
+auto_redo_threshold: 0.78

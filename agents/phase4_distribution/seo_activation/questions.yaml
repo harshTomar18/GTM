@@ -1,0 +1,35 @@
+agent_slug: phase4.seo_activation
+
+questions:
+  - id: q_domain_base_url
+    prompt: "Base URL for the site (e.g., https://acme.com)? Used to construct full canonical URLs."
+    type: text
+    required_for: plan
+    reusable_key: profile.company.url
+
+  - id: q_indexable_default
+    prompt: "Default indexability for new assets — 'indexable' or 'noindex_first_then_promote'? (Some teams stage content as noindex, then flip after editorial review.)"
+    type: enum
+    enum_options: ["indexable", "noindex_first_then_promote"]
+    required_for: plan
+    default: "indexable"
+
+  - id: q_aeo_priority
+    prompt: "AI Overview / Perplexity / ChatGPT citation priority? (aggressive | balanced | skip). Drives FAQ density + structured answer formatting."
+    type: enum
+    enum_options: ["aggressive", "balanced", "skip"]
+    required_for: plan
+    default: "balanced"
+    reusable_key: profile.seo.aeo_priority
+
+  - id: q_redirect_pairs
+    prompt: "Old-URL → new-URL redirects to set up? (Format: 'old/path → new/path' per line. Or 'none'.)"
+    type: long_text
+    required_for: gather
+
+  - id: q_hreflang_strategy
+    prompt: "If multi-locale: hreflang strategy? ('per_locale_subdomain' | 'per_locale_subfolder' | 'none — primary locale only')"
+    type: enum
+    enum_options: ["per_locale_subdomain", "per_locale_subfolder", "none"]
+    required_for: plan
+    default: "none"

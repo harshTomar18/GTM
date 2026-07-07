@@ -1,0 +1,36 @@
+agent_slug: phase4.community_activation
+
+questions:
+  - id: q_owned_community_status
+    prompt: "Owned community status? ('none' / 'considering' / 'building' / 'active'). If active, name it + size."
+    type: enum
+    enum_options: ["none", "considering", "building", "active"]
+    required_for: plan
+    default: "none"
+    reusable_key: profile.community.owned_status
+
+  - id: q_approved_creators
+    prompt: "Approved influencer / creator partners for this cycle? (Name + platform + relationship type. e.g., 'Jane Doe — LinkedIn — paid; Y Combinator's Garry Tan — Twitter — earned mention only')"
+    type: long_text
+    required_for: plan
+
+  - id: q_subreddit_forum_account_history
+    prompt: "Do we have an existing Reddit / forum account history? ('account in good standing' / 'new account — needs warming' / 'banned in X'). Affects whether we can post or just participate."
+    type: long_text
+    required_for: gather
+
+  - id: q_ama_schedule
+    prompt: "AMAs / podcast guesting planned this cycle? (Format: 'Host: <name>; Date: YYYY-MM-DD; Platform: <X>'. Or 'none'.)"
+    type: long_text
+    required_for: plan
+
+  - id: q_employee_advocacy_roster
+    prompt: "Employees actively advocating this cycle (posting, engaging in communities)? (Names + roles. Empty = brand-account-only.)"
+    type: long_text
+    required_for: plan
+    reusable_key: cycle.social.executive_advocates
+
+  - id: q_disclosure_jurisdiction
+    prompt: "Disclosure requirements per jurisdiction? (FTC for US paid creators, ASA for UK, ACMA for AU. Auto-applied per geo, but flag any specific reviewer requirements.)"
+    type: long_text
+    required_for: gather

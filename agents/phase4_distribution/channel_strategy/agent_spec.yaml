@@ -1,0 +1,76 @@
+slug: phase4.channel_strategy
+phase: 4
+stage: 1
+mission: >
+  Decide which channels deserve investment this cycle, with budget allocation,
+  audience pairing, primary KPI per channel, and test hypotheses — grounded in
+  motion + ICP + prior-cycle attribution.
+
+inputs:
+  - key: phase2.narrative_lock.output
+    schema_version: "NarrativeLockDoc:v1"
+    required: true
+    require_approved: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+  - key: phase1.research_synthesis.output
+    schema_version: "ResearchDossier:v1"
+    required: true
+
+profile_keys:
+  - profile.lob
+  - profile.tech_stack
+  - profile.geography
+
+output_schema: "ChannelPlan:v1.0.0"
+artifact_markdown_template: "agents/phase4_distribution/channel_strategy/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - budget_threshold   # often triggers CFO
+
+kpis:
+  - id: channels_recommended
+    name: "Channels recommended"
+    target: 4
+    unit: "count"   # 3-5 acceptable
+  - id: budget_pct_sums_to_one
+    name: "Allocations sum to 1.0"
+    target: 1.0
+    unit: "ratio"
+  - id: every_persona_has_channel
+    name: "Every persona served by ≥1 channel"
+    target: 1.0
+    unit: "ratio"
+  - id: test_hypothesis_per_channel
+    name: "Channels with explicit test_hypothesis"
+    target: 0.80
+    unit: "ratio"
+
+sla:
+  max_tokens: 12000
+  max_latency_s: 300
+  max_cost_usd: 1.50
+
+failure_modes:
+  - mode: budget_doesnt_sum
+    detection: "sum(allocations.budget_pct) outside 0.98-1.02 range"
+    auto_mitigation: redo
+  - mode: orphan_persona
+    detection: "any persona not served by any channel"
+    auto_mitigation: redo
+  - mode: motion_mismatch
+    detection: "primary motion is PLG but plan recommends 60%+ outbound spend"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-opus-4-7
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

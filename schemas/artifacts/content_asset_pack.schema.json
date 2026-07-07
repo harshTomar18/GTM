@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/content_asset_pack.schema.json",
+  "title": "ContentAssetPack",
+  "description": "Long-form articles, case studies, one-pagers. Output of phase3.content_assets.",
+  "type": "object",
+  "required": ["schema_version", "assets"],
+  "properties": {
+    "schema_version": { "const": "ContentAssetPack:v1.0.0" },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "title", "asset_type", "pillar_id", "draft_markdown", "primary_persona_id"],
+        "properties": {
+          "asset_id": { "type": "string" },
+          "title": { "type": "string" },
+          "asset_type": { "enum": ["flagship_pillar", "blog", "case_study", "one_pager", "whitepaper", "datasheet", "ebook", "report"] },
+          "pillar_id": { "type": "string" },
+          "primary_persona_id": { "type": "string" },
+          "funnel_stage": { "enum": ["TOFU", "MOFU", "BOFU", "RETENTION", "EXPANSION"] },
+          "primary_keyword": { "type": ["string", "null"] },
+          "secondary_keywords": { "type": "array", "items": { "type": "string" } },
+          "word_count": { "type": "integer" },
+          "draft_markdown": { "type": "string" },
+          "outline_summary": { "type": "string" },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["claim", "source"],
+              "properties": {
+                "claim": { "type": "string" },
+                "source": { "type": "string" },
+                "accessed_on": { "type": ["string", "null"], "format": "date" }
+              }
+            }
+          },
+          "internal_links": { "type": "array", "items": { "type": "string" } },
+          "cta": { "type": "string" },
+          "gated": { "type": "boolean", "default": false },
+          "distribution_plan_summary": { "type": "string" }
+        }
+      }
+    }
+  }
+}

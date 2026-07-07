@@ -1,0 +1,78 @@
+slug: phase4.paid_media
+phase: 4
+stage: 4
+mission: >
+  Translate ChannelPlan + PaidAdCreativePack into platform-ready paid campaign
+  structures with budgets, bid strategies, audience layering, UTM tracking, and
+  an experiment matrix.
+
+inputs:
+  - key: phase4.channel_strategy.output
+    schema_version: "ChannelPlan:v1"
+    required: true
+    require_approved: true
+  - key: phase3.paid_ad_creative.output
+    schema_version: "PaidAdCreativePack:v1"
+    required: true
+  - key: phase4.campaign_calendar.output
+    schema_version: "CampaignCalendar:v1"
+    required: false   # provides launch dates
+
+profile_keys:
+  - profile.tech_stack
+  - profile.currency.default
+
+output_schema: "PaidMediaSetupPack:v1.0.0"
+artifact_markdown_template: "agents/phase4_distribution/paid_media/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - budget_threshold
+
+kpis:
+  - id: platforms_setup
+    name: "Platforms with full setup"
+    target: 1.0
+    unit: "ratio"   # every channel_strategy paid channel gets a setup
+  - id: utm_template_present
+    name: "Campaigns with utm_template"
+    target: 1.0
+    unit: "ratio"
+  - id: experiment_matrix_present
+    name: "Campaigns with experiment_matrix"
+    target: 0.50
+    unit: "ratio"  # half of campaigns should be in an experiment
+  - id: lp_match_validated
+    name: "Campaigns with lp_match_validated: true"
+    target: 1.0
+    unit: "ratio"
+
+sla:
+  max_tokens: 24000
+  max_latency_s: 600
+  max_cost_usd: 3.00
+
+failure_modes:
+  - mode: budget_drift
+    detection: "sum(campaigns.budget_total_usd per platform) doesn't match channel_strategy allocation ±5%"
+    auto_mitigation: redo
+  - mode: utm_missing
+    detection: "any campaign without utm_template"
+    auto_mitigation: redo
+  - mode: lp_mismatch
+    detection: "ad's creative references a landing_url not in website_copy_pack"
+    auto_mitigation: redo_strict
+  - mode: bid_strategy_objective_mismatch
+    detection: "objective=lead_gen but bid_strategy=max_clicks (mismatch)"
+    auto_mitigation: redo
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

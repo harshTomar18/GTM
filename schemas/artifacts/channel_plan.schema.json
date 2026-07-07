@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/channel_plan.schema.json",
+  "title": "ChannelPlan",
+  "description": "Channel × audience × budget × KPI. Output of phase4.channel_strategy.",
+  "type": "object",
+  "required": ["schema_version", "cycle_id", "total_budget_usd", "allocations"],
+  "properties": {
+    "schema_version": { "const": "ChannelPlan:v1.0.0" },
+    "cycle_id": { "type": "string" },
+    "total_budget_usd": { "type": "number", "minimum": 0 },
+    "allocations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["channel", "audience", "budget_pct", "primary_kpi"],
+        "properties": {
+          "channel": { "type": "string" },
+          "audience": { "type": "string" },
+          "budget_pct": { "type": "number", "minimum": 0, "maximum": 1 },
+          "budget_usd": { "type": "number", "minimum": 0 },
+          "primary_kpi": { "type": "string" },
+          "test_hypothesis": { "type": ["string", "null"] },
+          "time_horizon_days": { "type": "integer", "default": 90 }
+        }
+      }
+    }
+  }
+}

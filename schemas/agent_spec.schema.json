@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/agent_spec.schema.json",
+  "title": "AgentSpec",
+  "description": "Per-agent declarative metadata. Lives at agents/<phase>/<slug>/agent_spec.yaml.",
+  "type": "object",
+  "required": ["slug", "phase", "stage", "mission", "output_schema"],
+  "properties": {
+    "slug": { "type": "string", "pattern": "^phase[1-5]\\.[a-z_]+$" },
+    "phase": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "stage": { "type": "integer", "minimum": 1, "maximum": 10 },
+    "mission": { "type": "string" },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "schema_version"],
+        "properties": {
+          "key": { "type": "string", "description": "ContextBus key" },
+          "schema_version": { "type": "string", "description": "Required major version" },
+          "required": { "type": "boolean", "default": true }
+        }
+      }
+    },
+    "profile_keys": {
+      "type": "array",
+      "items": { "type": "string", "description": "TenantProfile dotted paths the agent reads" }
+    },
+    "output_schema": { "type": "string", "description": "Schema slug, e.g. 'BriefIntake:v1.0.0'" },
+    "artifact_markdown_template": { "type": ["string", "null"], "description": "Optional path to a Jinja-style template" },
+    "approval_policy_ids": { "type": "array", "items": { "type": "string" } },
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "target": { "type": ["number", "null"] },
+          "unit": { "type": "string", "default": "" }
+        }
+      }
+    },
+    "sla": {
+      "type": "object",
+      "properties": {
+        "max_tokens": { "type": "integer", "default": 16384 },
+        "max_latency_s": { "type": "integer", "default": 600 },
+        "max_cost_usd": { "type": "number", "default": 5 }
+      }
+    },
+    "failure_modes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["mode", "detection"],
+        "properties": {
+          "mode": { "type": "string" },
+          "detection": { "type": "string" },
+          "auto_mitigation": { "enum": ["redo", "redo_strict", "escalate_to_human", "skip", "fail_hard"], "default": "redo" }
+        }
+      }
+    },
+    "cache_strategy": {
+      "type": "object",
+      "properties": {
+        "enable_block_1_profile": { "type": "boolean", "default": true },
+        "enable_block_2_cycle": { "type": "boolean", "default": true },
+        "enable_block_3_agent": { "type": "boolean", "default": false }
+      }
+    },
+    "model_plan": { "type": "string", "default": "claude-sonnet-4-6" },
+    "model_gather": { "type": "string", "default": "claude-haiku-4-5-20251001" },
+    "model_synthesize": { "type": "string", "default": "claude-sonnet-4-6" },
+    "model_write": { "type": "string", "default": "claude-opus-4-7" },
+    "model_review": { "type": "string", "default": "claude-sonnet-4-6" },
+    "entrypoint": { "type": "boolean", "default": false, "description": "True if this agent may run without approved upstream handoffs" },
+    "reactive_subscribes": { "type": "array", "items": { "type": "string" }, "description": "Signal Bus patterns this agent subscribes to" }
+  }
+}

@@ -1,0 +1,58 @@
+agent_slug: phase4.campaign_calendar
+
+criteria:
+  - id: cycle_window_respected
+    weight: 0.10
+    hard_fail: true
+    description: "All scheduled_date values within [cycle_start_date, cycle_end_date]."
+
+  - id: blackouts_respected
+    weight: 0.15
+    hard_fail: true
+    description: "Zero items scheduled on operating_calendar.blackout_dates OR q_pto_blackouts_cycle_specific."
+
+  - id: dependency_ordering
+    weight: 0.15
+    hard_fail: true
+    description: "For every item A with depends_on=[B], A.scheduled_date ≥ B.scheduled_date + 1 day."
+
+  - id: owner_assigned_specific
+    weight: 0.10
+    hard_fail: true
+    description: "Every item has an owner from q_owners_roster (not 'TBD' / 'Marketing')."
+
+  - id: frequency_caps_respected
+    weight: 0.10
+    description: "No audience receives > profile.email.frequency_cap_per_week emails in any rolling 7-day window."
+
+  - id: tentpole_clustering
+    weight: 0.05
+    description: "Items associated with tentpole moments cluster ±7 days around the tentpole date."
+
+  - id: risk_callouts_present
+    weight: 0.10
+    description: "≥3 specific risk_callouts identifying real coverage gaps, approval bottlenecks, fatigue weeks, or dependency risks."
+
+  - id: asset_refs_valid
+    weight: 0.10
+    hard_fail: true
+    description: "Every asset_ref resolves to a real asset/page/sequence/campaign in the input inventory."
+
+  - id: channel_alignment
+    weight: 0.05
+    description: "Items' channel field matches a channel declared in channel_plan.allocations."
+
+  - id: owner_load_balanced
+    weight: 0.05
+    description: "No owner has >3 items launching the same day."
+
+  - id: brand_voice_compliance
+    weight: 0.05
+    hard_fail: true
+    description: "Zero banned phrases (in risk_callouts and item descriptions)."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+  - "\\b(TBD|TBA|to be determined|to be assigned)\\b"
+
+auto_redo_threshold: 0.80

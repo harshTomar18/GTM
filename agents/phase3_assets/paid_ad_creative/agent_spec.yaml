@@ -1,0 +1,88 @@
+slug: phase3.paid_ad_creative
+phase: 3
+stage: 5
+mission: >
+  Produce ad-unit copy + creative direction across paid channels (Google Search,
+  LinkedIn, Meta, X, programmatic, TikTok, Reddit) with variants for testing and
+  landing-page alignment.
+
+inputs:
+  - key: phase2.narrative_lock.output
+    schema_version: "NarrativeLockDoc:v1"
+    required: true
+    require_approved: true
+  - key: phase2.positioning.output
+    schema_version: "PositioningStatement:v1"
+    required: true
+  - key: phase2.value_proposition.output
+    schema_version: "ValuePropositionSet:v1"
+    required: true
+  - key: phase1.keyword_intent.output
+    schema_version: "KeywordCluster:v1"
+    required: true
+  - key: phase3.website_copy.output
+    schema_version: "WebsiteCopyPack:v1"
+    required: false   # LP match validation when available
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+
+profile_keys:
+  - profile.brand_voice
+  - profile.regulatory_constraints
+
+output_schema: "PaidAdCreativePack:v1.0.0"
+artifact_markdown_template: "agents/phase3_assets/paid_ad_creative/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+  - legal_regulated
+  - budget_threshold
+
+kpis:
+  - id: campaigns_produced
+    name: "Campaigns produced"
+    target: 3
+    unit: "count"
+  - id: variants_per_ad_group
+    name: "Variants per ad group"
+    target: 3
+    unit: "count"
+  - id: lp_match_score
+    name: "LP promise match score (when website_copy provided)"
+    target: 0.85
+    unit: "ratio"
+  - id: character_limit_compliance
+    name: "Headlines within platform char limits"
+    target: 1.0
+    unit: "ratio"
+
+sla:
+  max_tokens: 32000
+  max_latency_s: 600
+  max_cost_usd: 3.50
+
+failure_modes:
+  - mode: variant_count_insufficient
+    detection: "any ad_group has < 2 variants"
+    auto_mitigation: redo
+  - mode: char_limit_overflow
+    detection: "Google headline > 30; LinkedIn headline > 70; Meta primary > 125"
+    auto_mitigation: redo
+  - mode: lp_promise_mismatch
+    detection: "ad headline promises X; landing_url's hero promises Y"
+    auto_mitigation: redo_strict
+  - mode: compliance_missing
+    detection: "regulated tenant + ad copy lacks required disclaimers"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

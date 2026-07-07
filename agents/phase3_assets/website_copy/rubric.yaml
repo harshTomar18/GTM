@@ -1,0 +1,53 @@
+agent_slug: phase3.website_copy
+
+criteria:
+  - id: must_say_coverage
+    weight: 0.15
+    description: "Each page references ≥3 narrative_lock.must_say phrases naturally woven."
+
+  - id: must_not_say_violation
+    weight: 0.15
+    hard_fail: true
+    description: "Zero occurrences of any narrative_lock.must_not_say phrase."
+
+  - id: meta_within_limits
+    weight: 0.10
+    hard_fail: true
+    description: "Every page meta has title_tag ≤60 chars AND meta_description ≤160 chars."
+
+  - id: primary_keyword_in_h1
+    weight: 0.10
+    description: "Every page with primary_keyword has that exact phrase in hero.headline."
+
+  - id: faq_aeo_format
+    weight: 0.10
+    description: "FAQ answers are 40-60 words each. Schema-ready Q&A pairs."
+
+  - id: persona_benefits_distinct
+    weight: 0.10
+    description: "benefits_by_persona section has a distinct sentence per declared persona — not copy-pasted."
+
+  - id: proof_legal_clearance
+    weight: 0.10
+    hard_fail: true
+    description: "No customer named in proof sections that isn't in legally_cleared_logos."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases (universal + tenant-specific)."
+
+  - id: reading_level
+    weight: 0.05
+    description: "Average sentence length and complexity matches profile.brand_voice.reading_level."
+
+  - id: cta_present
+    weight: 0.05
+    description: "Every page has at least one CTA section with a clear cta_label + cta_target."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|game[-\\s]?chang|leverag|streamline|paradigm|holistic|robust|seamless)\\b"
+  - "\\bnext[-\\s]?gen(eration)?\\b"
+  - "\\bAI[-\\s]?powered\\b(?!.*demonstrat|.*shown|.*specific)"
+
+auto_redo_threshold: 0.78

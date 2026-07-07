@@ -1,0 +1,74 @@
+slug: phase2.messaging_matrix
+phase: 2
+stage: 3
+mission: >
+  Build the persona × channel × funnel-stage messaging grid + taglines +
+  differentiators. This is the operational reference every asset agent will use.
+
+inputs:
+  - key: phase2.value_proposition.output
+    schema_version: "ValuePropositionSet:v1"
+    required: true
+    require_approved: true
+  - key: phase2.positioning.output
+    schema_version: "PositioningStatement:v1"
+    required: true
+    require_approved: true
+  - key: phase1.audience_intelligence.output
+    schema_version: "PersonaSpec:v1"
+    required: true
+
+profile_keys:
+  - profile.brand_voice
+  - profile.tech_stack
+
+output_schema: "MessagingMatrix:v1.0.0"
+artifact_markdown_template: "agents/phase2_narrative/messaging_matrix/prompt.md"
+
+approval_policy_ids:
+  - brand_impacting
+
+kpis:
+  - id: matrix_cell_coverage
+    name: "Persona × channel × funnel-stage cells filled"
+    target: 0.80
+    unit: "ratio"
+  - id: brand_voice_fidelity
+    name: "Brand-voice validator score"
+    target: 0.85
+    unit: "ratio"
+  - id: taglines_produced
+    name: "Tagline options"
+    target: 5
+    unit: "count"
+  - id: differentiators_named
+    name: "Key differentiators stated"
+    target: 5
+    unit: "count"
+
+sla:
+  max_tokens: 16000
+  max_latency_s: 400
+  max_cost_usd: 2.00
+
+failure_modes:
+  - mode: matrix_sparse
+    detection: "cell coverage < 0.50"
+    auto_mitigation: redo
+  - mode: tagline_count_low
+    detection: "fewer than 3 tagline options"
+    auto_mitigation: redo
+  - mode: brand_voice_drift
+    detection: "brand_voice_fidelity < 0.70"
+    auto_mitigation: redo_strict
+
+cache_strategy:
+  enable_block_1_profile: true
+  enable_block_2_cycle: true
+  enable_block_3_agent: false
+
+model_plan: claude-sonnet-4-6
+model_gather: claude-haiku-4-5-20251001
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/question_set.schema.json",
+  "title": "QuestionSet",
+  "description": "Loaded from agents/<phase>/<agent>/questions.yaml. Drives the MVC gate.",
+  "type": "object",
+  "required": ["agent_slug", "questions"],
+  "properties": {
+    "agent_slug": { "type": "string" },
+    "questions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Question" }
+    }
+  },
+  "$defs": {
+    "Question": {
+      "type": "object",
+      "required": ["id", "prompt"],
+      "properties": {
+        "id": { "type": "string", "description": "Stable, unique within agent" },
+        "prompt": { "type": "string", "description": "Shown to user" },
+        "type": { "enum": ["text", "long_text", "enum", "number", "date", "json", "boolean"], "default": "text" },
+        "required_for": { "enum": ["plan", "gather", "synthesize", "write", "optional"], "default": "plan" },
+        "validation_regex": { "type": ["string", "null"] },
+        "enum_options": { "type": ["array", "null"], "items": { "type": "string" } },
+        "depends_on": { "type": "array", "items": { "type": "string" } },
+        "reusable_key": {
+          "type": ["string", "null"],
+          "description": "Canonical T2 promotion key. Prior answers under this key reused silently across agents."
+        },
+        "default": { "type": ["string", "null"] },
+        "help_text": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

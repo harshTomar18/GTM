@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/paid_media_setup_pack.schema.json",
+  "title": "PaidMediaSetupPack",
+  "description": "Platform-ready paid campaign setup with budgets, bids, audiences, tracking, experiments. Output of phase4.paid_media.",
+  "type": "object",
+  "required": ["schema_version", "platform_setups"],
+  "properties": {
+    "schema_version": { "const": "PaidMediaSetupPack:v1.0.0" },
+    "platform_setups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["platform", "campaigns"],
+        "properties": {
+          "platform": { "enum": ["google_search", "google_display", "google_video", "linkedin_ads", "meta_ads", "x_ads", "programmatic_dsp", "tiktok_ads", "reddit_ads"] },
+          "campaigns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["campaign_id", "campaign_name", "budget_daily_usd", "bid_strategy", "ad_groups"],
+              "properties": {
+                "campaign_id": { "type": "string" },
+                "campaign_name": { "type": "string" },
+                "objective": { "type": "string" },
+                "budget_daily_usd": { "type": "number" },
+                "budget_total_usd": { "type": "number" },
+                "bid_strategy": { "enum": ["max_conversions", "target_cpa", "target_roas", "manual_cpc", "manual_cpm", "max_clicks", "target_impression_share"] },
+                "ad_groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["ad_group_id", "audience", "creative_refs"],
+                    "properties": {
+                      "ad_group_id": { "type": "string" },
+                      "audience": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "source_layer": { "enum": ["first_party_crm", "first_party_lookalike", "third_party_intent", "demographic", "interest", "retargeting"] },
+                          "definition": { "type": "string" }
+                        }
+                      },
+                      "creative_refs": { "type": "array", "items": { "type": "string" }, "description": "Refs to PaidAdCreativePack variants" },
+                      "match_type": { "type": ["string", "null"], "description": "Search ads only — exact/phrase/broad" },
+                      "targeting_geos": { "type": "array", "items": { "type": "string" } }
+                    }
+                  }
+                },
+                "tracking": {
+                  "type": "object",
+                  "properties": {
+                    "utm_template": { "type": "string" },
+                    "conversion_action_name": { "type": "string" },
+                    "lp_match_validated": { "type": "boolean", "default": false }
+                  }
+                },
+                "experiment_matrix": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "experiment_id": { "type": "string" },
+                      "dimension": { "enum": ["creative", "audience", "landing_page", "bid_strategy", "combined"] },
+                      "arms": { "type": "array", "items": { "type": "string" } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "kpi_benchmarks": {
+      "type": "object",
+      "properties": {
+        "target_cpl_usd": { "type": "number" },
+        "target_cac_usd": { "type": "number" },
+        "target_roas": { "type": "number" },
+        "target_quality_score_min": { "type": "integer" }
+      }
+    }
+  }
+}

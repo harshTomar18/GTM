@@ -1,0 +1,44 @@
+agent_slug: phase4.channel_strategy
+
+criteria:
+  - id: channel_count
+    weight: 0.10
+    hard_fail: true
+    description: "3-5 channels. Outside range = redo."
+
+  - id: budget_sums_to_one
+    weight: 0.20
+    hard_fail: true
+    description: "sum(allocations.budget_pct) is 0.98-1.02. Sums outside = redo."
+
+  - id: persona_coverage
+    weight: 0.15
+    hard_fail: true
+    description: "Every persona in audience_intelligence served by ≥1 channel's audience field."
+
+  - id: motion_alignment
+    weight: 0.15
+    description: "Channel mix reasonable for primary motion. PLG with 60% sdr_outbound = fail. ABM with no sdr_outbound = fail."
+
+  - id: time_horizon_realism
+    weight: 0.10
+    description: "time_horizon_days realistic per channel. SEO with 30d = fail. Branded search at 365d = fail."
+
+  - id: test_hypothesis_specificity
+    weight: 0.10
+    description: "≥80% of channels have specific test_hypothesis (named metric + threshold), not 'test if X works'."
+
+  - id: strategic_mandates_honored
+    weight: 0.10
+    description: "Channels named in q_strategic_channel_mandates appear with ≥10% spend; off-limits channels absent."
+
+  - id: brand_voice_compliance
+    weight: 0.10
+    hard_fail: true
+    description: "Zero banned phrases."
+
+banned_patterns:
+  - "\\b(synergize|world[-\\s]?class|cutting[-\\s]?edge|leverag)"
+  - "\\b(other|misc|miscellaneous|test budget)\\b"  # bucket-style allocations
+
+auto_redo_threshold: 0.78

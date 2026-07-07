@@ -1,0 +1,121 @@
+# Cycle definition — the 27-stage DAG.
+#
+# Phases run sequentially with exit gates between them. Within a phase, agents
+# run in parallel where `depends_on` allows.
+#
+# The cycle_length (monthly / quarterly / etc.) is read from the tenant profile,
+# not declared here — the same DAG works for any cadence.
+
+version: 1
+default_cycle_length: monthly
+
+phases:
+  # ============================================================
+  - id: phase1_research
+    label: "Phase 1 — Research & Market Intelligence"
+    exit_gate: phase_exit_gate
+    agents:
+      - slug: phase1.brief_intake
+        parallel_group: A
+      - slug: phase1.market_research
+        depends_on: [phase1.brief_intake]
+        parallel_group: B
+      - slug: phase1.audience_intelligence
+        depends_on: [phase1.brief_intake]
+        parallel_group: B
+      - slug: phase1.keyword_intent
+        depends_on: [phase1.brief_intake]
+        parallel_group: B
+      - slug: phase1.research_synthesis
+        depends_on:
+          - phase1.market_research
+          - phase1.audience_intelligence
+          - phase1.keyword_intent
+
+  # ============================================================
+  - id: phase2_narrative
+    label: "Phase 2 — Narrative & Messaging Architecture"
+    exit_gate: phase_exit_gate
+    agents:
+      - slug: phase2.positioning
+        depends_on: [phase1.research_synthesis]
+      - slug: phase2.value_proposition
+        depends_on: [phase2.positioning]
+      - slug: phase2.messaging_matrix
+        depends_on: [phase2.value_proposition]
+      - slug: phase2.content_pillars
+        depends_on: [phase2.messaging_matrix]
+      - slug: phase2.narrative_lock
+        depends_on: [phase2.content_pillars]
+
+  # ============================================================
+  - id: phase3_assets
+    label: "Phase 3 — Asset Creation"
+    agents:
+      - slug: phase3.website_copy
+        depends_on: [phase2.narrative_lock]
+        parallel_group: assets
+      - slug: phase3.content_assets
+        depends_on: [phase2.narrative_lock]
+        parallel_group: assets
+      - slug: phase3.email_sequences
+        depends_on: [phase2.narrative_lock]
+        parallel_group: assets
+      - slug: phase3.social_content
+        depends_on: [phase2.narrative_lock]
+        parallel_group: assets
+      - slug: phase3.paid_ad_creative
+        depends_on: [phase2.narrative_lock]
+        parallel_group: assets
+      - slug: phase3.sales_enablement
+        depends_on: [phase2.narrative_lock]
+        parallel_group: assets
+
+  # ============================================================
+  - id: phase4_distribution
+    label: "Phase 4 — Distribution & Activation"
+    agents:
+      - slug: phase4.channel_strategy
+        depends_on: [phase2.narrative_lock]
+      - slug: phase4.campaign_calendar
+        depends_on:
+          - phase4.channel_strategy
+          - phase3.website_copy
+          - phase3.content_assets
+          - phase3.email_sequences
+          - phase3.social_content
+          - phase3.paid_ad_creative
+          - phase3.sales_enablement
+      - slug: phase4.seo_activation
+        depends_on: [phase4.campaign_calendar]
+        parallel_group: activation
+      - slug: phase4.paid_media
+        depends_on: [phase4.campaign_calendar]
+        parallel_group: activation
+      - slug: phase4.outbound_partner
+        depends_on: [phase4.campaign_calendar]
+        parallel_group: activation
+      - slug: phase4.community_activation
+        depends_on: [phase4.campaign_calendar]
+        parallel_group: activation
+
+  # ============================================================
+  - id: phase5_measurement
+    label: "Phase 5 — Measurement & Iteration"
+    exit_gate: phase_exit_gate
+    agents:
+      - slug: phase5.measurement
+        depends_on: [phase4.campaign_calendar]
+      - slug: phase5.experiment_review
+        depends_on: [phase5.measurement]
+        optional: true
+      - slug: phase5.competitive_pulse
+        depends_on: [phase1.research_synthesis]
+        parallel_group: continuous
+        optional: true
+      - slug: phase5.executive_brief
+        depends_on:
+          - phase5.measurement
+      - slug: phase5.iteration_planner
+        depends_on:
+          - phase5.executive_brief

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/persona_spec.schema.json",
+  "title": "PersonaSpec",
+  "description": "One evidence-based persona. Output of phase1.audience_intelligence (produces 2-3 of these per cycle).",
+  "type": "object",
+  "required": ["schema_version", "persona_id", "name", "title"],
+  "properties": {
+    "schema_version": { "const": "PersonaSpec:v1.0.0" },
+    "persona_id": { "type": "string" },
+    "name": { "type": "string" },
+    "title": { "type": "string" },
+    "company_size": { "type": ["string", "null"] },
+    "seniority": { "type": ["string", "null"] },
+    "day_in_life": { "type": "string" },
+    "measured_on": { "type": "array", "items": { "type": "string" } },
+    "decisions_owned": { "type": "array", "items": { "type": "string" } },
+    "decisions_influenced": { "type": "array", "items": { "type": "string" } },
+    "pain_points": { "type": "array", "items": { "$ref": "#/$defs/VOC" } },
+    "triggers": { "type": "array", "items": { "type": "string" } },
+    "research_paths": { "type": "array", "items": { "type": "string" } },
+    "buying_committee_role": { "type": ["string", "null"] },
+    "objections": { "type": "array", "items": { "type": "string" } },
+    "language_phrases": { "type": "array", "items": { "$ref": "#/$defs/VOC" } },
+    "watering_holes": { "type": "array", "items": { "type": "string" } },
+    "proof_required": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "VOC": {
+      "type": "object",
+      "required": ["quote", "source"],
+      "properties": {
+        "quote": { "type": "string" },
+        "source": { "type": "string", "description": "URL, thread title, review id, etc." },
+        "sentiment": { "enum": ["pain", "gain", "fear", "neutral"], "default": "neutral" }
+      }
+    }
+  }
+}

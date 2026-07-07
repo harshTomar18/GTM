@@ -1,0 +1,30 @@
+agent_slug: phase4.outbound_partner
+
+questions:
+  - id: q_target_account_source
+    prompt: "Source of tier-1 target accounts? ('CRM tagged tier_1' / '6sense intent list' / 'manual hand-curated' / 'partner-provided list'). If you have a real list, paste it (or path)."
+    type: long_text
+    required_for: gather
+    reusable_key: profile.outbound.account_source
+
+  - id: q_tier_definitions
+    prompt: "Define tier 1/2/3 thresholds? (e.g., 'tier_1: Fortune 1000 + intent surge >0.8; tier_2: $500M+ revenue; tier_3: rest of ICP fit'.)"
+    type: long_text
+    required_for: plan
+    reusable_key: profile.outbound.tier_thresholds
+
+  - id: q_partner_roster
+    prompt: "Active partners co-selling this cycle? (Comma-separated names + tier. Or 'none — no partner motion this cycle'.)"
+    type: long_text
+    required_for: plan
+    reusable_key: profile.partners.active_roster
+
+  - id: q_sdr_capacity
+    prompt: "How many SDR FTEs are working accounts this cycle? Drives realistic account-count target (rule of thumb: ~30 tier-1 accounts per SDR per quarter)."
+    type: number
+    required_for: plan
+
+  - id: q_co_marketing_window
+    prompt: "Co-marketing activities planned this cycle? (e.g., 'joint webinar with Partner X on 2026-09-10', 'co-authored white paper Q3'.) Or 'none'."
+    type: long_text
+    required_for: plan

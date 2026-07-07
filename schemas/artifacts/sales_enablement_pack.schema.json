@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/sales_enablement_pack.schema.json",
+  "title": "SalesEnablementPack",
+  "description": "Battlecards, decks, objection handling, talk tracks, demo scripts. Output of phase3.sales_enablement.",
+  "type": "object",
+  "required": ["schema_version", "battlecards", "objection_responses", "discovery_questions"],
+  "properties": {
+    "schema_version": { "const": "SalesEnablementPack:v1.0.0" },
+    "battlecards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["competitor_name", "when_to_use", "differentiators", "trap_setting_questions", "objection_responses"],
+        "properties": {
+          "competitor_name": { "type": "string" },
+          "when_to_use": { "type": "string", "description": "Conditions under which this battlecard applies" },
+          "differentiators": { "type": "array", "items": { "type": "string" } },
+          "trap_setting_questions": { "type": "array", "items": { "type": "string" }, "description": "Questions that surface this competitor's weaknesses without naming them" },
+          "objection_responses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "objection": { "type": "string" },
+                "response": { "type": "string" }
+              }
+            }
+          },
+          "win_proof_examples": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "one_pagers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "audience": { "type": "string" },
+          "headline": { "type": "string" },
+          "body_markdown": { "type": "string" },
+          "format": { "enum": ["pdf", "linkedin_attachment", "email_attachment"], "default": "pdf" }
+        }
+      }
+    },
+    "discovery_questions": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "type": "object",
+        "required": ["question", "what_were_listening_for"],
+        "properties": {
+          "question": { "type": "string" },
+          "category": { "enum": ["situation", "problem", "implication", "need_payoff"] },
+          "what_were_listening_for": { "type": "string" }
+        }
+      }
+    },
+    "objection_responses": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["objection", "underlying_concern", "response_talk_track"],
+        "properties": {
+          "objection": { "type": "string" },
+          "underlying_concern": { "type": "string", "description": "What they really mean" },
+          "response_talk_track": { "type": "string" }
+        }
+      }
+    },
+    "demo_script": {
+      "type": "object",
+      "properties": {
+        "opening_hook": { "type": "string" },
+        "act_structure": { "type": "array", "items": { "type": "string" } },
+        "objection_handling_moments": { "type": "array", "items": { "type": "string" } },
+        "closing": { "type": "string" }
+      }
+    },
+    "mutual_close_plan_template": { "type": "string", "description": "Markdown template a rep can populate per opp" },
+    "persona_cheat_sheets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "persona_id": { "type": "string" },
+          "top_pain": { "type": "string" },
+          "language_to_use": { "type": "array", "items": { "type": "string" } },
+          "language_to_avoid": { "type": "array", "items": { "type": "string" } },
+          "buying_committee_role": { "type": "string" }
+        }
+      }
+    },
+    "roi_talking_points": { "type": "array", "items": { "type": "string" } }
+  }
+}

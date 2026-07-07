@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gtm-os/schemas/artifacts/positioning_statement.schema.json",
+  "title": "PositioningStatement",
+  "description": "Output of phase2.positioning (produces 2-3 variants).",
+  "type": "object",
+  "required": ["schema_version", "statement", "category", "target_audience", "primary_value"],
+  "properties": {
+    "schema_version": { "const": "PositioningStatement:v1.0.0" },
+    "statement": { "type": "string", "description": "One-sentence positioning" },
+    "category": { "type": "string" },
+    "target_audience": { "type": "string" },
+    "primary_value": { "type": "string" },
+    "competing_alternatives": { "type": "array", "items": { "type": "string" } },
+    "evidence": { "type": "array", "items": { "type": "string" } },
+    "rationale": { "type": "string" },
+    "variant_label": { "type": "string", "default": "primary" }
+  }
+}

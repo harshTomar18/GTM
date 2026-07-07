@@ -1,0 +1,29 @@
+agent_slug: phase4.paid_media
+
+questions:
+  - id: q_first_party_audiences
+    prompt: "First-party audiences available to layer? (e.g., 'CRM all-customers list (5k)', 'website visitors last 90 days (12k)', 'closed-lost last 12mo (300)')"
+    type: long_text
+    required_for: gather
+
+  - id: q_third_party_intent_sources
+    prompt: "Third-party intent data sources connected? (6sense, Bombora, Demandbase — or 'none')"
+    type: long_text
+    required_for: gather
+    reusable_key: profile.intent.providers
+
+  - id: q_bid_strategy_defaults
+    prompt: "Bid strategy defaults? Per objective: lead_gen → target_cpa OR max_conversions; awareness → max_clicks OR target_impression_share; retargeting → manual_cpc."
+    type: long_text
+    required_for: plan
+
+  - id: q_quality_score_floor
+    prompt: "Google Quality Score floor (only matters for Google Search)? (Default: 7. Below 5 = restructure ad group.)"
+    type: number
+    required_for: plan
+    default: "7"
+
+  - id: q_lp_match_pairs
+    prompt: "Mandatory LP-match pairs we MUST verify before launch? Format: 'campaign_id → landing_url' per line."
+    type: long_text
+    required_for: gather
