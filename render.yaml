@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: gtm-operating-system
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install && cd ../ui && npm install && npm run build
+    startCommand: node backend/server.js
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false # Requires user to input this during setup
+      - key: PORT
+        value: 10000
