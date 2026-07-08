@@ -576,10 +576,23 @@ app.get('/api/tenant-profile/:tenant', (req, res) => {
     const tenant = req.params.tenant;
     const profilePath = path.join(getRootPath(), 'tenants', tenant, 'tenant_profile.yaml');
     try {
+        let fileContent;
         if (!fs.existsSync(profilePath)) {
-            return res.status(404).json({ error: 'Profile not found' });
+            // Load the example tenant profile as a default template!
+            const examplePath = path.join(getRootPath(), 'tenants', '_example', 'tenant_profile.yaml');
+            if (fs.existsSync(examplePath)) {
+                let exampleContent = fs.readFileSync(examplePath, 'utf8');
+                // Replace key fields with the new tenant name
+                exampleContent = exampleContent.replace(/profile_id:\s*_example/g, `profile_id: ${tenant}`);
+                exampleContent = exampleContent.replace(/legal_name:\s*"Acme Software Inc."/g, `legal_name: "${tenant} Inc."`);
+                exampleContent = exampleContent.replace(/brand_name:\s*"Acme"/g, `brand_name: "${tenant}"`);
+                fileContent = exampleContent;
+            } else {
+                return res.status(404).json({ error: 'Profile template not found' });
+            }
+        } else {
+            fileContent = fs.readFileSync(profilePath, 'utf8');
         }
-        const fileContent = fs.readFileSync(profilePath, 'utf8');
         const profileData = yaml.parse(fileContent);
         res.json({ success: true, profile: profileData, rawYaml: fileContent });
     } catch (error) {
