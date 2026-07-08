@@ -16,6 +16,26 @@ app.use(express.json());
 
 const getRootPath = () => path.resolve(__dirname, '..');
 
+// Helper to generate content with retry and exponential backoff
+const generateContentWithRetry = async (model, prompt, retries = 3, delay = 1000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const result = await model.generateContent(prompt);
+            return result;
+        } catch (error) {
+            const errorMsg = error.message || '';
+            const isTemporary = errorMsg.includes('503') || errorMsg.includes('429') || errorMsg.includes('demand') || errorMsg.includes('ResourceExhausted');
+            if (isTemporary && i < retries - 1) {
+                console.warn(`[GEMINI] Model busy or rate-limited. Retrying in ${delay}ms... (Attempt ${i + 1}/${retries})`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2; // Exponential backoff
+            } else {
+                throw error;
+            }
+        }
+    }
+};
+
 // Helper to run agents using Gemini Free API
 const runGeminiAgentDirectly = async (tenant, cycle, agent) => {
     try {
@@ -71,7 +91,7 @@ ${agentPrompt}
 `;
 
         console.log(`[GEMINI] Running agent: ${agent} for tenant: ${tenant}`);
-        const result = await model.generateContent(systemPrompt);
+        const result = await generateContentWithRetry(model, systemPrompt);
         const text = result.response.text().trim();
 
         // 4. Parse output and write to ContextBus
@@ -184,7 +204,7 @@ const runRealCLI = async (command) => {
             const tenant = getCommandParam(command, 'tenant');
             const pack = getCommandParam(command, 'pack');
             if (tenant && pack) {
-                const packPath = path.join(getRootPath(), 'tenants', pack);
+                const packPath = path.join(getRootPath(), 'vertical_packs', pack);
                 const tenantPath = path.join(getRootPath(), 'tenants', tenant);
                 if (!fs.existsSync(tenantPath)) {
                     fs.mkdirSync(tenantPath, { recursive: true });
@@ -351,7 +371,7 @@ app.post('/api/tenant-init', async (req, res) => {
     // Fallback: If Claude fails (e.g. not logged in), scaffold it manually so the UI demo still works
     if (!result.success || result.message.includes('Not logged in')) {
         try {
-            const packPath = path.join(getRootPath(), 'tenants', pack);
+            const packPath = path.join(getRootPath(), 'vertical_packs', pack);
             const tenantPath = path.join(getRootPath(), 'tenants', tenant);
             if (!fs.existsSync(tenantPath)) {
                 fs.mkdirSync(tenantPath, { recursive: true });
@@ -572,23 +592,142 @@ let p1Count = 0, p2Count = 0, p3Count = 0;
 });
 
 // 10. Read Tenant Profile
-app.get('/api/tenant-profile/:tenant', (req, res) => {
+app.get('/api/tenant-profile/:tenant', async (req, res) => {
     const tenant = req.params.tenant;
     const profilePath = path.join(getRootPath(), 'tenants', tenant, 'tenant_profile.yaml');
     try {
         let fileContent;
         if (!fs.existsSync(profilePath)) {
-            // Load the example tenant profile as a default template!
-            const examplePath = path.join(getRootPath(), 'tenants', '_example', 'tenant_profile.yaml');
-            if (fs.existsSync(examplePath)) {
-                let exampleContent = fs.readFileSync(examplePath, 'utf8');
-                // Replace key fields with the new tenant name
-                exampleContent = exampleContent.replace(/profile_id:\s*_example/g, `profile_id: ${tenant}`);
-                exampleContent = exampleContent.replace(/legal_name:\s*"Acme Software Inc."/g, `legal_name: "${tenant} Inc."`);
-                exampleContent = exampleContent.replace(/brand_name:\s*"Acme"/g, `brand_name: "${tenant}"`);
-                fileContent = exampleContent;
-            } else {
-                return res.status(404).json({ error: 'Profile template not found' });
+            if (process.env.GEMINI_API_KEY) {
+                try {
+                    console.log(`[GEMINI] Generating AI profile template for: ${tenant}`);
+                    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+                    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+                    const prompt = `
+Generate a professional, fully filled B2B SaaS tenant profile YAML file for a company named "${tenant}".
+It must adhere strictly to the following YAML schema:
+
+version: 2
+profile_id: ${tenant}
+extends: vertical_packs/_template
+
+company:
+  legal_name: "${tenant} Inc."
+  brand_name: "${tenant}"
+  url: "https://${tenant.toLowerCase().replace(/[^a-z0-9]/g, '')}.com"
+  founded: 2022
+  size_band: "mid_market"
+  hq_country: "US"
+  description_short: "A short one sentence description of what the company does."
+  description_long: "A longer description of the company product, value proposition, and how it helps customers."
+
+industry:
+  primary: "Identify the primary B2B software industry category"
+  secondary: ["List a few secondary categories"]
+
+lob:
+  - id: core_product
+    motion: enterprise_abm
+    weight: 1.0
+
+icp_archetypes:
+  - id: mid_market_buyer
+    industries: ["technology", "healthcare", "finance"]
+    company_size: ["100-1000"]
+    geos: ["US"]
+    buying_committee:
+      economic_buyer: "CFO"
+      technical_buyer: "Controller"
+      user_buyer: "Finance_Operations_Manager"
+      influencers: ["VP_Finance", "Internal_Audit_Lead"]
+    committee_complexity: "medium"
+    deal_size_band: "50k-100k"
+    sales_cycle_days: 90
+
+frameworks: []
+
+regulatory_constraints: []
+
+brand_voice:
+  archetype: "Sage"
+  tone: ["clear", "practical", "outcome-focused"]
+  reading_level: "grade_11"
+  banned_phrases: ["synergy", "world-class", "cutting-edge"]
+  required_disclaimers: []
+
+geography:
+  primary_markets: ["US"]
+  expansion_markets: []
+
+languages:
+  default: "en-US"
+  supported: ["en-US"]
+
+currency:
+  default: "USD"
+  reporting: "USD"
+
+tech_stack:
+  crm: "hubspot"
+  marketing_automation: "hubspot"
+  analytics: "ga4"
+  social: "linkedin"
+  ad_platforms: ["linkedin_ads", "google_ads"]
+
+approval_roles:
+  - role: CMO
+    name: "CMO Name"
+    email: "cmo@${tenant.toLowerCase().replace(/[^a-z0-9]/g, '')}.com"
+    scope: [brand, campaign, positioning]
+  - role: SME
+    name: "SME Name"
+    scope: [technical_claims]
+  - role: Legal
+    name: "Legal Name"
+    scope: [regulatory_claims]
+  - role: CFO
+    name: "CFO Name"
+    scope: [spend_over_threshold]
+  - role: SalesLeader
+    name: "VP Sales Name"
+    scope: [pipeline_facing_artifacts]
+  - role: CEO
+    name: "CEO Name"
+    scope: [positioning, executive_voice]
+  - role: CustomerSuccess
+    name: "CS Lead Name"
+    scope: [customer_named]
+
+operating_calendar:
+  cycle_length: monthly
+  fiscal_year_start: "01-01"
+
+---
+Ensure the output is ONLY the raw YAML content, with no markdown formatting or code block wrappers (like \`\`\`yaml). Generate highly realistic details specifically tailored to what a company named "${tenant}" would do.
+`;
+                    const geminiResult = await generateContentWithRetry(model, prompt);
+                    let responseText = geminiResult.response.text().trim();
+                    if (responseText.startsWith('```')) {
+                        responseText = responseText.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/i, '').trim();
+                    }
+                    fileContent = responseText;
+                } catch (err) {
+                    console.error("Gemini template generation failed, falling back to static:", err);
+                }
+            }
+
+            if (!fileContent) {
+                // Fallback to static template
+                const examplePath = path.join(getRootPath(), 'tenants', '_example', 'tenant_profile.yaml');
+                if (fs.existsSync(examplePath)) {
+                    let exampleContent = fs.readFileSync(examplePath, 'utf8');
+                    exampleContent = exampleContent.replace(/profile_id:\s*_example/g, `profile_id: ${tenant}`);
+                    exampleContent = exampleContent.replace(/legal_name:\s*"Acme Software Inc."/g, `legal_name: "${tenant} Inc."`);
+                    exampleContent = exampleContent.replace(/brand_name:\s*"Acme"/g, `brand_name: "${tenant}"`);
+                    fileContent = exampleContent;
+                } else {
+                    return res.status(404).json({ error: 'Profile template not found' });
+                }
             }
         } else {
             fileContent = fs.readFileSync(profilePath, 'utf8');
