@@ -137,10 +137,10 @@ export default function Dashboard({ tenants }) {
                 <div style={{ padding: '1.25rem', background: 'rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '10px' }}>
                   <div style={{ color: '#a7f3d0', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em', marginBottom: '0.5rem' }}>CURRENT PHASE</div>
                   <div style={{ fontSize: '1.5rem', color: '#fff', fontWeight: 'bold' }}>
-                    {metrics.phase3Progress > 0 ? 'Phase 3 / 5' : (metrics.phase2Progress > 0 ? 'Phase 2 / 5' : 'Phase 1 / 5')}
+                    {metrics.phase5Progress > 0 ? 'Phase 5 / 5' : (metrics.phase4Progress > 0 ? 'Phase 4 / 5' : (metrics.phase3Progress > 0 ? 'Phase 3 / 5' : (metrics.phase2Progress > 0 ? 'Phase 2 / 5' : 'Phase 1 / 5')))}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                    {metrics.phase3Progress > 0 ? 'Asset Creation' : (metrics.phase2Progress > 0 ? 'Positioning locked' : 'Researching market')}
+                    {metrics.phase5Progress > 0 ? 'Measurement & Optimization' : (metrics.phase4Progress > 0 ? 'Distribution & Activation' : (metrics.phase3Progress > 0 ? 'Asset Creation' : (metrics.phase2Progress > 0 ? 'Positioning locked' : 'Researching market')))}
                   </div>
                 </div>
                 <div style={{ padding: '1.25rem', background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: '10px' }}>
@@ -186,6 +186,22 @@ export default function Dashboard({ tenants }) {
                   </div>
                   <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
                     <div style={{ width: `${metrics.phase3Progress}%`, height: '100%', background: metrics.phase3Progress === 100 ? '#10b981' : '#3b82f6' }}></div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', marginTop: '0.5rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Phase 4: Distribution & Activation</span>
+                    <span style={{ color: metrics.phase4Progress === 100 ? '#10b981' : '#3b82f6', fontWeight: 600 }}>{metrics.phase4Progress}% {metrics.phase4Progress === 100 ? 'Completed' : (metrics.phase4Progress > 0 ? 'Processing' : 'Pending')}</span>
+                  </div>
+                  <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                    <div style={{ width: `${metrics.phase4Progress}%`, height: '100%', background: metrics.phase4Progress === 100 ? '#10b981' : '#3b82f6' }}></div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', marginTop: '0.5rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Phase 5: Measurement & Iteration</span>
+                    <span style={{ color: metrics.phase5Progress === 100 ? '#10b981' : '#3b82f6', fontWeight: 600 }}>{metrics.phase5Progress}% {metrics.phase5Progress === 100 ? 'Completed' : (metrics.phase5Progress > 0 ? 'Processing' : 'Pending')}</span>
+                  </div>
+                  <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                    <div style={{ width: `${metrics.phase5Progress}%`, height: '100%', background: metrics.phase5Progress === 100 ? '#10b981' : '#3b82f6' }}></div>
                   </div>
                 </div>
               </div>

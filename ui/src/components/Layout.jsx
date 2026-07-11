@@ -8,7 +8,9 @@ import {
   ShieldAlert, 
   Menu, 
   ChevronLeft, 
-  ChevronRight 
+  ChevronRight,
+  Search,
+  ClipboardList
 } from 'lucide-react';
 
 export default function Layout({ healthStatus }) {
@@ -46,6 +48,10 @@ export default function Layout({ healthStatus }) {
             <LayoutDashboard size={20} />
             {!isCollapsed && <span>Executive Dashboard</span>}
           </NavLink>
+          <NavLink to="/competitor-intelligence" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
+            <Search size={20} />
+            {!isCollapsed && <span>Competitor Intel</span>}
+          </NavLink>
           <NavLink to="/onboarding" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
             <User size={20} />
             {!isCollapsed && <span>SME Input Profile</span>}
@@ -61,6 +67,10 @@ export default function Layout({ healthStatus }) {
           <NavLink to="/approvals" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
             <ShieldAlert size={20} />
             {!isCollapsed && <span>Governance Gates</span>}
+          </NavLink>
+          <NavLink to="/audit" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
+            <ClipboardList size={20} />
+            {!isCollapsed && <span>Audit Trail</span>}
           </NavLink>
         </nav>
       </aside>

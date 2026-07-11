@@ -1,0 +1,135 @@
+version: 2
+profile_id: Ashtrellis Sales and Services
+extends: vertical_packs/_template
+company:
+  legal_name: Ashtrellis Sales and Services Inc.
+  brand_name: Ashtrellis Sales and Services
+  url: https://ashtrellissalesandservices.com
+  founded: 2022
+  size_band: mid_market
+  hq_country: US
+  description_short: Ashtrellis provides an AI-powered B2B SaaS platform designed
+    to optimize sales workflows and enhance customer service engagement.
+  description_long: Ashtrellis Sales and Services offers a comprehensive B2B SaaS
+    platform that unifies sales process automation with advanced customer
+    service tools. Our solution leverages AI to predict sales trends,
+    personalize customer interactions, and automate routine tasks, empowering
+    sales teams to close deals faster and service departments to deliver
+    exceptional support. We help businesses streamline their customer-facing
+    operations, improve team efficiency, and drive sustainable revenue growth
+    through intelligent insights and seamless communication.
+industry:
+  primary: Sales Enablement Software
+  secondary:
+    - Customer Experience (CX) Software
+    - AI & Machine Learning
+    - Business Process Automation
+    - CRM
+lob:
+  - id: core_product
+    motion: enterprise_abm
+    weight: 1
+icp_archetypes:
+  - id: mid_market_buyer
+    industries:
+      - technology
+      - healthcare
+      - finance
+    company_size:
+      - 100-1000
+    geos:
+      - US
+    buying_committee:
+      economic_buyer: CRO
+      technical_buyer: VP_Sales_Operations
+      user_buyer: Head_of_Sales_Enablement
+      influencers:
+        - VP_Sales
+        - Director_of_Customer_Success
+    committee_complexity: medium
+    deal_size_band: 50k-100k
+    sales_cycle_days: 90
+frameworks:
+  - MEDDIC
+  - Challenger_Sale
+  - SPIN_Selling
+regulatory_constraints:
+  - GDPR
+  - CCPA
+  - SOC2_TypeII
+  - PCI_DSS
+brand_voice:
+  archetype: Sage
+  tone:
+    - clear
+    - practical
+    - outcome-focused
+  reading_level: grade_11
+  banned_phrases:
+    - synergy
+    - world-class
+    - cutting-edge
+  required_disclaimers:
+    - AI_use_disclosure
+    - Data_privacy_policy_link
+geography:
+  primary_markets:
+    - US
+  expansion_markets:
+    - Canada
+    - UK
+    - Germany
+languages:
+  default: en-US
+  supported:
+    - en-US
+    - en-CA
+    - en-GB
+    - de-DE
+currency:
+  default: USD
+  reporting: USD
+tech_stack:
+  crm: hubspot
+  marketing_automation: hubspot
+  analytics: ga4
+  social: linkedin
+  ad_platforms:
+    - linkedin_ads
+    - google_ads
+approval_roles:
+  - role: CMO
+    name: Evelyn Reed
+    email: evelyn.reed@ashtrellissalesandservices.com
+    scope:
+      - brand
+      - campaign
+      - positioning
+  - role: SME
+    name: Dr. Liam Chen
+    scope:
+      - technical_claims
+  - role: Legal
+    name: Sarah Jenkins, Esq.
+    scope:
+      - regulatory_claims
+  - role: CFO
+    name: David Miller
+    scope:
+      - spend_over_threshold
+  - role: SalesLeader
+    name: Maria Rodriguez
+    scope:
+      - pipeline_facing_artifacts
+  - role: CEO
+    name: Michael Davis
+    scope:
+      - positioning
+      - executive_voice
+  - role: CustomerSuccess
+    name: Jessica Kim
+    scope:
+      - customer_named
+operating_calendar:
+  cycle_length: monthly
+  fiscal_year_start: 01-01

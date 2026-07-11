@@ -1,27 +1,23 @@
-# Example tenant profile — a fictional B2B SaaS company used for tests and demos.
-# Copy this file when onboarding a new real tenant, then fill in the blanks.
-
 version: 2
 profile_id: _example
 extends: vertical_packs/_template
-
 company:
-  legal_name: "Acme Software Inc."
-  brand_name: "Acme"
-  url: "https://acme.example"
+  legal_name: Acme Software Inc.
+  brand_name: _example Brand
+  url: https://acme.example
   founded: 2021
-  size_band: "smb"
-  hq_country: "US"
-  description_short: "Workflow automation for finance operations teams."
+  size_band: smb
+  hq_country: US
+  description_short: Workflow automation for finance operations teams.
   description_long: |
     Acme replaces spreadsheets and manual reconciliations with a workflow engine
     that connects directly to ERPs. Finance ops teams use Acme to cut their
     monthly close from 12 days to 3 days while preserving full audit trails.
-
 industry:
-  primary: "fintech_b2b_saas"
-  secondary: ["financial_operations", "automation"]
-
+  primary: fintech_b2b_saas
+  secondary:
+    - financial_operations
+    - automation
 lob:
   - id: core_product
     motion: enterprise_abm
@@ -29,89 +25,114 @@ lob:
   - id: self_serve_tier
     motion: plg
     weight: 0.3
-
 icp_archetypes:
   - id: mid_market_finance_ops
-    industries: ["technology", "retail", "manufacturing"]
-    company_size: ["250-2000"]
-    geos: ["US", "CA", "UK"]
+    industries:
+      - technology
+      - retail
+      - manufacturing
+    company_size:
+      - 250-2000
+    geos:
+      - US
+      - CA
+      - UK
     buying_committee:
-      economic_buyer: "CFO"
-      technical_buyer: "Controller"
-      user_buyer: "Finance_Operations_Manager"
-      influencers: ["VP_Finance", "Internal_Audit_Lead"]
-    committee_complexity: "medium"
-    deal_size_band: "30k-150k"
+      economic_buyer: CFO
+      technical_buyer: Controller
+      user_buyer: Finance_Operations_Manager
+      influencers:
+        - VP_Finance
+        - Internal_Audit_Lead
+    committee_complexity: medium
+    deal_size_band: 30k-150k
     sales_cycle_days: 75
-
 frameworks:
-  - "SOX"
-  - "GAAP"
-
+  - SOX
+  - GAAP
 regulatory_constraints:
-  - jurisdiction: "US"
-    regimes: ["SOX"]
+  - jurisdiction: US
+    regimes:
+      - SOX
     content_review_required: false
-
 brand_voice:
-  archetype: "Sage"
-  tone: ["clear", "practical", "outcome-focused", "respectful_of_audit_rigor"]
-  reading_level: "grade_11"
+  archetype: Sage
+  tone:
+    - clear
+    - practical
+    - outcome-focused
+    - respectful_of_audit_rigor
+  reading_level: grade_11
   banned_phrases:
-    - "synergy"
-    - "world-class"
-    - "cutting-edge"
-    - "revolutionary"
-    - "next-generation"
+    - synergy
+    - world-class
+    - cutting-edge
+    - revolutionary
+    - next-generation
   required_disclaimers: []
-
 geography:
-  primary_markets: ["US", "CA"]
-  expansion_markets: ["UK", "AU"]
-
+  primary_markets:
+    - US
+    - CA
+  expansion_markets:
+    - UK
+    - AU
 languages:
-  default: "en-US"
-  supported: ["en-US", "en-GB"]
-
+  default: en-US
+  supported:
+    - en-US
+    - en-GB
 currency:
-  default: "USD"
-  reporting: "USD"
-
+  default: USD
+  reporting: USD
 tech_stack:
-  crm: "hubspot"
-  marketing_automation: "hubspot"
-  analytics: "ga4"
-  seo: "ahrefs"
-  social: "linkedin"
-  ad_platforms: ["linkedin_ads", "google_ads"]
-  data_warehouse: "bigquery"
-
+  crm: hubspot
+  marketing_automation: hubspot
+  analytics: ga4
+  seo: ahrefs
+  social: linkedin
+  ad_platforms:
+    - linkedin_ads
+    - google_ads
+  data_warehouse: bigquery
 approval_roles:
   - role: CMO
-    name: "Sample CMO"
-    email: "cmo@acme.example"
-    scope: [brand, campaign, positioning]
-    notification: [email]
+    name: Sample CMO
+    email: cmo@acme.example
+    scope:
+      - brand
+      - campaign
+      - positioning
+    notification:
+      - email
   - role: SME
-    name: "Sample SME"
-    scope: [technical_claims, framework_references]
+    name: Sample SME
+    scope:
+      - technical_claims
+      - framework_references
   - role: Legal
-    name: "Sample Legal"
-    scope: [regulatory_claims, customer_logos]
+    name: Sample Legal
+    scope:
+      - regulatory_claims
+      - customer_logos
   - role: CFO
-    name: "Sample CFO"
-    scope: [spend_over_threshold]
+    name: Sample CFO
+    scope:
+      - spend_over_threshold
   - role: SalesLeader
-    name: "Sample VP Sales"
-    scope: [pipeline_facing_artifacts]
+    name: Sample VP Sales
+    scope:
+      - pipeline_facing_artifacts
   - role: CEO
-    name: "Sample CEO"
-    scope: [positioning, executive_voice]
+    name: Sample CEO
+    scope:
+      - positioning
+      - executive_voice
   - role: CustomerSuccess
-    name: "Sample CS Lead"
-    scope: [customer_named]
-
+    name: Sample CS Lead
+    scope:
+      - customer_named
 operating_calendar:
   cycle_length: monthly
-  fiscal_year_start: "01-01"
+  fiscal_year_start: 01-01
   blackout_dates: []

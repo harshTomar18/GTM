@@ -11,6 +11,8 @@ import IntelligenceLayer from './pages/IntelligenceLayer';
 import ContinuousLearning from './pages/ContinuousLearning';
 import ContentViewer from './pages/ContentViewer';
 import ProfileEditor from './pages/ProfileEditor';
+import CompetitorIntelligence from './pages/CompetitorIntelligence';
+import Audit from './pages/Audit';
 import './index.css';
 
 function App() {
@@ -43,6 +45,8 @@ function App() {
           <Route path="learning-loop" element={<ContinuousLearning />} />
           <Route path="content" element={<ContentViewer tenants={tenants} />} />
           <Route path="approvals" element={<Approvals />} />
+          <Route path="competitor-intelligence" element={<CompetitorIntelligence />} />
+          <Route path="audit" element={<Audit />} />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -50,3 +54,4 @@ function App() {
 }
 
 export default App;
+

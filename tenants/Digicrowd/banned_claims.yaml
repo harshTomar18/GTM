@@ -1,0 +1,6 @@
+# Statements no tenant under this pack may make in published content.
+# Examples for a hypothetical regulated pack might include:
+#   - "guaranteed returns" (financial services)
+#   - "FDA approved" (when not actually approved)
+
+banned: []

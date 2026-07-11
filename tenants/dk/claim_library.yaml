@@ -1,0 +1,5 @@
+# Pre-approved claims this pack supplies.
+# Each entry: { claim, citation, expires_on }. Claim Checker (Workstream D) uses these
+# to validate artifact content. Empty for the template; real packs ship populated.
+
+claims: []

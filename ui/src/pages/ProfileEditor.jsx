@@ -9,6 +9,7 @@ export default function ProfileEditor() {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [activeEditorTab, setActiveEditorTab] = useState('visual'); // 'visual' or 'advanced'
   const [result, setResult] = useState(null);
+  const [newFramework, setNewFramework] = useState('');
 
   const loadProfile = async () => {
     setIsProfileLoading(true);
@@ -293,12 +294,140 @@ export default function ProfileEditor() {
                 </div>
               </div>
 
+              {/* Section 4.5: Lines of Business & Frameworks */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                {/* LOBs Editor */}
+                <div style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '0.5rem' }}>
+                    <h3 style={{ color: 'var(--accent)', fontSize: '1.1rem', margin: 0 }}>💼 Lines of Business (LOB)</h3>
+                    <button type="button" onClick={() => {
+                      const updated = [...(profile.lob || [])];
+                      updated.push({ id: `lob_${updated.length + 1}`, motion: 'enterprise_abm', weight: 1.0 });
+                      handleVisualChange(null, 'lob', updated);
+                    }} className="btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}>+ Add LOB</button>
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {(profile.lob || []).map((lobItem, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(255,255,255,0.01)', padding: '0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.02)' }}>
+                        <div style={{ flex: 1 }}>
+                          <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>LOB ID</label>
+                          <input 
+                            type="text" 
+                            value={lobItem.id || ''} 
+                            onChange={e => {
+                              const updated = [...profile.lob];
+                              updated[idx] = { ...updated[idx], id: e.target.value };
+                              handleVisualChange(null, 'lob', updated);
+                            }}
+                            className="glass-input"
+                            style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem' }}
+                          />
+                        </div>
+                        <div style={{ flex: 1.5 }}>
+                          <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>GTM Motion</label>
+                          <select 
+                            value={lobItem.motion || 'enterprise_abm'} 
+                            onChange={e => {
+                              const updated = [...profile.lob];
+                              updated[idx] = { ...updated[idx], motion: e.target.value };
+                              handleVisualChange(null, 'lob', updated);
+                            }}
+                            className="glass-input"
+                            style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', color: '#fff', background: 'var(--bg-primary)' }}
+                          >
+                            <option value="enterprise_abm">Enterprise ABM</option>
+                            <option value="plg">PLG (Product Led Growth)</option>
+                            <option value="hybrid">Hybrid Motion</option>
+                            <option value="channel_partner">Channel Partner</option>
+                          </select>
+                        </div>
+                        <button type="button" onClick={() => {
+                          const updated = profile.lob.filter((_, i) => i !== idx);
+                          handleVisualChange(null, 'lob', updated);
+                        }} style={{ marginTop: '1.25rem', background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Frameworks Editor */}
+                <div style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <h3 style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '0.5rem' }}>🛡️ Authority Frameworks</h3>
+                  
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem' }}>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. SOC2, HIPAA, ISO27001" 
+                      value={newFramework} 
+                      onChange={e => setNewFramework(e.target.value)} 
+                      className="glass-input" 
+                      style={{ padding: '0.5rem 0.75rem', fontSize: '0.88rem' }}
+                    />
+                    <button type="button" onClick={() => {
+                      if (!newFramework) return;
+                      const updated = [...(profile.frameworks || [])];
+                      if (!updated.includes(newFramework)) {
+                        updated.push(newFramework);
+                        handleVisualChange(null, 'frameworks', updated);
+                      }
+                      setNewFramework('');
+                    }} className="btn" style={{ padding: '0 1rem', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Add</button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    {(profile.frameworks || []).map((f) => (
+                      <span key={f} style={{ 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        gap: '0.35rem', 
+                        padding: '0.25rem 0.6rem', 
+                        background: 'rgba(99, 102, 241, 0.08)', 
+                        border: '1px solid rgba(99, 102, 241, 0.2)', 
+                        color: '#a5b4fc', 
+                        borderRadius: '4px', 
+                        fontSize: '0.8rem' 
+                      }}>
+                        {f}
+                        <span onClick={() => {
+                          const updated = profile.frameworks.filter(item => item !== f);
+                          handleVisualChange(null, 'frameworks', updated);
+                        }} style={{ cursor: 'pointer', color: '#ef4444', fontWeight: 'bold' }}>×</span>
+                      </span>
+                    ))}
+                    {(profile.frameworks || []).length === 0 && (
+                      <span style={{ fontSize: '0.85rem', color: '#555' }}>No frameworks configured. Add one above.</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Section 5: Target Buyer Personas (ICP) */}
               <div style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <h3 style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '0.5rem' }}>🎯 Target Personas (ICP)</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '0.5rem' }}>
+                  <h3 style={{ color: 'var(--accent)', fontSize: '1.1rem', margin: 0 }}>🎯 Target Personas (ICP)</h3>
+                  <button type="button" onClick={() => {
+                    const updated = [...(profile.icp_archetypes || [])];
+                    updated.push({
+                      id: `persona_${updated.length + 1}`,
+                      company_size: ['100-1000'],
+                      geos: ['US'],
+                      buying_committee: { economic_buyer: 'CMO', technical_buyer: 'CTO', user_buyer: 'Director' }
+                    });
+                    handleVisualChange(null, 'icp_archetypes', updated);
+                  }} className="btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}>+ Add Persona</button>
+                </div>
                 
                 {profile.icp_archetypes?.map((icp, index) => (
-                  <div key={index} style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                  <div key={index} style={{ marginBottom: '1.5rem', padding: '1.25rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)' }}>Persona #{index + 1}</span>
+                      <button type="button" onClick={() => {
+                        const updated = profile.icp_archetypes.filter((_, idx) => idx !== index);
+                        handleVisualChange(null, 'icp_archetypes', updated);
+                      }} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.85rem' }}>Delete Persona</button>
+                    </div>
+
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1rem' }}>
                       <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Persona ID</label>
@@ -384,18 +513,50 @@ export default function ProfileEditor() {
 
               {/* Section 6: Approval Roles & Stakeholders */}
               <div style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <h3 style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '0.5rem' }}>👥 Key Stakeholders & Approvers</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '0.5rem' }}>
+                  <h3 style={{ color: 'var(--accent)', fontSize: '1.1rem', margin: 0 }}>👥 Key Stakeholders & Approvers</h3>
+                  <button type="button" onClick={() => {
+                    const updated = [...(profile.approval_roles || [])];
+                    updated.push({
+                      role: 'SME',
+                      name: 'Approver Name',
+                      email: 'approver@company.com',
+                      scope: ['technical_claims']
+                    });
+                    handleVisualChange(null, 'approval_roles', updated);
+                  }} className="btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}>+ Add Stakeholder</button>
+                </div>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
                   Define the names, emails, and positions of the internal stakeholders who will review and approve AI-generated marketing campaigns.
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   {profile.approval_roles?.map((roleInfo, idx) => (
-                    <div key={idx} style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    <div key={idx} style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.03)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                        <span className="status-badge" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--accent-hover)', fontWeight: 'bold' }}>
-                          Role: {roleInfo.role}
-                        </span>
+                        <select 
+                          value={roleInfo.role || 'SME'} 
+                          onChange={e => {
+                            const updatedList = [...profile.approval_roles];
+                            updatedList[idx] = { ...updatedList[idx], role: e.target.value };
+                            handleVisualChange(null, 'approval_roles', updatedList);
+                          }}
+                          className="glass-input"
+                          style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', width: 'auto', background: 'var(--bg-primary)', color: 'white', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                        >
+                          <option value="CMO">CMO</option>
+                          <option value="CEO">CEO</option>
+                          <option value="CFO">CFO</option>
+                          <option value="SME">SME</option>
+                          <option value="Legal">Legal</option>
+                          <option value="SalesLeader">Sales Leader</option>
+                          <option value="CustomerSuccess">Customer Success</option>
+                        </select>
+
+                        <button type="button" onClick={() => {
+                          const updated = profile.approval_roles.filter((_, i) => i !== idx);
+                          handleVisualChange(null, 'approval_roles', updated);
+                        }} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem' }}>✕ Delete</button>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         <div>
