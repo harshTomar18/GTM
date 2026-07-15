@@ -1,0 +1,5 @@
+agent_slug: phase1.ai_search_visibility
+criteria:
+  - id: high_intent_queries
+    weight: 1.0
+    description: "Specifies real targeted high-intent queries."

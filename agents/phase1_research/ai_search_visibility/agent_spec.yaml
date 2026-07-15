@@ -1,0 +1,21 @@
+slug: phase1.ai_search_visibility
+phase: 1
+stage: 2
+mission: >
+  Define the AI-search (AEO/GEO) strategy for the cycle.
+inputs:
+  - key: phase1.brief_intake.output
+    schema_version: "BriefIntake:v1.0.0"
+    required: true
+profile_keys:
+  - profile.company.brand_name
+output_schema: "AISearchVisibility:v1.0.0"
+artifact_markdown_template: "agents/phase1_research/ai_search_visibility/prompt.md"
+approval_policy_ids:
+  - brand_impacting
+sla:
+  max_tokens: 8192
+model_plan: claude-sonnet-4-6
+model_synthesize: claude-sonnet-4-6
+model_write: claude-sonnet-4-6
+model_review: claude-sonnet-4-6

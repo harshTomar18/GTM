@@ -13,6 +13,7 @@ import ContentViewer from './pages/ContentViewer';
 import ProfileEditor from './pages/ProfileEditor';
 import CompetitorIntelligence from './pages/CompetitorIntelligence';
 import Audit from './pages/Audit';
+import EmailDispatcher from './pages/EmailDispatcher';
 import './index.css';
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
           <Route path="content" element={<ContentViewer tenants={tenants} />} />
           <Route path="approvals" element={<Approvals />} />
           <Route path="competitor-intelligence" element={<CompetitorIntelligence />} />
+          <Route path="dispatcher" element={<EmailDispatcher tenants={tenants} />} />
           <Route path="audit" element={<Audit />} />
         </Route>
       </Routes>

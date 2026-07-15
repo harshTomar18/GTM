@@ -1,0 +1,6 @@
+agent_slug: phase3.aeo_content_optimizer
+questions:
+  - id: q_target_channels
+    prompt: "Confirm target AI search platforms (e.g. ChatGPT, Claude, Perplexity)"
+    type: text
+    required_for: plan

@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  User, 
-  Play, 
-  FileText, 
-  ShieldAlert, 
-  Menu, 
-  ChevronLeft, 
+import {
+  LayoutDashboard,
+  User,
+  Play,
+  FileText,
+  ShieldAlert,
+  Menu,
+  ChevronLeft,
   ChevronRight,
   Search,
-  ClipboardList
+  ClipboardList,
+  Mail
 } from 'lucide-react';
 
 export default function Layout({ healthStatus }) {
@@ -23,7 +24,7 @@ export default function Layout({ healthStatus }) {
     <div className="dashboard-container">
       {/* Sidebar Overlay for Mobile */}
       {sidebarOpen && (
-        <div 
+        <div
           onClick={closeSidebar}
           style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 999 }}
         />
@@ -34,7 +35,7 @@ export default function Layout({ healthStatus }) {
         <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', padding: isCollapsed ? '1.5rem 0.5rem' : '1.75rem 1.5rem', justifyContent: isCollapsed ? 'center' : 'space-between' }}>
           {!isCollapsed && <h2>GTM Operating System</h2>}
           {isCollapsed && <h2 style={{ fontSize: '1.25rem' }}>GTM</h2>}
-          <button 
+          <button
             onClick={closeSidebar}
             className="hamburger-close-btn"
             style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '1.25rem', cursor: 'pointer', display: 'none' }}
@@ -42,7 +43,7 @@ export default function Layout({ healthStatus }) {
             ✕
           </button>
         </div>
-        
+
         <nav className="sidebar-nav" style={{ padding: isCollapsed ? '1.5rem 0.5rem' : '1.5rem 0.75rem' }}>
           <NavLink to="/" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} end>
             <LayoutDashboard size={20} />
@@ -68,6 +69,10 @@ export default function Layout({ healthStatus }) {
             <ShieldAlert size={20} />
             {!isCollapsed && <span>Governance Gates</span>}
           </NavLink>
+          <NavLink to="/dispatcher" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
+            <Mail size={20} />
+            {!isCollapsed && <span>Email Dispatcher</span>}
+          </NavLink>
           <NavLink to="/audit" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
             <ClipboardList size={20} />
             {!isCollapsed && <span>Audit Trail</span>}
@@ -80,7 +85,7 @@ export default function Layout({ healthStatus }) {
         <header className="topbar">
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {/* Hamburger for mobile toggle or desktop collapse */}
-            <button 
+            <button
               onClick={() => {
                 if (window.innerWidth <= 768) {
                   setSidebarOpen(!sidebarOpen);
@@ -97,9 +102,9 @@ export default function Layout({ healthStatus }) {
           </div>
           <div>
             <span style={{ marginRight: '1rem', color: 'var(--text-secondary)' }}>
-              Backend Status: 
-              <span className="status-badge" style={{ 
-                marginLeft: '0.5rem', 
+              Backend Status:
+              <span className="status-badge" style={{
+                marginLeft: '0.5rem',
                 backgroundColor: healthStatus === 'Online' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
                 color: healthStatus === 'Online' ? 'var(--success)' : 'var(--danger)'
               }}>

@@ -1,0 +1,6 @@
+agent_slug: phase4.analyst_brief
+questions:
+  - id: q_target_firm
+    prompt: "Identify target analyst firm (e.g. Gartner, IDC)"
+    type: text
+    required_for: plan

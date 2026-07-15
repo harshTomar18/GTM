@@ -1,0 +1,5 @@
+agent_slug: phase5.spend_tracker
+criteria:
+  - id: accuracy
+    weight: 1.0
+    description: "Cost report is accurate to the telemetry."

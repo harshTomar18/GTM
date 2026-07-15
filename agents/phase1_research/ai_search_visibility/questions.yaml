@@ -1,0 +1,6 @@
+agent_slug: phase1.ai_search_visibility
+questions:
+  - id: q_search_visibility_focus
+    prompt: "Enter targeted queries or key phrases you want to stand out in AI answers."
+    type: long_text
+    required_for: plan

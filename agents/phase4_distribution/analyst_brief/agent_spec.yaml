@@ -1,0 +1,20 @@
+slug: phase4.analyst_brief
+phase: 4
+stage: 5
+mission: >
+  Produces briefing materials for analyst relations or press.
+inputs:
+  - key: phase1.brief_intake.output
+    schema_version: "BriefIntake:v1.0.0"
+    required: true
+profile_keys: []
+output_schema: "AnalystBrief:v1.0.0"
+artifact_markdown_template: "agents/phase4_distribution/analyst_brief/prompt.md"
+approval_policy_ids:
+  - brand_impacting
+sla:
+  max_tokens: 8192
+model_plan: claude-sonnet-4-6
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

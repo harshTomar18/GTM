@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 function AdCreativeRenderer({ payload }) {
   const [platform, setPlatform] = useState('google');
   const pack = payload?.paid_ad_creative_pack || payload || {};
-  
+
   // Normalize fields dynamically (handles both nested platforms and flat ad_creatives list)
   let googleList = pack.google_search || [];
   let linkedinList = pack.linkedin_ads || [];
@@ -28,7 +28,7 @@ function AdCreativeRenderer({ payload }) {
       .replace('{{campaign_id}}', campaignId || '')
       .replace('{{variant_label}}', variantLabel || '')
       .replace('{{ad_group_id}}', adGroupId || '');
-    
+
     if (!url.startsWith('http') && !url.startsWith('//')) {
       if (url.startsWith('/')) {
         url = window.location.origin + url;
@@ -68,20 +68,20 @@ function AdCreativeRenderer({ payload }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Platform Selector Tabs */}
       <div style={{ display: 'flex', gap: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1rem' }}>
-        <button 
-          onClick={() => setPlatform('google')} 
+        <button
+          onClick={() => setPlatform('google')}
           style={{ padding: '0.5rem 1.25rem', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', background: platform === 'google' ? 'rgba(79,70,229,0.15)' : 'transparent', color: platform === 'google' ? '#a5b4fc' : 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s' }}
         >
           🔍 Google Search Ads
         </button>
-        <button 
-          onClick={() => setPlatform('linkedin')} 
+        <button
+          onClick={() => setPlatform('linkedin')}
           style={{ padding: '0.5rem 1.25rem', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', background: platform === 'linkedin' ? 'rgba(0,119,181,0.15)' : 'transparent', color: platform === 'linkedin' ? '#0077b5' : 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s' }}
         >
           💼 LinkedIn Sponsored Ads
         </button>
-        <button 
-          onClick={() => setPlatform('meta')} 
+        <button
+          onClick={() => setPlatform('meta')}
           style={{ padding: '0.5rem 1.25rem', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', background: platform === 'meta' ? 'rgba(236,64,122,0.15)' : 'transparent', color: platform === 'meta' ? '#ec407a' : 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s' }}
         >
           📸 Meta (FB / IG) Ads
@@ -98,7 +98,7 @@ function AdCreativeRenderer({ payload }) {
               {camp.ad_groups?.map((grp, gIdx) => (
                 <div key={gIdx} style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '12px', padding: '1.5rem' }}>
                   <h4 style={{ color: '#4f46e5', fontSize: '1rem', marginTop: 0, marginBottom: '1rem' }}>📦 Ad Group: {grp.ad_group_id}</h4>
-                  
+
                   {/* Keywords Grid */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
                     <div>
@@ -136,7 +136,7 @@ function AdCreativeRenderer({ payload }) {
 
                       return (
                         <div key={idx} style={{ background: '#121212', border: '1px solid #222', borderRadius: '8px', padding: '1.25rem', fontFamily: 'Arial, sans-serif' }}>
-                          <div 
+                          <div
                             onClick={handleAdClick}
                             style={{ color: '#8ab4f8', fontSize: '1.2rem', marginBottom: '0.25rem', cursor: 'pointer', textDecoration: 'underline' }}
                           >
@@ -149,7 +149,7 @@ function AdCreativeRenderer({ payload }) {
                             {v.description || 'Ad description body goes here.'}
                           </div>
                           {v.cta && (
-                            <button 
+                            <button
                               onClick={handleAdClick}
                               style={{ marginTop: '0.75rem', display: 'inline-block', fontSize: '0.75rem', color: '#8ab4f8', border: '1px solid #444', background: 'transparent', padding: '0.25rem 0.75rem', borderRadius: '4px', cursor: 'pointer', transition: 'all 0.2s' }}
                               onMouseOver={e => e.target.style.background = 'rgba(138,180,248,0.1)'}
@@ -204,7 +204,7 @@ function AdCreativeRenderer({ payload }) {
                         ) : (
                           <div style={{ height: '150px', background: 'rgba(255,255,255,0.01)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444' }}>No image specified</div>
                         )}
-                        
+
                         {/* Ad Bottom Bar */}
                         <div style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1d2226' }}>
                           <div>
@@ -212,7 +212,7 @@ function AdCreativeRenderer({ payload }) {
                             <div style={{ color: '#888', fontSize: '0.7rem', marginTop: '0.15rem' }}>company.com</div>
                           </div>
                           {v.cta && (
-                            <button 
+                            <button
                               onClick={() => {
                                 const resolvedUrl = getCleanUrl(v.landing_url || grp.landing_url, v.variant_label, camp.campaign_id, grp.ad_group_id);
                                 window.open(resolvedUrl, '_blank');
@@ -268,7 +268,7 @@ function AdCreativeRenderer({ payload }) {
                         ) : (
                           <div style={{ height: '150px', background: 'rgba(255,255,255,0.01)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444' }}>No image specified</div>
                         )}
-                        
+
                         {/* Ad Bottom Bar */}
                         <div style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#242526' }}>
                           <div>
@@ -277,7 +277,7 @@ function AdCreativeRenderer({ payload }) {
                             {v.link_description && <div style={{ color: '#b0b3b8', fontSize: '0.75rem', marginTop: '0.15rem' }}>{v.link_description}</div>}
                           </div>
                           {v.cta && (
-                            <button 
+                            <button
                               onClick={() => {
                                 const resolvedUrl = getCleanUrl(v.landing_url || grp.landing_url, v.variant_label, camp.campaign_id, grp.ad_group_id);
                                 window.open(resolvedUrl, '_blank');

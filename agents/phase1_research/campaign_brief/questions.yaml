@@ -1,0 +1,6 @@
+agent_slug: phase1.campaign_brief
+questions:
+  - id: q_campaign_focus
+    prompt: "Confirm the core messaging focus or campaign theme for this cycle."
+    type: text
+    required_for: plan

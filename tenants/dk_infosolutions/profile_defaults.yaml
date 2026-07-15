@@ -1,0 +1,61 @@
+# Vertical Pack template — defaults that any tenant extending this pack inherits.
+#
+# A pack overrides nothing by itself; it provides defaults. A tenant_profile.yaml
+# deep-merges over these defaults via its `extends:` field.
+#
+# To create a new pack:
+#   1. Copy this directory to `vertical_packs/<your_pack_id>/`
+#   2. Fill in industry-appropriate defaults below.
+#   3. Add prompt fragments under `<your_pack_id>/prompt_fragments/`.
+#   4. Add claim/banned-claim libraries under `<your_pack_id>/claim_library.yaml`.
+
+pack_id: _template
+pack_version: "1.0.0"
+description: "Empty starter pack — copy and customize for a real vertical."
+
+supported_motions:
+  - plg
+  - enterprise_abm
+  - outbound
+  - channel_led
+  - community_led
+  - partner_led
+  - hybrid
+
+# Default values applied to TenantProfile sections. Tenant YAML wins on conflicts.
+defaults:
+  brand_voice:
+    reading_level: grade_10
+    tone:
+      - clear
+      - outcome-focused
+    banned_phrases:
+      - synergy
+      - world-class
+      - cutting-edge
+      - next-generation
+      - revolutionary
+      - leverage  # as a verb
+
+  geography:
+    primary_markets: [US]
+
+  languages:
+    default: en-US
+    supported: [en-US]
+
+  currency:
+    default: USD
+    reporting: USD
+
+  operating_calendar:
+    cycle_length: monthly
+    fiscal_year_start: "01-01"
+
+# Prompt fragments this pack contributes to the cache block 1.
+# Paths are relative to this pack directory.
+prompt_fragments: []
+
+# Tenant-readable resources packaged with this pack.
+claim_library_path: claim_library.yaml
+banned_claims_path: banned_claims.yaml

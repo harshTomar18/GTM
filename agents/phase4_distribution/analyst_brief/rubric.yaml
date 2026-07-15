@@ -1,0 +1,5 @@
+agent_slug: phase4.analyst_brief
+criteria:
+  - id: clarity
+    weight: 1.0
+    description: "Analyst brief contains zero jargon and is high clarity."

@@ -1,0 +1,20 @@
+slug: phase3.aeo_content_optimizer
+phase: 3
+stage: 5
+mission: >
+  Reviews content and gives recommendations to maximize presence in AI answers.
+inputs:
+  - key: phase1.ai_search_visibility.output
+    schema_version: "AISearchVisibility:v1.0.0"
+    required: true
+profile_keys: []
+output_schema: "AEOContentOptimizer:v1.0.0"
+artifact_markdown_template: "agents/phase3_assets/aeo_content_optimizer/prompt.md"
+approval_policy_ids:
+  - brand_impacting
+sla:
+  max_tokens: 8192
+model_plan: claude-sonnet-4-6
+model_synthesize: claude-sonnet-4-6
+model_write: claude-sonnet-4-6
+model_review: claude-sonnet-4-6

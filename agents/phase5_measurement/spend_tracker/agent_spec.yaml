@@ -1,0 +1,16 @@
+slug: phase5.spend_tracker
+phase: 5
+stage: 6
+mission: >
+  Produces a token-cost and infrastructure spend summary.
+inputs: []
+profile_keys: []
+output_schema: "SpendTracker:v1.0.0"
+artifact_markdown_template: "agents/phase5_measurement/spend_tracker/prompt.md"
+approval_policy_ids: []
+sla:
+  max_tokens: 8192
+model_plan: claude-sonnet-4-6
+model_synthesize: claude-sonnet-4-6
+model_write: claude-sonnet-4-6
+model_review: claude-sonnet-4-6

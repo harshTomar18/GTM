@@ -1,0 +1,5 @@
+agent_slug: phase3.aeo_content_optimizer
+criteria:
+  - id: actionability
+    weight: 1.0
+    description: "Recommendations are concrete and actionable."

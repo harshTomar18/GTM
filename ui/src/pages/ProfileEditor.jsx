@@ -103,14 +103,14 @@ export default function ProfileEditor() {
           <h2 style={{ color: '#eaf1ff', margin: 0 }}>Company Workspace: {tenantId}</h2>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.25rem', borderRadius: '6px' }}>
-          <button 
-            onClick={() => setActiveEditorTab('visual')} 
+          <button
+            onClick={() => setActiveEditorTab('visual')}
             style={{ padding: '0.5rem 1rem', border: 'none', background: activeEditorTab === 'visual' ? 'var(--accent)' : 'transparent', color: activeEditorTab === 'visual' ? '#000' : '#fff', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
           >
             🛠️ Visual Form
           </button>
-          <button 
-            onClick={() => setActiveEditorTab('advanced')} 
+          <button
+            onClick={() => setActiveEditorTab('advanced')}
             style={{ padding: '0.5rem 1rem', border: 'none', background: activeEditorTab === 'advanced' ? 'var(--accent)' : 'transparent', color: activeEditorTab === 'advanced' ? '#000' : '#fff', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
           >
             📝 Raw YAML
@@ -128,36 +128,36 @@ export default function ProfileEditor() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Legal Name</label>
-                    <input 
-                      type="text" 
-                      value={profile.company?.legal_name || ''} 
-                      onChange={e => handleVisualChange('company', 'legal_name', e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      value={profile.company?.legal_name || ''}
+                      onChange={e => handleVisualChange('company', 'legal_name', e.target.value)}
+                      className="glass-input"
                     />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Brand Name</label>
-                    <input 
-                      type="text" 
-                      value={profile.company?.brand_name || ''} 
-                      onChange={e => handleVisualChange('company', 'brand_name', e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      value={profile.company?.brand_name || ''}
+                      onChange={e => handleVisualChange('company', 'brand_name', e.target.value)}
+                      className="glass-input"
                     />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Website URL</label>
-                    <input 
-                      type="text" 
-                      value={profile.company?.url || ''} 
-                      onChange={e => handleVisualChange('company', 'url', e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      value={profile.company?.url || ''}
+                      onChange={e => handleVisualChange('company', 'url', e.target.value)}
+                      className="glass-input"
                     />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Company Size</label>
-                    <select 
-                      value={profile.company?.size_band || 'smb'} 
-                      onChange={e => handleVisualChange('company', 'size_band', e.target.value)} 
+                    <select
+                      value={profile.company?.size_band || 'smb'}
+                      onChange={e => handleVisualChange('company', 'size_band', e.target.value)}
                       className="glass-input"
                       style={{ width: '100%', padding: '0.75rem', color: '#fff', background: 'var(--bg-primary)' }}
                     >
@@ -169,18 +169,18 @@ export default function ProfileEditor() {
                 </div>
                 <div style={{ marginTop: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Short Description</label>
-                  <input 
-                    type="text" 
-                    value={profile.company?.description_short || ''} 
-                    onChange={e => handleVisualChange('company', 'description_short', e.target.value)} 
-                    className="glass-input" 
+                  <input
+                    type="text"
+                    value={profile.company?.description_short || ''}
+                    onChange={e => handleVisualChange('company', 'description_short', e.target.value)}
+                    className="glass-input"
                   />
                 </div>
                 <div style={{ marginTop: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Long Description</label>
-                  <textarea 
-                    value={profile.company?.description_long || ''} 
-                    onChange={e => handleVisualChange('company', 'description_long', e.target.value)} 
+                  <textarea
+                    value={profile.company?.description_long || ''}
+                    onChange={e => handleVisualChange('company', 'description_long', e.target.value)}
                     className="glass-input"
                     style={{ width: '100%', height: '100px', resize: 'vertical' }}
                   />
@@ -193,35 +193,35 @@ export default function ProfileEditor() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Voice Archetype</label>
-                    <input 
-                      type="text" 
-                      value={profile.brand_voice?.archetype || 'Sage'} 
-                      onChange={e => handleVisualChange('brand_voice', 'archetype', e.target.value)} 
+                    <input
+                      type="text"
+                      value={profile.brand_voice?.archetype || 'Sage'}
+                      onChange={e => handleVisualChange('brand_voice', 'archetype', e.target.value)}
                       placeholder="e.g. Sage, Creator, Explorer"
-                      className="glass-input" 
+                      className="glass-input"
                     />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Reading Level</label>
-                    <input 
-                      type="text" 
-                      value={profile.brand_voice?.reading_level || 'grade_11'} 
-                      onChange={e => handleVisualChange('brand_voice', 'reading_level', e.target.value)} 
+                    <input
+                      type="text"
+                      value={profile.brand_voice?.reading_level || 'grade_11'}
+                      onChange={e => handleVisualChange('brand_voice', 'reading_level', e.target.value)}
                       placeholder="e.g. grade_10, grade_12"
-                      className="glass-input" 
+                      className="glass-input"
                     />
                   </div>
                 </div>
 
                 <div style={{ marginTop: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Banned Phrases (Comma Separated)</label>
-                  <input 
-                    type="text" 
-                    value={Array.isArray(profile.brand_voice?.banned_phrases) ? profile.brand_voice.banned_phrases.join(', ') : ''} 
-                    onChange={e => handleVisualChange('brand_voice', 'banned_phrases', e.target.value.split(',').map(s => s.trim()))} 
+                  <input
+                    type="text"
+                    value={Array.isArray(profile.brand_voice?.banned_phrases) ? profile.brand_voice.banned_phrases.join(', ') : ''}
+                    onChange={e => handleVisualChange('brand_voice', 'banned_phrases', e.target.value.split(',').map(s => s.trim()))}
                     placeholder="e.g. revolutionary, cutting-edge, synergy"
-                    className="glass-input" 
-                    />
+                    className="glass-input"
+                  />
                 </div>
               </div>
 
@@ -231,20 +231,20 @@ export default function ProfileEditor() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>CRM System</label>
-                    <input 
-                      type="text" 
-                      value={profile.tech_stack?.crm || ''} 
-                      onChange={e => handleVisualChange('tech_stack', 'crm', e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      value={profile.tech_stack?.crm || ''}
+                      onChange={e => handleVisualChange('tech_stack', 'crm', e.target.value)}
+                      className="glass-input"
                     />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Social Media Channel</label>
-                    <input 
-                      type="text" 
-                      value={profile.tech_stack?.social || ''} 
-                      onChange={e => handleVisualChange('tech_stack', 'social', e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      value={profile.tech_stack?.social || ''}
+                      onChange={e => handleVisualChange('tech_stack', 'social', e.target.value)}
+                      className="glass-input"
                     />
                   </div>
                 </div>
@@ -256,39 +256,39 @@ export default function ProfileEditor() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Primary Industry</label>
-                    <input 
-                      type="text" 
-                      value={profile.industry?.primary || ''} 
-                      onChange={e => handleVisualChange('industry', 'primary', e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      value={profile.industry?.primary || ''}
+                      onChange={e => handleVisualChange('industry', 'primary', e.target.value)}
+                      className="glass-input"
                     />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Target Markets (Comma Separated)</label>
-                    <input 
-                      type="text" 
-                      value={Array.isArray(profile.geography?.primary_markets) ? profile.geography.primary_markets.join(', ') : ''} 
-                      onChange={e => handleVisualChange('geography', 'primary_markets', e.target.value.split(',').map(s => s.trim()))} 
+                    <input
+                      type="text"
+                      value={Array.isArray(profile.geography?.primary_markets) ? profile.geography.primary_markets.join(', ') : ''}
+                      onChange={e => handleVisualChange('geography', 'primary_markets', e.target.value.split(',').map(s => s.trim()))}
                       placeholder="e.g. US, CA, UK"
-                      className="glass-input" 
+                      className="glass-input"
                     />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Default Language</label>
-                    <input 
-                      type="text" 
-                      value={profile.languages?.default || 'en-US'} 
-                      onChange={e => handleVisualChange('languages', 'default', e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      value={profile.languages?.default || 'en-US'}
+                      onChange={e => handleVisualChange('languages', 'default', e.target.value)}
+                      className="glass-input"
                     />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Currency</label>
-                    <input 
-                      type="text" 
-                      value={profile.currency?.default || 'USD'} 
-                      onChange={e => handleVisualChange('currency', 'default', e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      value={profile.currency?.default || 'USD'}
+                      onChange={e => handleVisualChange('currency', 'default', e.target.value)}
+                      className="glass-input"
                     />
                   </div>
                 </div>
@@ -306,15 +306,15 @@ export default function ProfileEditor() {
                       handleVisualChange(null, 'lob', updated);
                     }} className="btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}>+ Add LOB</button>
                   </div>
-                  
+
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {(profile.lob || []).map((lobItem, idx) => (
                       <div key={idx} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(255,255,255,0.01)', padding: '0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.02)' }}>
                         <div style={{ flex: 1 }}>
                           <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>LOB ID</label>
-                          <input 
-                            type="text" 
-                            value={lobItem.id || ''} 
+                          <input
+                            type="text"
+                            value={lobItem.id || ''}
                             onChange={e => {
                               const updated = [...profile.lob];
                               updated[idx] = { ...updated[idx], id: e.target.value };
@@ -326,8 +326,8 @@ export default function ProfileEditor() {
                         </div>
                         <div style={{ flex: 1.5 }}>
                           <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>GTM Motion</label>
-                          <select 
-                            value={lobItem.motion || 'enterprise_abm'} 
+                          <select
+                            value={lobItem.motion || 'enterprise_abm'}
                             onChange={e => {
                               const updated = [...profile.lob];
                               updated[idx] = { ...updated[idx], motion: e.target.value };
@@ -354,14 +354,14 @@ export default function ProfileEditor() {
                 {/* Frameworks Editor */}
                 <div style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <h3 style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '0.5rem' }}>🛡️ Authority Frameworks</h3>
-                  
+
                   <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem' }}>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. SOC2, HIPAA, ISO27001" 
-                      value={newFramework} 
-                      onChange={e => setNewFramework(e.target.value)} 
-                      className="glass-input" 
+                    <input
+                      type="text"
+                      placeholder="e.g. SOC2, HIPAA, ISO27001"
+                      value={newFramework}
+                      onChange={e => setNewFramework(e.target.value)}
+                      className="glass-input"
                       style={{ padding: '0.5rem 0.75rem', fontSize: '0.88rem' }}
                     />
                     <button type="button" onClick={() => {
@@ -377,16 +377,16 @@ export default function ProfileEditor() {
 
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {(profile.frameworks || []).map((f) => (
-                      <span key={f} style={{ 
-                        display: 'inline-flex', 
-                        alignItems: 'center', 
-                        gap: '0.35rem', 
-                        padding: '0.25rem 0.6rem', 
-                        background: 'rgba(99, 102, 241, 0.08)', 
-                        border: '1px solid rgba(99, 102, 241, 0.2)', 
-                        color: '#a5b4fc', 
-                        borderRadius: '4px', 
-                        fontSize: '0.8rem' 
+                      <span key={f} style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        padding: '0.25rem 0.6rem',
+                        background: 'rgba(99, 102, 241, 0.08)',
+                        border: '1px solid rgba(99, 102, 241, 0.2)',
+                        color: '#a5b4fc',
+                        borderRadius: '4px',
+                        fontSize: '0.8rem'
                       }}>
                         {f}
                         <span onClick={() => {
@@ -417,7 +417,7 @@ export default function ProfileEditor() {
                     handleVisualChange(null, 'icp_archetypes', updated);
                   }} className="btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}>+ Add Persona</button>
                 </div>
-                
+
                 {profile.icp_archetypes?.map((icp, index) => (
                   <div key={index} style={{ marginBottom: '1.5rem', padding: '1.25rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.03)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -431,38 +431,38 @@ export default function ProfileEditor() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1rem' }}>
                       <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Persona ID</label>
-                        <input 
-                          type="text" 
-                          value={icp.id || ''} 
+                        <input
+                          type="text"
+                          value={icp.id || ''}
                           onChange={e => {
                             const updatedList = [...profile.icp_archetypes];
                             updatedList[index] = { ...updatedList[index], id: e.target.value };
                             handleVisualChange(null, 'icp_archetypes', updatedList);
                           }}
-                          className="glass-input" 
+                          className="glass-input"
                         />
                       </div>
                       <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Company Size Target</label>
-                        <input 
-                          type="text" 
-                          value={Array.isArray(icp.company_size) ? icp.company_size.join(', ') : ''} 
+                        <input
+                          type="text"
+                          value={Array.isArray(icp.company_size) ? icp.company_size.join(', ') : ''}
                           onChange={e => {
                             const updatedList = [...profile.icp_archetypes];
                             updatedList[index] = { ...updatedList[index], company_size: e.target.value.split(',').map(s => s.trim()) };
                             handleVisualChange(null, 'icp_archetypes', updatedList);
                           }}
-                          className="glass-input" 
+                          className="glass-input"
                         />
                       </div>
                     </div>
-                    
+
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                       <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Economic Buyer</label>
-                        <input 
-                          type="text" 
-                          value={icp.buying_committee?.economic_buyer || ''} 
+                        <input
+                          type="text"
+                          value={icp.buying_committee?.economic_buyer || ''}
                           onChange={e => {
                             const updatedList = [...profile.icp_archetypes];
                             updatedList[index] = {
@@ -471,14 +471,14 @@ export default function ProfileEditor() {
                             };
                             handleVisualChange(null, 'icp_archetypes', updatedList);
                           }}
-                          className="glass-input" 
+                          className="glass-input"
                         />
                       </div>
                       <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Technical Buyer</label>
-                        <input 
-                          type="text" 
-                          value={icp.buying_committee?.technical_buyer || ''} 
+                        <input
+                          type="text"
+                          value={icp.buying_committee?.technical_buyer || ''}
                           onChange={e => {
                             const updatedList = [...profile.icp_archetypes];
                             updatedList[index] = {
@@ -487,14 +487,14 @@ export default function ProfileEditor() {
                             };
                             handleVisualChange(null, 'icp_archetypes', updatedList);
                           }}
-                          className="glass-input" 
+                          className="glass-input"
                         />
                       </div>
                       <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>User Buyer</label>
-                        <input 
-                          type="text" 
-                          value={icp.buying_committee?.user_buyer || ''} 
+                        <input
+                          type="text"
+                          value={icp.buying_committee?.user_buyer || ''}
                           onChange={e => {
                             const updatedList = [...profile.icp_archetypes];
                             updatedList[index] = {
@@ -503,7 +503,7 @@ export default function ProfileEditor() {
                             };
                             handleVisualChange(null, 'icp_archetypes', updatedList);
                           }}
-                          className="glass-input" 
+                          className="glass-input"
                         />
                       </div>
                     </div>
@@ -534,8 +534,8 @@ export default function ProfileEditor() {
                   {profile.approval_roles?.map((roleInfo, idx) => (
                     <div key={idx} style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.03)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                        <select 
-                          value={roleInfo.role || 'SME'} 
+                        <select
+                          value={roleInfo.role || 'SME'}
                           onChange={e => {
                             const updatedList = [...profile.approval_roles];
                             updatedList[idx] = { ...updatedList[idx], role: e.target.value };
@@ -561,29 +561,29 @@ export default function ProfileEditor() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         <div>
                           <label style={{ display: 'block', marginBottom: '0.35rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Name</label>
-                          <input 
-                            type="text" 
-                            value={roleInfo.name || ''} 
+                          <input
+                            type="text"
+                            value={roleInfo.name || ''}
                             onChange={e => {
                               const updatedList = [...profile.approval_roles];
                               updatedList[idx] = { ...updatedList[idx], name: e.target.value };
                               handleVisualChange(null, 'approval_roles', updatedList);
                             }}
-                            className="glass-input" 
+                            className="glass-input"
                             style={{ padding: '0.5rem 0.75rem', fontSize: '0.9rem' }}
                           />
                         </div>
                         <div>
                           <label style={{ display: 'block', marginBottom: '0.35rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Email Address</label>
-                          <input 
-                            type="email" 
-                            value={roleInfo.email || ''} 
+                          <input
+                            type="email"
+                            value={roleInfo.email || ''}
                             onChange={e => {
                               const updatedList = [...profile.approval_roles];
                               updatedList[idx] = { ...updatedList[idx], email: e.target.value };
                               handleVisualChange(null, 'approval_roles', updatedList);
                             }}
-                            className="glass-input" 
+                            className="glass-input"
                             style={{ padding: '0.5rem 0.75rem', fontSize: '0.9rem' }}
                           />
                         </div>
@@ -604,16 +604,16 @@ export default function ProfileEditor() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <textarea 
-                value={rawYaml} 
+              <textarea
+                value={rawYaml}
                 onChange={(e) => setRawYaml(e.target.value)}
                 className="glass-input"
-                style={{ 
-                  width: '100%', 
-                  height: '500px', 
-                  fontFamily: 'monospace', 
+                style={{
+                  width: '100%',
+                  height: '500px',
+                  fontFamily: 'monospace',
                   fontSize: '0.9rem',
-                  padding: '1rem', 
+                  padding: '1rem',
                   borderRadius: '8px',
                   border: '1px solid rgba(255,255,255,0.1)',
                   background: 'rgba(0,0,0,0.4)',

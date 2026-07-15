@@ -1,0 +1,6 @@
+agent_slug: phase5.spend_tracker
+questions:
+  - id: q_budget_limit
+    prompt: "Confirm monthly token budget in USD."
+    type: text
+    required_for: plan

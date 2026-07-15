@@ -4,6 +4,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('yaml');
+const nodemailer = require('nodemailer');
 const { exec } = require('child_process');
 
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -73,7 +74,7 @@ const getRequiredRolesForAgent = (agent, tenant) => {
             frameworks = data.frameworks || [];
             regulatoryReview = data.regulatory_constraints && data.regulatory_constraints.length > 0;
         }
-    } catch (e) {}
+    } catch (e) { }
 
     const roles = new Set();
 
@@ -81,7 +82,7 @@ const getRequiredRolesForAgent = (agent, tenant) => {
         roles.add('CMO');
         roles.add('SalesLeader');
     }
-    
+
     if (['positioning', 'value_proposition', 'messaging_matrix', 'content_pillars', 'narrative_lock', 'website_copy', 'campaign_brief'].includes(agent)) {
         roles.add('CMO');
     }
@@ -180,11 +181,11 @@ ${agentPrompt}
             payload = text.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/i, '').trim();
             try {
                 payload = JSON.parse(payload);
-            } catch (e) {}
+            } catch (e) { }
         } else {
             try {
                 payload = JSON.parse(text);
-            } catch (e) {}
+            } catch (e) { }
         }
 
         const busPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'context_bus');
@@ -205,12 +206,12 @@ ${agentPrompt}
         const approvalId = Math.random().toString(36).substring(2, 10);
         const approvalPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'approvals');
         fs.mkdirSync(approvalPath, { recursive: true });
-        
+
         // Clean old resolutions if re-run
         try {
             if (fs.existsSync(path.join(approvalPath, `${agent}.approved.json`))) fs.unlinkSync(path.join(approvalPath, `${agent}.approved.json`));
             if (fs.existsSync(path.join(approvalPath, `${agent}.rejected.json`))) fs.unlinkSync(path.join(approvalPath, `${agent}.rejected.json`));
-        } catch(e) {}
+        } catch (e) { }
 
         const matchedRoles = getRequiredRolesForAgent(agent, tenant);
 
@@ -303,7 +304,7 @@ const runRealCLI = async (command) => {
             // Extract tenant ID from the command
             const parts = command.trim().split(/\s+/);
             const tenant = parts[parts.length - 1].replace(/"/g, '').trim();
-            
+
             const profilePath = path.join(getRootPath(), 'tenants', tenant, 'tenant_profile.yaml');
             if (!fs.existsSync(profilePath)) {
                 return {
@@ -437,7 +438,7 @@ app.get('/api/audit', (req, res) => {
         if (!fs.existsSync(auditLogPath)) {
             const auditDir = path.dirname(auditLogPath);
             if (!fs.existsSync(auditDir)) fs.mkdirSync(auditDir, { recursive: true });
-            
+
             const seed = [
                 { ts: new Date(Date.now() - 1000000).toISOString(), event: 'tenant.initialized', actor: 'System', actor_role: 'System', subject_type: 'tenant', subject_id: '_example', tenant_id: '_example', cycle_id: 'N/A', rationale: 'Default workspace onboarding', before: null, after: { pack: '_template' } },
                 { ts: new Date(Date.now() - 500000).toISOString(), event: 'tenant.profile_validated', actor: 'System', actor_role: 'System', subject_type: 'tenant', subject_id: '_example', tenant_id: '_example', cycle_id: 'N/A', rationale: 'Verification profile scan', before: null, after: { success: true } }
@@ -480,7 +481,7 @@ app.post('/api/tenant-init', async (req, res) => {
     const { tenant, pack } = req.body;
     if (!tenant || !pack) return res.status(400).json({ error: 'Missing tenant or pack' });
     const result = await runRealCLI(`claude -p "/gtm-tenant-init tenant=${tenant} pack=${pack}"`);
-    
+
     // Fallback: If Claude fails (e.g. not logged in), scaffold it manually so the UI demo still works
     if (!result.success || result.message.includes('Not logged in')) {
         try {
@@ -531,7 +532,7 @@ app.get('/api/pending', (req, res) => {
                                 try {
                                     const fileData = JSON.parse(fs.readFileSync(path.join(appPath, f), 'utf8'));
                                     approvals.push(fileData);
-                                } catch (e) {}
+                                } catch (e) { }
                             }
                         }
                     }
@@ -564,7 +565,7 @@ const findPendingApproval = (id) => {
                             if (data.id === id) {
                                 return { data, filePath, tenant: t, cycle: cy, appPath, agent: data.agent };
                             }
-                        } catch (e) {}
+                        } catch (e) { }
                     }
                 }
             }
@@ -577,10 +578,10 @@ const findPendingApproval = (id) => {
 app.post('/api/approve', async (req, res) => {
     const { id, role, comment } = req.body;
     const approvalInfo = findPendingApproval(id);
-    
+
     if (approvalInfo) {
         const { data, filePath, tenant, cycle, agent } = approvalInfo;
-        
+
         const requiredRoles = data.required_roles || [data.required_role || 'CMO'];
         const approvalsReceived = data.approvals_received || {};
         approvalsReceived[role] = new Date().toISOString();
@@ -597,7 +598,7 @@ app.post('/api/approve', async (req, res) => {
                     artifact.approved_at = new Date().toISOString();
                     artifact.approval_record_id = id;
                     fs.writeFileSync(outputFile, JSON.stringify(artifact, null, 2), 'utf8');
-                } catch(e) {}
+                } catch (e) { }
             }
 
             fs.unlinkSync(filePath);
@@ -634,7 +635,7 @@ app.post('/api/approve', async (req, res) => {
 // 6. Reject (/gtm-reject)
 app.post('/api/reject', async (req, res) => {
     const { id, role, comment } = req.body;
-    
+
     if (!comment || comment.trim() === '') {
         return res.status(400).json({ success: false, error: 'Rejection comment is required.' });
     }
@@ -650,7 +651,7 @@ app.post('/api/reject', async (req, res) => {
             data.required_roles = ['CEO'];
             data.required_role = 'CEO';
             data.approvals_received = {};
-            
+
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
 
             writeAuditLog('approval.escalated', role, role, 'approval', id, tenant, cycle, null, { iteration: currentIteration, required_roles: ['CEO'] }, comment);
@@ -702,7 +703,7 @@ app.post('/api/agent-run', async (req, res) => {
 app.get('/api/dashboard/:tenant', (req, res) => {
     const tenant = req.params.tenant;
     const tenantPath = path.join(getRootPath(), 'tenants', tenant);
-    
+
     if (!fs.existsSync(tenantPath)) {
         return res.json({
             success: true,
@@ -736,7 +737,7 @@ app.get('/api/dashboard/:tenant', (req, res) => {
                     if (fs.existsSync(busPath)) {
                         const outputs = fs.readdirSync(busPath).filter(f => f.endsWith('.output.json'));
                         deliverablesCount += outputs.length;
-                        
+
                         outputs.forEach(f => {
                             const agent = f.replace('.output.json', '');
                             if (['brief_intake', 'market_research', 'audience_intelligence', 'keyword_intent', 'research_synthesis'].includes(agent)) p1Count++;
@@ -746,7 +747,7 @@ app.get('/api/dashboard/:tenant', (req, res) => {
                             if (['measurement', 'experiment_review', 'competitive_pulse', 'executive_brief', 'iteration_planner'].includes(agent)) p5Count++;
                         });
                     }
-                    
+
                     const appPath = path.join(cyclesPath, cy, 'approvals');
                     if (fs.existsSync(appPath)) {
                         const pending = fs.readdirSync(appPath).filter(f => f.endsWith('.pending.json'));
@@ -934,21 +935,21 @@ app.post('/api/tenant-profile/:tenant', (req, res) => {
     const tenant = req.params.tenant;
     const { profile, rawYaml } = req.body;
     if (!profile && !rawYaml) return res.status(400).json({ error: 'Missing profile data' });
-    
+
     const profilePath = path.join(getRootPath(), 'tenants', tenant, 'tenant_profile.yaml');
     try {
         const dirPath = path.dirname(profilePath);
         if (!fs.existsSync(dirPath)) {
             fs.mkdirSync(dirPath, { recursive: true });
         }
-        
+
         // If rawYaml is provided (from the Advanced Editor), write it directly
         // Otherwise stringify the JSON profile object
         let yamlContent = rawYaml;
         if (!yamlContent) {
             yamlContent = yaml.stringify(profile);
         }
-        
+
         fs.writeFileSync(profilePath, yamlContent, 'utf8');
         res.json({ success: true, message: 'Profile saved successfully' });
     } catch (error) {
@@ -967,7 +968,7 @@ app.get('/api/outputs/:tenant/:cycle', (req, res) => {
             try {
                 const raw = fs.readFileSync(path.join(busPath, f), 'utf8');
                 const data = JSON.parse(raw);
-                return { file: f, agent: data.written_by_agent || f.replace('.output.json',''), payload: data.payload || data, written_at: data.written_at };
+                return { file: f, agent: data.written_by_agent || f.replace('.output.json', ''), payload: data.payload || data, written_at: data.written_at };
             } catch { return { file: f, agent: f, payload: null }; }
         });
         res.json({ outputs });
@@ -1114,6 +1115,116 @@ IMPORTANT RULES:
         res.status(500).json({
             error: `Competitor analysis failed: ${error.message}`
         });
+    }
+});
+
+// 30. Dispatch Email API
+app.post('/api/dispatch-email', async (req, res) => {
+    const { tenant, cycle, agent, stakeholder, subject, notes } = req.body;
+    if (!tenant || !cycle || !agent || !stakeholder || !stakeholder.email) {
+        return res.status(400).json({ error: 'Missing required parameters: tenant, cycle, agent, stakeholder, and stakeholder.email' });
+    }
+
+    const busPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'context_bus');
+    const filePath = path.join(busPath, `${agent}.output.json`);
+
+    try {
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ error: `No generated output found for agent ${agent} in tenant ${tenant}` });
+        }
+
+        const rawData = fs.readFileSync(filePath, 'utf8');
+        const parsed = JSON.parse(rawData);
+        const content = parsed.payload || parsed;
+
+        // Configure Nodemailer transporter
+        let transporter;
+        let isTestAccount = false;
+        let testAccount = null;
+
+        if (process.env.SMTP_HOST) {
+            transporter = nodemailer.createTransport({
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT || '587'),
+                secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS
+                }
+            });
+        } else {
+            // Setup Ethereal developer test SMTP account
+            console.log("[SMTP] No SMTP config found. Creating temporary Ethereal test account...");
+            testAccount = await nodemailer.createTestAccount();
+            transporter = nodemailer.createTransport({
+                host: 'smtp.ethereal.email',
+                port: 587,
+                secure: false,
+                auth: {
+                    user: testAccount.user,
+                    pass: testAccount.pass
+                }
+            });
+            isTestAccount = true;
+        }
+
+        // Format content payload for display in email
+        let formattedContent = '';
+        if (typeof content === 'object') {
+            formattedContent = `<pre style="background:#f4f4f5; padding:15px; border-radius:6px; border:1px solid #e4e4e7; font-family:monospace; font-size:13px; color:#18181b; overflow-x:auto;">${JSON.stringify(content, null, 2)}</pre>`;
+        } else {
+            formattedContent = `<div style="background:#f4f4f5; padding:15px; border-radius:6px; border:1px solid #e4e4e7; white-space:pre-wrap; font-family:sans-serif; color:#18181b; line-height:1.6;">${content}</div>`;
+        }
+
+        // Email details
+        const mailOptions = {
+            from: process.env.SMTP_FROM || '"GTM OS AI Department" <gtm-dispatcher@example.com>',
+            to: stakeholder.email,
+            subject: subject || `GTM OS Dispatch: AI Marketing ${agent}`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4e4e7; border-radius: 8px; color: #18181b;">
+                    <h2 style="color: #4f46e5; margin-bottom: 5px;">GTM OS Marketing Dispatch</h2>
+                    <p style="font-size: 14px; color: #71717a; margin-top: 0; margin-bottom: 20px;">Autonomous B2B Marketing Delivery</p>
+                    
+                    <p>Hello <strong>${stakeholder.name}</strong> (${stakeholder.role}),</p>
+                    <p>The AI Agent <strong>${agent}</strong> has generated marketing deliverables for the <strong>${tenant}</strong> campaign cycle (<strong>${cycle}</strong>).</p>
+                    
+                    ${notes ? `
+                    <div style="background: #fef08a; border-left: 4px solid #eab308; padding: 12px; margin: 15px 0; border-radius: 4px; font-size: 14px;">
+                        <strong>Reviewer / CMO Notes:</strong><br/>
+                        ${notes}
+                    </div>
+                    ` : ''}
+                    
+                    <h3 style="color: #0f172a; margin-top: 25px; border-bottom: 1px solid #e4e4e7; padding-bottom: 8px;">Deliverable Preview</h3>
+                    ${formattedContent}
+                    
+                    <p style="margin-top: 30px; font-size: 12px; color: #a1a1aa; text-align: center; border-top: 1px solid #e4e4e7; padding-top: 15px;">
+                        Sent automatically by GTM Operating System Monolith.
+                    </p>
+                </div>
+            `
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`[SMTP] Email successfully dispatched to ${stakeholder.email}. MessageId: ${info.messageId}`);
+
+        let previewUrl = null;
+        if (isTestAccount) {
+            previewUrl = nodemailer.getTestMessageUrl(info);
+            console.log(`[SMTP] Preview URL: ${previewUrl}`);
+        }
+
+        res.json({
+            success: true,
+            message: `Email dispatched successfully to ${stakeholder.email}.`,
+            messageId: info.messageId,
+            previewUrl
+        });
+
+    } catch (error) {
+        console.error('[SMTP DISPATCH ERROR]', error);
+        res.status(500).json({ error: `Failed to dispatch email: ${error.message}` });
     }
 });
 

@@ -1,0 +1,24 @@
+slug: phase1.campaign_brief
+phase: 1
+stage: 2
+mission: >
+  Produce the definitive campaign brief — the authoritative source of truth every downstream agent in the cycle reads.
+inputs:
+  - key: phase1.brief_intake.output
+    schema_version: "BriefIntake:v1.0.0"
+    required: true
+profile_keys:
+  - profile.company.brand_name
+  - profile.company.description_short
+  - profile.brand_voice
+output_schema: "CampaignBrief:v1.0.0"
+artifact_markdown_template: "agents/phase1_research/campaign_brief/prompt.md"
+approval_policy_ids:
+  - brand_impacting
+sla:
+  max_tokens: 8192
+  max_cost_usd: 0.50
+model_plan: claude-sonnet-4-6
+model_synthesize: claude-sonnet-4-6
+model_write: claude-opus-4-7
+model_review: claude-sonnet-4-6

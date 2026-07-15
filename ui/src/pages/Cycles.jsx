@@ -113,7 +113,7 @@ export default function Cycles({ tenants = [] }) {
   const renderTenantSelector = () => {
     if (tenants.length > 0) {
       return (
-        <select 
+        <select
           value={tenant}
           onChange={(e) => handleTenantChange(e.target.value)}
           className="glass-input"
@@ -130,7 +130,7 @@ export default function Cycles({ tenants = [] }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      
+
       {/* Visual DAG Representation */}
       <div className="glass-card animated-page" style={{ padding: '2rem' }}>
         <h2 style={{ fontSize: '1.25rem', color: 'white', marginBottom: '1.5rem', fontWeight: 600 }}>System DAG Overview</h2>
@@ -170,10 +170,10 @@ export default function Cycles({ tenants = [] }) {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Cycle ID</label>
-              <select 
-                value={cycle} 
-                onChange={e => setCycle(e.target.value)} 
-                className="glass-input" 
+              <select
+                value={cycle}
+                onChange={e => setCycle(e.target.value)}
+                className="glass-input"
                 style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white', appearance: 'none' }}
               >
                 {cycles.map(c => <option key={c.id} value={c.id}>{c.id}</option>)}
@@ -183,7 +183,7 @@ export default function Cycles({ tenants = [] }) {
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Campaign Objective</label>
               <input type="text" className="glass-input" value={objective} onChange={e => setObjective(e.target.value)} placeholder='e.g. Drive 5M pipeline...' style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white' }} />
             </div>
-            
+
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
               <button onClick={() => handleStart(false)} className="btn" style={{ flex: 1, background: 'transparent', border: '1px solid var(--accent)', color: 'var(--accent)' }} disabled={isLoading}>
                 {isLoading ? 'Running...' : 'Execute (Dry Run)'}
@@ -209,10 +209,10 @@ export default function Cycles({ tenants = [] }) {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>cycle=&lt;id&gt;</label>
-              <select 
-                value={cycle} 
-                onChange={e => setCycle(e.target.value)} 
-                className="glass-input" 
+              <select
+                value={cycle}
+                onChange={e => setCycle(e.target.value)}
+                className="glass-input"
                 style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white', appearance: 'none' }}
               >
                 {cycles.map(c => <option key={c.id} value={c.id}>{c.id}</option>)}
@@ -220,10 +220,10 @@ export default function Cycles({ tenants = [] }) {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>agent=&lt;slug&gt;</label>
-              <select 
-                value={agent} 
-                onChange={e => setAgent(e.target.value)} 
-                className="glass-input" 
+              <select
+                value={agent}
+                onChange={e => setAgent(e.target.value)}
+                className="glass-input"
                 style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white', appearance: 'none' }}
               >
                 <option value="">-- Select an Agent --</option>
@@ -234,7 +234,7 @@ export default function Cycles({ tenants = [] }) {
                 ))}
               </select>
             </div>
-            
+
             <button onClick={handleAgentRun} className="btn" style={{ marginTop: '1rem', background: 'var(--warning)', color: '#000' }} disabled={isLoading}>
               {isLoading ? 'Running...' : 'Execute Agent'}
             </button>

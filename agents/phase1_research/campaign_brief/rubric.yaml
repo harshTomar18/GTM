@@ -1,0 +1,9 @@
+agent_slug: phase1.campaign_brief
+criteria:
+  - id: clear_theme
+    weight: 0.5
+    description: "Brief contains 1-6 concrete campaign themes."
+  - id: no_fabrication
+    weight: 0.5
+    hard_fail: true
+    description: "Contains zero fabricated claims or empty placeholders."

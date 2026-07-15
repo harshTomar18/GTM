@@ -155,9 +155,9 @@ export default function AgentDependencyMap() {
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Active Workspace</label>
-            <select 
-              value={tenant} 
-              onChange={e => setTenant(e.target.value)} 
+            <select
+              value={tenant}
+              onChange={e => setTenant(e.target.value)}
               className="glass-input"
               style={{ padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.85rem' }}
             >
@@ -166,9 +166,9 @@ export default function AgentDependencyMap() {
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Target Cycle</label>
-            <select 
-              value={cycle} 
-              onChange={e => setCycle(e.target.value)} 
+            <select
+              value={cycle}
+              onChange={e => setCycle(e.target.value)}
               className="glass-input"
               style={{ padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.85rem' }}
             >
@@ -197,8 +197,8 @@ export default function AgentDependencyMap() {
                 {phase.agents.map((agent) => {
                   const status = getAgentStatus(agent.slug);
                   return (
-                    <div key={agent.slug} style={{ 
-                      padding: '1.25rem', 
+                    <div key={agent.slug} style={{
+                      padding: '1.25rem',
                       background: status === 'completed' ? 'rgba(16,185,129,0.02)' : (status === 'pending' ? 'rgba(245,158,11,0.02)' : 'rgba(255,255,255,0.01)'),
                       border: `1px solid ${status === 'completed' ? 'rgba(16,185,129,0.15)' : (status === 'pending' ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.03)')}`,
                       borderRadius: '10px',
@@ -208,8 +208,8 @@ export default function AgentDependencyMap() {
                       transition: 'transform 0.2s',
                       cursor: 'pointer'
                     }}
-                    onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                    onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+                      onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                      onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
                     >
                       <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem', gap: '0.5rem' }}>
@@ -220,7 +220,7 @@ export default function AgentDependencyMap() {
                           {agent.desc}
                         </p>
                       </div>
-                      
+
                       <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', color: '#666', borderTop: '1px solid rgba(255,255,255,0.02)', paddingTop: '0.75rem' }}>
                         <span>Requires: {phase.id > 1 ? `Phase 0${phase.id - 1}` : 'Objective'}</span>
                         <span>Bus envelope: output.json</span>
