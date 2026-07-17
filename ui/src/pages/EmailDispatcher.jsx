@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Mail, Send, CheckCircle, AlertCircle, FileText, UserCheck, Loader, Calendar } from 'lucide-react';
+import { normalizePayloadKeys } from '../components/Renderers';
 
 const ALL_AGENTS = [
   { id: 'brief_intake', name: 'Brief Intake' },
@@ -117,15 +118,15 @@ export default function EmailDispatcher({ tenants = [] }) {
       .then(data => {
         const found = (data.outputs || []).find(o => o.agent === selectedAgent);
         if (found) {
-          const payload = found.payload;
+          const payload = normalizePayloadKeys(found.payload);
           setAgentOutput(payload);
           
           // Extract sub-items if it's an array of steps or ads
           let items = [];
           if (selectedAgent === 'email_sequences' || payload.email_sequences || payload.steps || payload.emails) {
-            const seqList = payload.email_sequences || payload.steps || payload.emails || [];
+            const seqList = payload.email_sequences || (payload.steps || payload.emails ? [payload] : []);
             seqList.forEach(seq => {
-              const steps = seq.steps || [];
+              const steps = seq.steps || seq.emails || [];
               steps.forEach(step => {
                 items.push({
                   type: 'email_step',
