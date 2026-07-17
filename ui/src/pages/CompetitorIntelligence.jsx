@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, TrendingUp, Award, Target, Zap, Shield, DollarSign, Globe, ChevronDown, ChevronUp, Copy, CheckCircle, AlertTriangle, BarChart3, Users, Sparkles } from 'lucide-react';
 
 const LOADING_STAGES = [
@@ -62,8 +63,39 @@ function ScoreBar({ score, color, animated, delay }) {
   );
 }
 
-function CompetitorCard({ competitor, index, isExpanded, onToggle }) {
+function CompetitorCard({ competitor, index, isExpanded, onToggle, navigate }) {
   const posStyle = POSITION_COLORS[competitor.market_position] || POSITION_COLORS.Emerging;
+  const [isOnboarding, setIsOnboarding] = useState(false);
+  const [onboardSuccess, setOnboardSuccess] = useState(false);
+
+  const handleOnboard = async () => {
+    setIsOnboarding(true);
+    try {
+      const response = await fetch('/api/onboard-competitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: competitor.name,
+          description: competitor.description,
+          founded: competitor.founded,
+          headquarters: competitor.headquarters,
+          best_for: competitor.best_for
+        })
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setOnboardSuccess(true);
+        alert(data.message);
+        navigate(`/onboarding/editor/${data.tenantId}`);
+        window.location.reload(); // Refresh tenant lists in global App state
+      } else {
+        alert(data.error || 'Failed to onboard workspace');
+      }
+    } catch (err) {
+      alert('Network error failed to onboard workspace');
+    }
+    setIsOnboarding(false);
+  };
 
   return (
     <div
@@ -138,11 +170,28 @@ function CompetitorCard({ competitor, index, isExpanded, onToggle }) {
         </div>
       </div>
 
-      {/* Expandable detail */}
-      <button className="ci-expand-btn" onClick={() => onToggle(index)}>
-        {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        {isExpanded ? 'Less detail' : 'More detail'}
-      </button>
+      {/* Action buttons footer */}
+      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+        <button className="ci-expand-btn" onClick={() => onToggle(index)} style={{ flex: 1 }}>
+          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          {isExpanded ? 'Less detail' : 'More detail'}
+        </button>
+        
+        <button
+          onClick={handleOnboard}
+          disabled={isOnboarding || onboardSuccess}
+          className="ci-expand-btn"
+          style={{
+            flex: 1.2,
+            background: onboardSuccess ? 'rgba(16,185,129,0.1)' : 'rgba(99,102,241,0.1)',
+            borderColor: onboardSuccess ? 'rgba(16,185,129,0.3)' : 'rgba(99,102,241,0.3)',
+            color: onboardSuccess ? '#34d399' : '#a5b4fc',
+            cursor: (isOnboarding || onboardSuccess) ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {isOnboarding ? 'Onboarding...' : onboardSuccess ? '✓ Workspace Active' : '🛠️ Onboard Workspace'}
+        </button>
+      </div>
 
       {isExpanded && (
         <div className="ci-expanded-detail">
@@ -169,6 +218,7 @@ function CompetitorCard({ competitor, index, isExpanded, onToggle }) {
 }
 
 export default function CompetitorIntelligence() {
+  const navigate = useNavigate();
   const [service, setService] = useState('');
   const [industry, setIndustry] = useState('');
   const [region, setRegion] = useState('');
@@ -494,6 +544,7 @@ export default function CompetitorIntelligence() {
                   index={i}
                   isExpanded={!!expandedCards[i]}
                   onToggle={toggleCard}
+                  navigate={navigate}
                 />
               ))}
             </div>

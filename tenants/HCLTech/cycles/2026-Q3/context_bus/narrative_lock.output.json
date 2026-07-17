@@ -1,0 +1,51 @@
+{
+  "schema_version": "narrative_lock.Output:v1.0.0",
+  "written_by_agent": "narrative_lock",
+  "written_at": "2026-07-17T05:51:24.201Z",
+  "tenant_id": "HCLTech",
+  "cycle_id": "2026-Q3",
+  "payload": {
+    "schema_version": "NarrativeLockDoc:v1.0.0",
+    "lock_version": "1.0.0",
+    "locked_at": "2024-07-30T14:30:00Z",
+    "expires_at": "2024-08-30T14:30:00Z",
+    "approved_by": [],
+    "summary": "HCLTech's narrative focuses on being the Integrated IT Solutions Partner for US mid-market CTOs. We address the core challenge of fragmented IT systems and increasing operational complexity by simplifying operations, unlocking efficiency, and accelerating strategic business growth through comprehensive, end-to-end IT services.",
+    "referenced_artifacts": {
+      "positioning_ref": "phase2.positioning.output",
+      "positioning_version": "1.0.0",
+      "value_proposition_ref": "phase2.value_proposition.output",
+      "value_proposition_version": "1.0.0",
+      "messaging_matrix_ref": "phase2.messaging_matrix.output",
+      "messaging_matrix_version": "1.0.0",
+      "content_pillars_ref": "phase2.content_pillars.output",
+      "content_pillars_version": "1.0.0"
+    },
+    "narrative_arc": {
+      "context": "US mid-market CTOs are navigating a complex IT landscape, often burdened by fragmented systems and a proliferation of vendors that hinder agility and strategic initiatives.",
+      "tension": "This fragmentation leads to increased operational complexity, inefficiencies, and difficulty in aligning IT with business objectives, causing mid-market leaders to feel their growth potential is constrained.",
+      "shift": "There is a growing demand among mid-market companies for a unified, reliable partner who can integrate disparate IT services, providing global expertise with tailored local execution to simplify their operations.",
+      "resolution": "HCLTech addresses this by serving as the Integrated IT Solutions Partner, delivering end-to-end services that simplify complexity, unlock critical efficiencies, and accelerate strategic business growth.",
+      "proof": "Our extensive track record, bolstered by case studies demonstrating measurable efficiency gains and successful integrated system implementations, affirms our capability to deliver adaptable, reliable IT solutions for mid-market realities."
+    },
+    "must_say": [
+      "Integrated IT Solutions Partner",
+      "Simplify operations, unlock efficiency, and accelerate strategic business growth",
+      "Global expertise with adaptable, reliable, and end-to-end IT services",
+      "Tailored for mid-market realities",
+      "Comprehensive suite of integrated IT services",
+      "Unified and consistent approach",
+      "IT Complexity? We Simplify."
+    ],
+    "must_not_say": [
+      "Positioning HCLTech as a generic IT services provider without emphasizing our unique integration capabilities and mid-market agility.",
+      "Implying our solutions are exclusively for large enterprises, thus alienating mid-market CTOs who perceive 'enterprise-grade' as unattainable or too complex for their scale.",
+      "Over-promising on abstract 'digital transformation' without grounding it in tangible operational simplification and efficiency gains specific to mid-market needs."
+    ],
+    "lock_conditions_to_reopen": [
+      "Acquisition of a major competitor or a key technology by a competitor that fundamentally alters the integrated IT solutions landscape for the mid-market.",
+      "A significant downturn or shift in US mid-market IT spending priorities, moving away from integration and efficiency towards other, unaddressed strategic areas.",
+      "Launch of a new HCLTech product or service offering that directly competes with the current positioning and requires a re-evaluation of core messaging."
+    ]
+  }
+}

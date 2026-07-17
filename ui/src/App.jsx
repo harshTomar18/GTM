@@ -14,6 +14,8 @@ import ProfileEditor from './pages/ProfileEditor';
 import CompetitorIntelligence from './pages/CompetitorIntelligence';
 import Audit from './pages/Audit';
 import EmailDispatcher from './pages/EmailDispatcher';
+import WhatsAppDispatcher from './pages/WhatsAppDispatcher';
+import AgentPlayground from './pages/AgentPlayground';
 import './index.css';
 
 function App() {
@@ -47,7 +49,9 @@ function App() {
           <Route path="content" element={<ContentViewer tenants={tenants} />} />
           <Route path="approvals" element={<Approvals />} />
           <Route path="competitor-intelligence" element={<CompetitorIntelligence />} />
+          <Route path="playground" element={<AgentPlayground tenants={tenants} />} />
           <Route path="dispatcher" element={<EmailDispatcher tenants={tenants} />} />
+          <Route path="whatsapp-dispatcher" element={<WhatsAppDispatcher tenants={tenants} />} />
           <Route path="audit" element={<Audit />} />
         </Route>
       </Routes>

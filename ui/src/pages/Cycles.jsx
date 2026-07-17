@@ -86,6 +86,8 @@ export default function Cycles({ tenants = [] }) {
     setIsLoading(false);
   };
 
+  const [customInstructions, setCustomInstructions] = useState('');
+
   const handleAgentRun = async () => {
     if (!tenant || !cycle || !agent) return alert('Enter Tenant, Cycle, and Agent Slug.');
     setIsLoading(true);
@@ -94,7 +96,7 @@ export default function Cycles({ tenants = [] }) {
       const res = await fetch('/api/agent-run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tenant, cycle, agent })
+        body: JSON.stringify({ tenant, cycle, agent, customInstructions })
       });
       const data = await res.json();
       setResult(data);
@@ -158,9 +160,9 @@ export default function Cycles({ tenants = [] }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
         {/* /gtm-cycle-start */}
         <div className="glass-card animated-page" style={{ animationDelay: '0.1s' }}>
-          <div className="card-header">Agent Dependency Map</div>
+          <div className="card-header">GTM Cycle Workspace Control</div>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-            Start a GTM cycle for a tenant (dry-run by default; pass <code>live=true</code> to execute).
+            Initialize or run the multi-agent marketing cycle DAG.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -169,15 +171,8 @@ export default function Cycles({ tenants = [] }) {
               {renderTenantSelector()}
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Cycle ID</label>
-              <select
-                value={cycle}
-                onChange={e => setCycle(e.target.value)}
-                className="glass-input"
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white', appearance: 'none' }}
-              >
-                {cycles.map(c => <option key={c.id} value={c.id}>{c.id}</option>)}
-              </select>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>cycle=&lt;id&gt;</label>
+              <input type="text" value={cycle} onChange={e => setCycle(e.target.value)} className="glass-input" placeholder="e.g. 2026-Q3" style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white' }} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Campaign Objective</label>
@@ -234,6 +229,20 @@ export default function Cycles({ tenants = [] }) {
                 ))}
               </select>
             </div>
+
+            {agent && (
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Custom Instructions for Agent (Optional)</label>
+                <textarea
+                  value={customInstructions}
+                  onChange={e => setCustomInstructions(e.target.value)}
+                  placeholder="e.g. Focus heavily on security features, or write a friendly onboarding sequence..."
+                  rows={3}
+                  className="glass-input"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white', resize: 'none' }}
+                />
+              </div>
+            )}
 
             <button onClick={handleAgentRun} className="btn" style={{ marginTop: '1rem', background: 'var(--warning)', color: '#000' }} disabled={isLoading}>
               {isLoading ? 'Running...' : 'Execute Agent'}

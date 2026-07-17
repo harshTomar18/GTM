@@ -1,0 +1,68 @@
+{
+  "schema_version": "brief_intake.Output:v1.0.0",
+  "written_by_agent": "brief_intake",
+  "written_at": "2026-07-17T05:45:57.677Z",
+  "tenant_id": "HCLTech",
+  "cycle_id": "2026-Q3",
+  "payload": {
+    "schema_version": "BriefIntake:v1.0.0",
+    "campaign_id": "hcltech-2024q3-coreservice-abm",
+    "product_summary": "HCLTech delivers comprehensive IT services to mid-market enterprise organizations, enabling enhanced operational efficiency and strategic technological advancement.",
+    "primary_buyer": "CTO (enterprise_it_decision_maker)",
+    "primary_user": "Knowledge Workers",
+    "business_objective": "Increase qualified pipeline for HCLTech's comprehensive IT services by 15% in Q3 2024 for US mid-market clients [ASSUMPTION: specific growth metric and deadline].",
+    "timeline": "Q3 2024 (July - September) [ASSUMPTION: standard quarterly planning cycle].",
+    "budget_signal": "Undisclosed; assumed to be sufficient for an enterprise ABM campaign targeting mid-market accounts in the US.",
+    "known_facts": [
+      "HCLTech is a global technology company founded in 1976, operating in the enterprise software industry.",
+      "The company offers a comprehensive suite of IT services with a significant development center in Lucknow.",
+      "HCLTech targets mid-market companies (100-1000 employees) in the US.",
+      "The primary economic buyer for IT services is the CTO.",
+      "The preferred GTM motion for core services is enterprise Account-Based Marketing (ABM)."
+    ],
+    "unknowns": [
+      "The specific IT service(s) HCLTech intends to prioritize for this campaign. [ASSUMPTION: The campaign will focus on a broad 'comprehensive IT services' offering.]",
+      "HCLTech's current market perception and brand awareness for these services among US mid-market CTOs. [ASSUMPTION: HCLTech has established credibility but may need to reinforce specific value propositions.]",
+      "Key triggers or recent market shifts that are compelling target CTOs to seek new IT service providers. [ASSUMPTION: General digital transformation and operational efficiency needs are driving demand.]",
+      "Detailed competitive landscape for the *specific* IT services within the mid-market segment.",
+      "Specific budget allocated for this Q3 2024 ABM campaign."
+    ],
+    "known_competitors": [],
+    "why_we_win": [
+      "HCLTech provides integrated, end-to-end IT solutions that simplify complex technology management for growing enterprises.",
+      "Our extensive global experience and reliable delivery model ensure successful project execution and long-term partnership.",
+      "We offer adaptable IT services tailored to evolving business needs, driving efficiency and strategic advantage."
+    ],
+    "why_we_lose": [
+      "None provided by the user. [ASSUMPTION: Potential reasons could include perceived cost competitiveness against niche players or agility concerns compared to smaller, specialized firms.]"
+    ],
+    "research_questions": {
+      "market": [
+        "What is the projected growth rate of the comprehensive IT services market for mid-market companies (100-1000 employees) in the US over the next 24 months?",
+        "Which regulatory changes or economic factors are most impacting IT investment decisions among US mid-market enterprises?",
+        "What are the top 3 technology trends or shifts (e.g., AI integration, cloud adoption, cybersecurity concerns) currently driving demand for external IT services in the US mid-market?",
+        "What is the average budget allocation range for comprehensive IT services among US mid-market companies, broken down by industry vertical?"
+      ],
+      "competitor": [
+        "Who are the top 5 direct competitors for HCLTech's comprehensive IT services targeting mid-market clients (100-1000 employees) in the US?",
+        "What are the primary pricing models, typical contract lengths, and service level agreements (SLAs) offered by leading enterprise IT service providers in the US market?",
+        "What are the common marketing channels and messaging strategies employed by top IT services competitors specifically targeting CTOs in the US mid-market?",
+        "What are the key weaknesses, customer complaints, or service gaps most frequently cited against leading enterprise IT service providers by US mid-market customers?",
+        "Which emerging service offerings or strategic partnerships are leading IT service providers currently prioritizing to differentiate themselves?"
+      ],
+      "audience": [
+        "What are the top 3 unaddressed IT challenges or 'hair-on-fire' problems that US mid-market CTOs (enterprise_it_decision_maker) are facing when considering external IT services?",
+        "Where do US mid-market CTOs (enterprise_it_decision_maker) primarily seek information and recommendations for selecting new IT service providers (e.g., industry analysts, peer networks, online forums)?",
+        "What are the key triggers or events (e.g., company growth, digital transformation initiatives, security breaches) that typically lead a US mid-market CTO (enterprise_it_decision_maker) to initiate a search for comprehensive IT services?",
+        "What are the most common objections or concerns raised by US mid-market CTOs (enterprise_it_decision_maker) when evaluating large, global IT service providers like HCLTech?",
+        "Which specific KPIs or ROI metrics are most important to US mid-market CTOs (enterprise_it_decision_maker) when evaluating the success of IT service engagements?"
+      ],
+      "language": [
+        "What 5 verbatim phrases do US mid-market CTOs (enterprise_it_decision_maker) use when describing their frustration with current IT service providers in online reviews, forums, or social media?",
+        "What are the top 3 terms or keywords US mid-market CTOs (enterprise_it_decision_maker) search for when looking for 'comprehensive IT services' or related solutions?",
+        "Which 5 adjectives or phrases do US mid-market CTOs (enterprise_it_decision_maker) use to describe an 'ideal' IT service partner in interviews or market studies?",
+        "What common business jargon or technical acronyms are frequently used by US mid-market CTOs (enterprise_it_decision_maker) when discussing IT strategy and vendor selection?"
+      ]
+    }
+  }
+}

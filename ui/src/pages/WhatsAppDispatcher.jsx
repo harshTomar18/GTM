@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mail, Send, CheckCircle, AlertCircle, FileText, UserCheck, Loader, Calendar } from 'lucide-react';
+import { MessageSquare, Send, CheckCircle, AlertCircle, FileText, Loader, Calendar, Phone } from 'lucide-react';
 
 const ALL_AGENTS = [
   { id: 'brief_intake', name: 'Brief Intake' },
@@ -31,7 +31,7 @@ const ALL_AGENTS = [
   { id: 'iteration_planner', name: 'Iteration Planner' }
 ];
 
-export default function EmailDispatcher({ tenants = [] }) {
+export default function WhatsAppDispatcher({ tenants = [] }) {
   const [selectedTenant, setSelectedTenant] = useState(tenants.length > 0 ? tenants[0].id : '_example');
   const [selectedCycle, setSelectedCycle] = useState('2026-Q3');
   const [selectedAgent, setSelectedAgent] = useState('email_sequences');
@@ -42,22 +42,18 @@ export default function EmailDispatcher({ tenants = [] }) {
 
   // Dynamic list of stakeholders
   const [stakeholders, setStakeholders] = useState([]);
-  
-  // Checklist State: keeps track of which roles are selected
   const [selectedRoles, setSelectedRoles] = useState([]);
   
-  // Emails map: role -> custom editable email string
-  const [emailsMap, setEmailsMap] = useState({});
+  // Contacts map: role -> custom phone number, role -> name
+  const [phonesMap, setPhonesMap] = useState({});
   const [namesMap, setNamesMap] = useState({});
   
   const [agentOutput, setAgentOutput] = useState(null);
-  
-  // Sub-items list extraction (for sequences / ad variants)
   const [subItems, setSubItems] = useState([]);
   const [selectedSubItemIndex, setSelectedSubItemIndex] = useState(0);
 
-  // Custom message overrides
-  const [customSubject, setCustomSubject] = useState('');
+  // Custom overrides
+  const [customHeader, setCustomHeader] = useState('*📢 GTM OS CAMPAIGN DISPATCH*');
   const [customNotes, setCustomNotes] = useState('');
   const [dispatchDate, setDispatchDate] = useState(new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
   
@@ -66,7 +62,7 @@ export default function EmailDispatcher({ tenants = [] }) {
   const [isSending, setIsSending] = useState(false);
   const [result, setResult] = useState(null);
 
-  // Fetch stakeholder roles & generated outputs
+  // Load profiles and outputs
   useEffect(() => {
     if (!selectedTenant) return;
     setIsLoading(true);
@@ -75,13 +71,12 @@ export default function EmailDispatcher({ tenants = [] }) {
     setSubItems([]);
     setSelectedSubItemIndex(0);
     
-    // Clear list inputs immediately
     setStakeholders([]);
     setSelectedRoles([]);
-    setEmailsMap({});
+    setPhonesMap({});
     setNamesMap({});
 
-    // 1. Fetch Company profile details
+    // 1. Fetch Company profile
     fetch(`/api/tenant-profile/${selectedTenant}`)
       .then(res => res.json())
       .then(data => {
@@ -93,25 +88,27 @@ export default function EmailDispatcher({ tenants = [] }) {
           const roles = profile.approval_roles || [];
           setStakeholders(roles);
           
-          // Initialize checkbox states and emails map
-          const initialEmails = {};
+          const initialPhones = {};
           const initialNames = {};
           const initialSelected = [];
           
-          roles.forEach(r => {
-            initialEmails[r.role] = r.email || '';
+          roles.forEach((r, idx) => {
+            // Scaffold dummy test phone numbers based on roles
+            const countryCode = '+91';
+            const dummyNumber = `${9876500000 + idx + 1}`;
+            initialPhones[r.role] = r.phone || (countryCode + dummyNumber);
             initialNames[r.role] = r.name || r.role;
-            initialSelected.push(r.role); // check all by default
+            initialSelected.push(r.role);
           });
           
-          setEmailsMap(initialEmails);
+          setPhonesMap(initialPhones);
           setNamesMap(initialNames);
           setSelectedRoles(initialSelected);
         }
       })
       .catch(err => console.error("Error loading stakeholders", err));
 
-    // 2. Fetch all generated outputs
+    // 2. Fetch agent outputs
     fetch(`/api/outputs/${selectedTenant}/${selectedCycle}`)
       .then(res => res.json())
       .then(data => {
@@ -120,7 +117,6 @@ export default function EmailDispatcher({ tenants = [] }) {
           const payload = found.payload;
           setAgentOutput(payload);
           
-          // Extract sub-items if it's an array of steps or ads
           let items = [];
           if (selectedAgent === 'email_sequences' || payload.email_sequences || payload.steps || payload.emails) {
             const seqList = payload.email_sequences || payload.steps || payload.emails || [];
@@ -163,10 +159,6 @@ export default function EmailDispatcher({ tenants = [] }) {
 
           setSubItems(items);
           setSelectedSubItemIndex(0);
-
-          // Update default subject
-          const agentName = ALL_AGENTS.find(a => a.id === selectedAgent)?.name || selectedAgent;
-          setCustomSubject(`GTM OS Dispatch: ${agentName}`);
         } else {
           setAgentOutput(null);
         }
@@ -178,24 +170,6 @@ export default function EmailDispatcher({ tenants = [] }) {
       });
   }, [selectedTenant, selectedCycle, selectedAgent]);
 
-  // Handle sub-item selection to dynamically update subject line
-  useEffect(() => {
-    if (subItems.length > 0 && subItems[selectedSubItemIndex]) {
-      const selected = subItems[selectedSubItemIndex];
-      if (selected.type === 'email_step') {
-        const rawSub = selected.payload.subject || selected.payload.subject_line || '';
-        // Clean tokens for display in subject
-        const cleanSub = rawSub
-          .replace(/\{\{company_name\}\}/g, companyName)
-          .replace(/\{\{first_name\}\}/g, 'Valued Partner')
-          .replace(/\{\{industry\}\}/g, companyIndustry)
-          .replace(/\{\{quarter_number\}\}/g, '3');
-        setCustomSubject(cleanSub);
-      }
-    }
-  }, [selectedSubItemIndex, subItems, companyName, companyIndustry]);
-
-  // Select All/Deselect All Toggle
   const handleSelectAllToggle = (checked) => {
     if (checked) {
       setSelectedRoles(stakeholders.map(s => s.role));
@@ -212,168 +186,92 @@ export default function EmailDispatcher({ tenants = [] }) {
     }
   };
 
-  // Helper to replace B2B tags with readable text
-  const cleanTokens = (text, recipientName = 'Partner') => {
+  // Convert HTML or plain text tags to WhatsApp markdown formats (*bold*, _italic_, ~strike~)
+  const cleanTokensForWhatsApp = (text, recipientName = 'Partner') => {
     if (!text) return '';
     return String(text)
-      .replace(/\{\{first_name\}\}/g, recipientName)
-      .replace(/\{\{company_name\}\}/g, companyName)
-      .replace(/\{\{industry\}\}/g, companyIndustry)
-      .replace(/\{\{quarter_number\}\}/g, '3');
+      .replace(/\{\{first_name\}\}/g, `*${recipientName}*`)
+      .replace(/\{\{company_name\}\}/g, `*${companyName}*`)
+      .replace(/\{\{industry\}\}/g, `*${companyIndustry}*`)
+      .replace(/\{\{quarter_number\}\}/g, '*3*')
+      // Clean HTML tags if any leak
+      .replace(/<[^>]*>/g, '');
   };
 
-  const handleSendEmail = async () => {
+  // Build the compiled text message block that will be dispatched
+  const compileWhatsAppMessage = (recipientName = 'Partner') => {
+    let finalPayload = agentOutput;
+    if (subItems.length > 0 && subItems[selectedSubItemIndex]) {
+      finalPayload = subItems[selectedSubItemIndex].payload;
+    }
+
+    let messageBody = '';
+    if (!finalPayload) {
+      messageBody = 'No content generated.';
+    } else if (typeof finalPayload === 'string') {
+      messageBody = cleanTokensForWhatsApp(finalPayload, recipientName);
+    } else {
+      // It's a structured object (e.g. Email step or ad)
+      if ((finalPayload.subject || finalPayload.subject_line) && (finalPayload.body_markdown || finalPayload.body || finalPayload.content)) {
+        const sub = finalPayload.subject || finalPayload.subject_line;
+        const body = finalPayload.body_markdown || finalPayload.body || finalPayload.content;
+        messageBody = `*Subject:* ${cleanTokensForWhatsApp(sub, recipientName)}\n\n${cleanTokensForWhatsApp(body, recipientName)}`;
+        if (finalPayload.cta) {
+          messageBody += `\n\n*CTA Button Action:* _${cleanTokensForWhatsApp(finalPayload.cta, recipientName)}_`;
+        }
+      } else {
+        // Generic object formatting
+        Object.entries(finalPayload).forEach(([k, v]) => {
+          if (k === 'schema_version' || k === 'written_by_agent' || k === 'written_at') return;
+          messageBody += `*${k.toUpperCase().replace(/_/g, ' ')}:*\n${cleanTokensForWhatsApp(typeof v === 'object' ? JSON.stringify(v, null, 2) : String(v), recipientName)}\n\n`;
+        });
+      }
+    }
+
+    return `${customHeader}\n_Date: ${dispatchDate}_\n\nHello *${recipientName}*,\nThe GTM OS AI Agent *${selectedAgent}* has dispatched the following deliverable package:\n\n---\n\n${messageBody.trim()}\n\n---\n${customNotes ? `*Notes from Reviewer:* ${customNotes}\n` : ''}`;
+  };
+
+  const handleSendWhatsApp = async () => {
     if (selectedRoles.length === 0) {
       alert("Please select at least one recipient to dispatch.");
       return;
     }
-    
-    // Validate emails for selected roles
+
     const recipientsList = [];
     for (const role of selectedRoles) {
-      const email = emailsMap[role]?.trim();
-      if (!email) {
-        alert(`Please enter a valid email address for role: ${role}`);
+      const phone = phonesMap[role]?.trim();
+      if (!phone) {
+        alert(`Please enter a valid phone number for role: ${role}`);
         return;
       }
       recipientsList.push({
         role,
         name: namesMap[role] || role,
-        email: email
+        phone: phone,
+        compiledMessage: compileWhatsAppMessage(namesMap[role] || role)
       });
-    }
-
-    if (!agentOutput) {
-      alert("No AI generated content found for this agent. Please generate content first.");
-      return;
-    }
-
-    // Build the specific selected payload content
-    let finalPayload = agentOutput;
-    if (subItems.length > 0 && subItems[selectedSubItemIndex]) {
-      finalPayload = subItems[selectedSubItemIndex].payload;
     }
 
     setIsSending(true);
     setResult(null);
 
     try {
-      const response = await fetch('/api/dispatch-email', {
+      const response = await fetch('/api/dispatch-whatsapp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tenant: selectedTenant,
           cycle: selectedCycle,
           agent: selectedAgent,
-          recipients: recipientsList,
-          subject: customSubject,
-          notes: customNotes + `\n\n[Dispatch Date: ${dispatchDate}]`,
-          // Pass the single item payload directly
-          stakeholder: { email: 'override' }, // backward compatibility key
-          recipientsPayload: finalPayload 
+          recipients: recipientsList
         })
       });
       const data = await response.json();
       setResult(data);
     } catch (error) {
-      setResult({ success: false, message: 'Network error failed to send emails.' });
+      setResult({ success: false, message: 'Network error. Failed to dispatch WhatsApp messages.' });
     }
     setIsSending(false);
-  };
-
-  // Render the selected single content cleanly
-  const renderSinglePreview = () => {
-    if (subItems.length === 0) {
-      // Fallback for general text or non-array outputs
-      if (typeof agentOutput === 'string') {
-        return (
-          <div style={{ whiteSpace: 'pre-wrap', color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.85rem' }}>
-            {cleanTokens(agentOutput)}
-          </div>
-        );
-      }
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {Object.entries(agentOutput || {}).map(([k, v]) => {
-            if (k === 'schema_version' || k === 'written_by_agent' || k === 'written_at') return null;
-            return (
-              <div key={k} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', paddingBottom: '0.5rem' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>{k.replace(/_/g, ' ')}</div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{cleanTokens(typeof v === 'object' ? JSON.stringify(v, null, 2) : String(v))}</div>
-              </div>
-            );
-          })}
-        </div>
-      );
-    }
-
-    const selected = subItems[selectedSubItemIndex];
-    if (!selected) return null;
-
-    if (selected.type === 'email_step') {
-      const email = selected.payload;
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
-            <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: '0.9rem' }}>📧 {selected.label}</span>
-            <span style={{ fontSize: '0.8rem', color: '#999' }}>⏱️ Delay: {email.delay || email.delay_after_prior_step_hours ? `${email.delay_after_prior_step_hours}h` : 'Immediate'}</span>
-          </div>
-          <div style={{ fontSize: '0.85rem', color: 'white' }}>
-            <strong>Subject:</strong> {cleanTokens(email.subject || email.subject_line)}
-          </div>
-          {email.preheader && (
-            <div style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic' }}>
-              <strong>Preheader:</strong> {cleanTokens(email.preheader)}
-            </div>
-          )}
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.6, background: 'rgba(0,0,0,0.15)', padding: '1.25rem', borderRadius: '6px', marginTop: '0.5rem' }}>
-            {cleanTokens(email.body_markdown || email.body || email.content)}
-          </div>
-          {email.cta && (
-            <div style={{ fontSize: '0.8rem', color: 'var(--success)', marginTop: '0.5rem' }}>
-              <strong>CTA Button Action:</strong> <span style={{ background: 'rgba(16,185,129,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 'bold' }}>{cleanTokens(email.cta)}</span>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    if (selected.type === 'ad_google') {
-      const ad = selected.payload;
-      return (
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <div style={{ fontSize: '0.75rem', color: '#4f46e5', fontWeight: 600, textTransform: 'uppercase' }}>Google Search Ad Preview</div>
-          <div style={{ fontSize: '1rem', color: '#1a0dab', textDecoration: 'underline', fontWeight: 500 }}>
-            {cleanTokens(Array.isArray(ad.headlines) ? ad.headlines.join(' | ') : ad.headlines)}
-          </div>
-          <div style={{ color: '#006621', fontSize: '0.75rem' }}>{ad.landing_url || 'https://example.com'}</div>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>{cleanTokens(ad.description)}</p>
-        </div>
-      );
-    }
-
-    if (selected.type === 'ad_linkedin') {
-      const ad = selected.payload;
-      return (
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <div style={{ fontSize: '0.75rem', color: '#0077b5', fontWeight: 600, textTransform: 'uppercase' }}>LinkedIn Sponsored Ad Copy</div>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', whiteSpace: 'pre-wrap', margin: 0, lineHeight: 1.5 }}>{cleanTokens(ad.primary_text || ad.intro_text)}</p>
-          {ad.headline && <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'white', marginTop: '0.5rem' }}>{cleanTokens(ad.headline)}</div>}
-        </div>
-      );
-    }
-
-    // Default variant fallback
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {Object.entries(selected.payload).map(([k, v]) => (
-          <div key={k} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', paddingBottom: '0.5rem' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>{k.replace(/_/g, ' ')}</div>
-            <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{cleanTokens(typeof v === 'object' ? JSON.stringify(v, null, 2) : String(v))}</div>
-          </div>
-        ))}
-      </div>
-    );
   };
 
   return (
@@ -382,8 +280,8 @@ export default function EmailDispatcher({ tenants = [] }) {
       {/* Configuration Card */}
       <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
-          <Mail size={24} style={{ color: 'var(--accent)' }} />
-          <h2 style={{ fontSize: '1.25rem', color: 'white', fontWeight: 600 }}>Email Dispatcher Workspace</h2>
+          <MessageSquare size={24} style={{ color: '#25D366' }} />
+          <h2 style={{ fontSize: '1.25rem', color: 'white', fontWeight: 600 }}>WhatsApp Dispatcher Workspace</h2>
         </div>
 
         {/* Company Dropdown */}
@@ -401,10 +299,10 @@ export default function EmailDispatcher({ tenants = [] }) {
           </select>
         </div>
 
-        {/* Stakeholder Selection Checklist */}
+        {/* Recipient phone checklist */}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Recipient Selection (Select Members)</label>
+            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Recipient Checklist (Phone Numbers)</label>
             {stakeholders.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', color: 'white' }}>
                 <input
@@ -422,7 +320,7 @@ export default function EmailDispatcher({ tenants = [] }) {
           {stakeholders.length === 0 ? (
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>⚠️ Loading company stakeholder profiles...</p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '250px', overflowY: 'auto', background: 'rgba(0,0,0,0.1)', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '220px', overflowY: 'auto', background: 'rgba(0,0,0,0.1)', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
               {stakeholders.map(s => {
                 const isChecked = selectedRoles.includes(s.role);
                 return (
@@ -439,12 +337,13 @@ export default function EmailDispatcher({ tenants = [] }) {
                         {s.role} - {namesMap[s.role] || s.name}
                       </label>
                     </div>
-                    <div style={{ paddingLeft: '1.5rem' }}>
+                    <div style={{ paddingLeft: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Phone size={12} style={{ color: '#25D366' }} />
                       <input
-                        type="email"
-                        value={emailsMap[s.role] || ''}
-                        onChange={e => setEmailsMap({ ...emailsMap, [s.role]: e.target.value })}
-                        placeholder="Enter email address..."
+                        type="text"
+                        value={phonesMap[s.role] || ''}
+                        onChange={e => setPhonesMap({ ...phonesMap, [s.role]: e.target.value })}
+                        placeholder="e.g. +919876543210"
                         className="glass-input"
                         style={{ width: '100%', padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white', fontSize: '0.8rem' }}
                       />
@@ -471,10 +370,10 @@ export default function EmailDispatcher({ tenants = [] }) {
           </select>
         </div>
 
-        {/* Sub-item selector (Step selection dropdown) */}
+        {/* Sub-item step selector */}
         {subItems.length > 0 && (
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Select Specific Step / Ad Copy to Send</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Select Specific Step / Ad Copy</label>
             <select
               value={selectedSubItemIndex}
               onChange={e => setSelectedSubItemIndex(parseInt(e.target.value))}
@@ -488,42 +387,26 @@ export default function EmailDispatcher({ tenants = [] }) {
           </div>
         )}
 
-        {/* Date Selector */}
+        {/* WhatsApp Header Customizer */}
         <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-            <Calendar size={14} />
-            <span>Campaign Dispatch Date</span>
-          </label>
+          <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>WhatsApp Header Block</label>
           <input
             type="text"
-            value={dispatchDate}
-            onChange={e => setDispatchDate(e.target.value)}
+            value={customHeader}
+            onChange={e => setCustomHeader(e.target.value)}
             className="glass-input"
             style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white' }}
           />
         </div>
 
-        {/* Subject Override */}
+        {/* Dispatch Notes */}
         <div>
-          <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Email Subject Line</label>
-          <input
-            type="text"
-            value={customSubject}
-            onChange={e => setCustomSubject(e.target.value)}
-            placeholder="Enter custom email subject"
-            className="glass-input"
-            style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white' }}
-          />
-        </div>
-
-        {/* Custom Notes */}
-        <div>
-          <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Additional Context / Review Comments</label>
+          <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Custom Notes / Comments (Appended at end)</label>
           <textarea
             value={customNotes}
             onChange={e => setCustomNotes(e.target.value)}
-            placeholder="Add specific comments or change instructions for the stakeholders..."
-            rows={3}
+            placeholder="Review updates, budget figures, or instructions..."
+            rows={2}
             className="glass-input"
             style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'white', resize: 'none' }}
           />
@@ -531,7 +414,7 @@ export default function EmailDispatcher({ tenants = [] }) {
 
         {/* Dispatch Action */}
         <button
-          onClick={handleSendEmail}
+          onClick={handleSendWhatsApp}
           disabled={isSending || !agentOutput || selectedRoles.length === 0}
           className="glass-button"
           style={{
@@ -540,24 +423,26 @@ export default function EmailDispatcher({ tenants = [] }) {
             justifyContent: 'center',
             gap: '0.75rem',
             padding: '1rem',
-            background: (!agentOutput || selectedRoles.length === 0) ? 'rgba(255,255,255,0.05)' : 'var(--accent)',
-            cursor: (!agentOutput || selectedRoles.length === 0) ? 'not-allowed' : 'pointer'
+            background: (!agentOutput || selectedRoles.length === 0) ? 'rgba(255,255,255,0.05)' : '#25D366',
+            color: (!agentOutput || selectedRoles.length === 0) ? 'rgba(255,255,255,0.3)' : '#000',
+            cursor: (!agentOutput || selectedRoles.length === 0) ? 'not-allowed' : 'pointer',
+            fontWeight: 'bold'
           }}
         >
           {isSending ? (
             <>
               <Loader size={18} className="animate-spin" />
-              <span>Sending Dispatch...</span>
+              <span>Sending WhatsApp Dispatches...</span>
             </>
           ) : (
             <>
               <Send size={18} />
-              <span>Dispatch Email to Selected Members</span>
+              <span>Send WhatsApp Dispatches</span>
             </>
           )}
         </button>
 
-        {/* Result Notification summary */}
+        {/* Results display */}
         {result && (
           <div
             style={{
@@ -572,66 +457,119 @@ export default function EmailDispatcher({ tenants = [] }) {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: result.success ? 'var(--success)' : 'var(--danger)' }}>
               {result.success ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
-              {result.success ? 'Dispatch Summary' : 'Dispatch Failed'}
+              {result.success ? 'WhatsApp Dispatch Summary' : 'Dispatch Failed'}
             </div>
             
-            {result.results ? (
+            {result.results && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8rem' }}>
                 {result.results.map((r, idx) => (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', borderBottom: '1px solid rgba(255,255,255,0.03)', paddingBottom: '0.5rem' }}>
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderBottom: '1px solid rgba(255,255,255,0.03)', paddingBottom: '0.5rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ color: 'white', fontWeight: 500 }}>{r.role} - {r.name}</span>
-                      <span style={{ color: r.success ? 'var(--success)' : 'var(--danger)' }}>{r.success ? 'Sent' : 'Failed'}</span>
+                      <span style={{ color: r.success ? 'var(--success)' : 'var(--danger)' }}>{r.success ? 'Sent' : 'Fallback Ready'}</span>
                     </div>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{r.email}</div>
-                    {r.previewUrl && (
-                      <a
-                        href={r.previewUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ color: 'var(--accent)', textDecoration: 'underline', marginTop: '0.1rem', display: 'inline-block' }}
-                      >
-                        🔗 Open Email Preview
-                      </a>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{r.phone}</div>
+                    
+                    {/* Fallback Direct Click-to-Chat Button */}
+                    {r.clickToChatUrl && (
+                      <div style={{ marginTop: '0.25rem' }}>
+                        <a
+                          href={r.clickToChatUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            background: '#25D366',
+                            color: '#000',
+                            padding: '0.3rem 0.6rem',
+                            borderRadius: '4px',
+                            fontWeight: 'bold',
+                            textDecoration: 'none',
+                            fontSize: '0.75rem'
+                          }}
+                        >
+                          💬 Send via WhatsApp Web (Free)
+                        </a>
+                      </div>
                     )}
-                    {r.error && <div style={{ color: 'var(--danger)', fontSize: '0.75rem' }}>Error: {r.error}</div>}
                   </div>
                 ))}
               </div>
-            ) : (
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>{result.message}</p>
             )}
           </div>
         )}
       </div>
 
-      {/* Asset Preview Panel */}
+      {/* WhatsApp Mockup Preview Panel */}
       <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', minHeight: '400px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
           <FileText size={24} style={{ color: 'var(--text-secondary)' }} />
-          <h2 style={{ fontSize: '1.25rem', color: 'white', fontWeight: 600 }}>Asset Output Preview</h2>
+          <h2 style={{ fontSize: '1.25rem', color: 'white', fontWeight: 600 }}>WhatsApp Chat Preview</h2>
         </div>
 
         {isLoading ? (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', color: 'var(--text-secondary)' }}>
             <Loader size={36} className="animate-spin" style={{ color: 'var(--accent)' }} />
-            <span>Retrieving generated content...</span>
+            <span>Formatting chat preview...</span>
           </div>
         ) : !agentOutput ? (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', padding: '2rem', border: '1px dashed var(--border-color)', borderRadius: '8px', textAlign: 'center' }}>
             <AlertCircle size={40} style={{ color: 'var(--text-secondary)' }} />
             <div>
               <h4 style={{ color: 'white', marginBottom: '0.5rem' }}>No Content Found</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', maxWidth: '300px' }}>
-                The selected agent has not generated output for this campaign cycle. Generate it in **Agent Workflow & Run** tab.
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                Run AI agents to generate content in Agent Workflow tab first.
               </p>
             </div>
           </div>
         ) : (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.01)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '1.5rem', flex: 1, overflowY: 'auto', maxHeight: '550px' }}>
-              {renderSinglePreview()}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#0b141a', borderRadius: '12px', border: '1px solid #233138', overflow: 'hidden' }}>
+            
+            {/* Phone header */}
+            <div style={{ background: '#202c33', padding: '0.75rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: '1px solid #2f3b43' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#25D366', color: '#000', display: 'flex', alignItems: 'center', justifyObject: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                👤
+              </div>
+              <div>
+                <div style={{ color: '#e9edef', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                  {selectedRoles.length > 0 ? `${namesMap[selectedRoles[0]] || selectedRoles[0]} (${selectedRoles[0]})` : 'Stakeholder'}
+                </div>
+                <div style={{ color: '#8696a0', fontSize: '0.7rem' }}>online</div>
+              </div>
             </div>
+
+            {/* Chat Messages Container */}
+            <div style={{ flex: 1, padding: '1.5rem', backgroundImage: 'radial-gradient(#1e2b34 10%, transparent 11%)', backgroundSize: '15px 15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', minHeight: '350px' }}>
+              
+              {/* Message Bubble */}
+              <div style={{ alignSelf: 'flex-end', background: '#005c4b', border: '1px solid #005c4b', borderRadius: '8px 0 8px 8px', padding: '0.75rem 1rem', maxWidth: '85%', color: '#e9edef', fontSize: '0.85rem', boxShadow: '0 1px 0.5px rgba(11,20,26,.13)', position: 'relative' }}>
+                
+                {/* Arrow */}
+                <div style={{ position: 'absolute', right: '-8px', top: 0, width: 0, height: 0, borderTop: '8px solid #005c4b', borderRight: '8px solid transparent' }} />
+                
+                <pre style={{ margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'sans-serif', lineHeight: 1.5 }}>
+                  {compileWhatsAppMessage(selectedRoles.length > 0 ? (namesMap[selectedRoles[0]] || selectedRoles[0]) : 'Partner')}
+                </pre>
+                
+                <div style={{ textAlign: 'right', fontSize: '0.65rem', color: '#8696a0', marginTop: '0.25rem' }}>
+                  {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+              
+            </div>
+            
+            {/* Input Bar */}
+            <div style={{ background: '#202c33', padding: '0.75rem 1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <div style={{ flex: 1, background: '#2a3942', borderRadius: '8px', padding: '0.5rem 1rem', color: '#8696a0', fontSize: '0.85rem' }}>
+                Type a message
+              </div>
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#25D366', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                🎤
+              </div>
+            </div>
+
           </div>
         )}
       </div>

@@ -1,0 +1,93 @@
+version: 2
+profile_id: HCLTech
+extends: vertical_packs/_template
+company:
+  legal_name: HCLTech Inc.
+  brand_name: HCLTech
+  url: https://hcltech.com
+  founded: 1976
+  size_band: mid_market
+  hq_country: US
+  description_short: A global technology company with a significant development
+    center in Lucknow, offering a comprehensive suite of IT services.
+  description_long: >
+    A global technology company with a significant development center in
+    Lucknow, offering a comprehensive suite of IT services..
+
+    Headquartered in Noida, India.
+industry:
+  primary: enterprise_software
+  secondary: []
+lob:
+  - id: core_service
+    motion: enterprise_abm
+    weight: 1
+icp_archetypes:
+  - id: enterprise_it_decision_maker
+    industries:
+      - all
+    company_size:
+      - 100-1000
+    geos:
+      - US
+    buying_committee:
+      economic_buyer: CTO
+      technical_buyer: IT Director
+      user_buyer: Knowledge Workers
+      influencers:
+        - CISO
+        - CFO
+    committee_complexity: medium
+    deal_size_band: 30k-150k
+    sales_cycle_days: 90
+brand_voice:
+  archetype: Sage
+  tone:
+    - trustworthy
+    - innovative
+    - clear
+  reading_level: grade_11
+  banned_phrases:
+    - revolutionary
+    - world-class
+  required_disclaimers: []
+geography:
+  primary_markets:
+    - US
+  expansion_markets: []
+languages:
+  default: en-US
+  supported:
+    - en-US
+currency:
+  default: USD
+  reporting: USD
+tech_stack:
+  crm: hubspot
+  marketing_automation: hubspot
+  analytics: ga4
+  seo: ahrefs
+  social: "linkedin "
+  ad_platforms:
+    - linkedin_ads
+    - google_ads
+approval_roles:
+  - role: CustomerSuccess
+    name: HCLTech CMO
+    email: harshtomar1834@gmail.com
+    scope:
+      - brand
+      - campaign
+      - positioning
+    notification:
+      - email
+  - role: CEO
+    name: HCLTech CEO
+    email: harshtomar3021@gmail.com
+    scope:
+      - executive_voice
+      - positioning
+operating_calendar:
+  cycle_length: monthly
+  fiscal_year_start: 01-01
+  blackout_dates: []

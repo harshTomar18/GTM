@@ -1,4 +1,5 @@
 require('dotenv').config();
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -108,8 +109,66 @@ const getRequiredRolesForAgent = (agent, tenant) => {
     return Array.from(roles);
 };
 
+// Helper to resolve Jinja-style prompt template variables dynamically
+const compilePromptTemplate = (templateStr, profile, contextBus, answers = {}) => {
+    return templateStr.replace(/\{\{\s*([^\}]+)\s*\}\}/g, (match, pathStr) => {
+        pathStr = pathStr.trim();
+        
+        // 1. Resolve profile variables (e.g. profile.company.brand_name)
+        if (pathStr.startsWith('profile.')) {
+            const parts = pathStr.split('.');
+            let current = profile;
+            for (let i = 1; i < parts.length; i++) {
+                if (!current) break;
+                let key = parts[i];
+                if (key.includes('|')) key = key.split('|')[0].trim();
+                current = current[key];
+            }
+            if (Array.isArray(current)) return current.join(', ');
+            return current !== undefined ? String(current) : '';
+        }
+        
+        // 2. Resolve inputs.upstream variables
+        if (pathStr.startsWith('inputs.upstream')) {
+            const matchKey = pathStr.match(/\["([^"]+)"\]/);
+            if (matchKey) {
+                const upstreamKey = matchKey[1];
+                const cleanKey = upstreamKey.replace('.output', '');
+                const busFile = cleanKey.includes('.') ? cleanKey.split('.')[1] : cleanKey;
+                
+                let fieldPath = pathStr.substring(pathStr.indexOf(']') + 1).trim();
+                if (fieldPath.startsWith('.')) fieldPath = fieldPath.substring(1);
+                if (fieldPath.includes('|')) fieldPath = fieldPath.split('|')[0].trim();
+                
+                const busData = contextBus[busFile];
+                if (busData && busData.payload) {
+                    if (!fieldPath) return JSON.stringify(busData.payload, null, 2);
+                    const parts = fieldPath.split('.');
+                    let current = busData.payload;
+                    for (const p of parts) {
+                        if (!current) break;
+                        current = current[p];
+                    }
+                    if (Array.isArray(current)) return current.join(', ');
+                    return current !== undefined ? String(current) : '';
+                }
+            }
+            return '';
+        }
+
+        // 3. Resolve inputs.answers variables
+        if (pathStr.startsWith('inputs.answers')) {
+            const parts = pathStr.split('.');
+            const key = parts[parts.length - 1].split('|')[0].trim();
+            return answers[key] || '';
+        }
+
+        return '';
+    });
+};
+
 // Helper to run agents using Gemini Free API
-const runGeminiAgentDirectly = async (tenant, cycle, agent) => {
+const runGeminiAgentDirectly = async (tenant, cycle, agent, rejectionComment = '') => {
     writeAuditLog('agent.run.start', 'Gemini AI', 'AI System', 'agent_run', agent, tenant, cycle, null, { status: 'started' });
     try {
         if (!process.env.GEMINI_API_KEY) {
@@ -121,11 +180,45 @@ const runGeminiAgentDirectly = async (tenant, cycle, agent) => {
         // 1. Load tenant profile
         const profilePath = path.join(getRootPath(), 'tenants', tenant, 'tenant_profile.yaml');
         let profileContent = '';
+        let profile = {};
         if (fs.existsSync(profilePath)) {
             profileContent = fs.readFileSync(profilePath, 'utf8');
+            try {
+                profile = yaml.parse(profileContent);
+            } catch (e) {}
         }
 
-        // 2. Locate agent folder and prompt
+        // 2. Load ContextBus and Answers
+        const contextBus = {};
+        const busPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'context_bus');
+        if (fs.existsSync(busPath)) {
+            try {
+                const files = fs.readdirSync(busPath).filter(f => f.endsWith('.output.json'));
+                files.forEach(f => {
+                    const key = f.replace('.output.json', '');
+                    try {
+                        const content = JSON.parse(fs.readFileSync(path.join(busPath, f), 'utf8'));
+                        contextBus[key] = content;
+                    } catch (e) {}
+                });
+            } catch (e) {}
+        }
+
+        const answers = {};
+        const answersPath = path.join(getRootPath(), 'tenants', tenant, 'answers');
+        if (fs.existsSync(answersPath)) {
+            try {
+                const files = fs.readdirSync(answersPath).filter(f => f.endsWith('.json'));
+                files.forEach(f => {
+                    try {
+                        const content = JSON.parse(fs.readFileSync(path.join(answersPath, f), 'utf8'));
+                        Object.assign(answers, content);
+                    } catch (e) {}
+                });
+            } catch (e) {}
+        }
+
+        // 3. Locate agent folder and prompt
         let agentPrompt = '';
         const phases = ['phase1_research', 'phase2_narrative', 'phase3_assets', 'phase4_distribution', 'phase5_measurement'];
         let foundPath = null;
@@ -143,7 +236,12 @@ const runGeminiAgentDirectly = async (tenant, cycle, agent) => {
             agentPrompt = `Write B2B marketing content for the ${agent} task.`;
         }
 
-        // 3. Construct Gemini Prompt with professional copywriting constraints
+        let compiledPrompt = compilePromptTemplate(agentPrompt, profile, contextBus, answers);
+        if (rejectionComment) {
+            compiledPrompt += `\n\n--- REJECTION FEEDBACK FROM THE REVIEWER ---\nThe previous output was rejected. You MUST revise the content based on this feedback:\n"${rejectionComment}"\nMake sure to incorporate all changes requested.`;
+        }
+
+        // 4. Construct Gemini Prompt with professional copywriting constraints
         const systemPrompt = `You are a GTM AI Agent named "${agent}" for the company described in the profile.
 Execute the following agent prompt instructions and output the generated marketing assets or research.
 
@@ -160,7 +258,7 @@ Execute the following agent prompt instructions and output the generated marketi
 ${profileContent}
 
 --- AGENT INSTRUCTIONS ---
-${agentPrompt}
+${compiledPrompt}
 `;
 
         console.log(`[GEMINI] Running agent: ${agent} for tenant: ${tenant}`);
@@ -188,7 +286,6 @@ ${agentPrompt}
             } catch (e) { }
         }
 
-        const busPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'context_bus');
         fs.mkdirSync(busPath, { recursive: true });
 
         const outputFile = path.join(busPath, `${agent}.output.json`);
@@ -277,9 +374,31 @@ const runRealCLI = async (command) => {
                 const busPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'context_bus');
                 fs.mkdirSync(busPath, { recursive: true });
                 writeAuditLog('cycle.start', 'System Operator', 'Operator', 'cycle', cycle, tenant, cycle, null, { status: 'running' });
+                
+                const agentsList = [
+                    'brief_intake', 'market_research', 'audience_intelligence', 'keyword_intent', 'research_synthesis',
+                    'positioning', 'value_proposition', 'messaging_matrix', 'content_pillars', 'narrative_lock',
+                    'website_copy', 'content_assets', 'email_sequences', 'social_content', 'paid_ad_creative', 'sales_enablement',
+                    'channel_strategy', 'campaign_calendar', 'seo_activation', 'paid_media', 'outbound_partner', 'community_activation',
+                    'measurement', 'experiment_review', 'competitive_pulse', 'executive_brief', 'iteration_planner'
+                ];
+                
+                // Trigger background execution of all 27 agents sequentially
+                (async () => {
+                    console.log(`[CYCLE START] Starting background pipeline of all 27 agents for ${tenant}...`);
+                    for (const ag of agentsList) {
+                        try {
+                            await runGeminiAgentDirectly(tenant, cycle, ag);
+                        } catch (err) {
+                            console.error(`[CYCLE START] Error executing agent ${ag}:`, err);
+                        }
+                    }
+                    console.log(`[CYCLE START] Completed background pipeline of all 27 agents for ${tenant}!`);
+                })();
+
                 return {
                     success: true,
-                    message: `[cycle_start] Cycle ${cycle} successfully started for ${tenant} via Gemini Bridge.`
+                    message: `[cycle_start] Cycle ${cycle} successfully started. Executing all 27 agents in the background.`
                 };
             }
         } else if (command.includes('/gtm-tenant-init')) {
@@ -669,11 +788,28 @@ app.post('/api/reject', async (req, res) => {
                 'utf8'
             );
 
+            // Delete the old output file so Content Viewer reflects the rejection status
+            const busPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'context_bus');
+            const outputFile = path.join(busPath, `${agent}.output.json`);
+            if (fs.existsSync(outputFile)) {
+                fs.unlinkSync(outputFile);
+            }
+
+            // Trigger background regeneration using the rejection comment as prompt feedback
+            (async () => {
+                try {
+                    console.log(`[REJECTION LOOP] Auto-regenerating agent: ${agent} for ${tenant} with feedback: ${comment}`);
+                    await runGeminiAgentDirectly(tenant, cycle, agent, comment);
+                } catch (e) {
+                    console.error('[REJECTION LOOP ERROR]', e);
+                }
+            })();
+
             writeAuditLog('approval.decision', role, role, 'approval', id, tenant, cycle, { status: 'pending' }, { status: 'rejected', iteration: currentIteration }, comment);
 
             res.json({
                 success: true,
-                message: `[reject] Artifact from agent "${agent}" rejected. Sent back to feedback loop. (Revision iteration: ${currentIteration}/3)`
+                message: `[reject] Artifact from agent "${agent}" rejected. Old output deleted. Auto-triggering regeneration with feedback...`
             });
         }
     } else {
@@ -692,9 +828,15 @@ app.post('/api/validate-profile', async (req, res) => {
 
 // 8. Agent Run (/gtm-agent-run)
 app.post('/api/agent-run', async (req, res) => {
-    const { tenant, cycle, agent } = req.body;
+    const { tenant, cycle, agent, customInstructions } = req.body;
     if (!tenant || !cycle || !agent) return res.status(400).json({ error: 'Missing tenant, cycle, or agent' });
-    const result = await runRealCLI(`claude -p "/gtm-agent-run tenant=${tenant} cycle=${cycle} agent=${agent}"`);
+    
+    if (customInstructions) {
+        console.log(`[AGENT RUN] Executing agent ${agent} with custom instructions: "${customInstructions}"`);
+    }
+
+    const cmd = `claude -p "/gtm-agent-run tenant=${tenant} cycle=${cycle} agent=${agent}${customInstructions ? ` instruction=\\\"${customInstructions}\\\"` : ''}"`;
+    const result = await runRealCLI(cmd);
     res.json(result);
 });
 
@@ -996,10 +1138,170 @@ app.post('/api/outputs/:tenant/:cycle', (req, res) => {
         payload
     };
     fs.writeFileSync(outputFile, JSON.stringify(record, null, 2));
-    res.json({ success: true, message: `Output saved for agent: ${agent}` });
+    writeAuditLog('agent.output.saved', 'System Operator', 'Operator', 'agent_output', agent, tenant, cycle, null, { status: 'completed' });
+    res.json({ success: true, message: 'Output saved successfully.' });
 });
 
-// 14. Competitor Intelligence Agent
+// 14. Delete an agent output
+app.delete('/api/outputs/:tenant/:cycle/:agent', (req, res) => {
+    const { tenant, cycle, agent } = req.params;
+    const busPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'context_bus');
+    const outputFile = path.join(busPath, `${agent}.output.json`);
+    const approvalPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'approvals');
+
+    try {
+        let deleted = false;
+        if (fs.existsSync(outputFile)) {
+            fs.unlinkSync(outputFile);
+            deleted = true;
+        }
+        
+        // Also remove any pending approvals associated with this agent output
+        const pendingFile = path.join(approvalPath, `${agent}.pending.json`);
+        const approvedFile = path.join(approvalPath, `${agent}.approved.json`);
+        const rejectedFile = path.join(approvalPath, `${agent}.rejected.json`);
+        
+        if (fs.existsSync(pendingFile)) fs.unlinkSync(pendingFile);
+        if (fs.existsSync(approvedFile)) fs.unlinkSync(approvedFile);
+        if (fs.existsSync(rejectedFile)) fs.unlinkSync(rejectedFile);
+
+        if (deleted) {
+            writeAuditLog('output.deleted', 'System Operator', 'Operator', 'output', agent, tenant, cycle, null, { status: 'deleted' });
+            res.json({ success: true, message: `Output for agent ${agent} deleted successfully.` });
+        } else {
+            res.status(404).json({ error: 'Output file not found' });
+        }
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to delete output', details: e.message });
+    }
+});
+
+// 14.5. Interactive Agent Playground API
+app.post('/api/agent-playground-run', async (req, res) => {
+    const { company, industry, agent, customInstructions } = req.body;
+    if (!company || !industry || !agent) {
+        return res.status(400).json({ error: 'Missing company name, industry, or agent.' });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+    }
+
+    try {
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+        // 1. Scaffold a clean virtual tenant profile object
+        const tempProfile = {
+            company: {
+                brand_name: company,
+                legal_name: `${company} Inc.`,
+                size_band: 'mid_market',
+                hq_country: 'US',
+                description_short: `A B2B solutions provider in the ${industry} niche.`
+            },
+            industry: {
+                primary: industry,
+                secondary: []
+            },
+            brand_voice: {
+                archetype: 'Sage',
+                tone: ['clear', 'outcome-focused', 'trustworthy'],
+                reading_level: 'grade_11',
+                banned_phrases: ['revolutionary', 'world-class']
+            },
+            geography: {
+                primary_markets: ['US']
+            },
+            languages: {
+                default: 'en-US',
+                supported: ['en-US']
+            },
+            currency: {
+                default: 'USD'
+            }
+        };
+
+        // 2. Locate agent template prompt
+        let agentPrompt = '';
+        const phases = ['phase1_research', 'phase2_narrative', 'phase3_assets', 'phase4_distribution', 'phase5_measurement'];
+        let foundPath = null;
+        for (const phase of phases) {
+            const p = path.join(getRootPath(), 'agents', phase, agent, 'prompt.md');
+            if (fs.existsSync(p)) {
+                foundPath = p;
+                break;
+            }
+        }
+
+        if (foundPath) {
+            agentPrompt = fs.readFileSync(foundPath, 'utf8');
+        } else {
+            agentPrompt = `Write B2B marketing content for the ${agent} task.`;
+        }
+
+        // 3. Compile prompt templates (dry runs for upstream variables in playground)
+        const compiledPrompt = compilePromptTemplate(agentPrompt, tempProfile, {}, {});
+
+        // 4. Construct System instructions prompt
+        const systemPrompt = `You are a GTM AI Agent named "${agent}" for the company described in the profile.
+Execute the following agent prompt instructions and output the generated marketing assets or research.
+
+--- COPYWRITING & FORMATTING RULES ---
+1. Return only the requested B2B content.
+2. Do not include explanations, introductions, conclusions, notes, or disclaimers.
+3. Use correct grammar and natural, professional language.
+4. Keep the formatting clean, clear, and easy to copy and paste.
+5. If the agent instructions request a JSON payload, return ONLY a clean JSON object. Do not add markdown wrappers (like \`\`\`json) inside the JSON string itself; just return clean parsable data.
+6. Preserve line breaks where appropriate for readability.
+7. Tone must be professional, persuasive, and tailored to target B2B buyers.
+
+--- COMPANY PROFILE ---
+${JSON.stringify(tempProfile, null, 2)}
+
+--- CUSTOM INSTRUCTIONS & BRIEF ---
+${customInstructions || 'None'}
+
+--- AGENT INSTRUCTIONS ---
+${compiledPrompt}
+`;
+
+        console.log(`[PLAYGROUND] Running agent playground: ${agent} for topic: ${industry}`);
+        const result = await generateContentWithRetry(model, systemPrompt);
+        const text = result.response.text().trim();
+
+        // 5. Parse JSON output if present
+        let payload = text;
+        if (text.startsWith('```json')) {
+            const cleanText = text.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+            try {
+                payload = JSON.parse(cleanText);
+            } catch (e) {
+                payload = cleanText;
+            }
+        } else if (text.startsWith('```')) {
+            payload = text.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/i, '').trim();
+            try {
+                payload = JSON.parse(payload);
+            } catch (e) { }
+        } else {
+            try {
+                payload = JSON.parse(text);
+            } catch (e) { }
+        }
+
+        res.json({
+            success: true,
+            payload
+        });
+
+    } catch (error) {
+        console.error('[PLAYGROUND ERROR]', error);
+        res.status(500).json({ error: `Failed to run agent in playground: ${error.message}` });
+    }
+});
+
+// 15. Competitor Intelligence Agent
 // AI-powered competitive landscape analysis using Gemini
 app.post('/api/competitor-analysis', async (req, res) => {
     const { service, industry, region } = req.body;
@@ -1118,24 +1420,180 @@ IMPORTANT RULES:
     }
 });
 
+// Helper to format content to clean readable HTML for the email
+function formatContentToHTML(content) {
+    if (!content) return '';
+
+    // Helper to format text with newlines into HTML paragraphs
+    const formatText = (txt) => {
+        if (!txt) return '';
+        return String(txt).replace(/\n/g, '<br/>');
+    };
+
+    // 0. Single Email Step
+    if (content && typeof content === 'object' && (content.subject || content.subject_line) && (content.body_markdown || content.body || content.content)) {
+        return `
+            <div style="background: white; border: 1px solid #e4e4e7; border-radius: 6px; padding: 15px; font-family: sans-serif;">
+                <div style="font-size: 14px; color: #18181b; margin-bottom: 8px;">
+                    <strong>Subject:</strong> ${content.subject || content.subject_line}
+                </div>
+                ${content.preheader ? `<div style="font-size: 12px; color: #71717a; margin-bottom: 10px; font-style: italic;">Preheader: ${content.preheader}</div>` : ''}
+                <div style="font-size: 13px; color: #18181b; line-height: 1.6; background: #fafafa; padding: 12px; border-radius: 4px; border: 1px solid #f4f4f5; white-space: pre-wrap;">${formatText(content.body_markdown || content.body || content.content)}</div>
+                ${content.cta ? `<div style="margin-top: 10px; font-size: 12px; color: #10b981;"><strong>CTA:</strong> <span style="background: #ecfdf5; padding: 4px 8px; border-radius: 4px; font-weight: bold;">${content.cta}</span></div>` : ''}
+            </div>
+        `;
+    }
+
+    // 1. Email Sequences
+    if (content.email_sequences || content.steps || content.emails) {
+        const list = content.email_sequences || content.steps || content.emails || [];
+        if (Array.isArray(list)) {
+            let html = '<div style="display: flex; flex-direction: column; gap: 20px;">';
+            list.forEach((seq, sIdx) => {
+                const steps = seq.steps || [];
+                html += `
+                    <div style="border: 1px solid #e4e4e7; border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fafafa; font-family: sans-serif;">
+                        <h4 style="color: #4f46e5; margin: 0 0 15px 0; border-bottom: 1px solid #e4e4e7; padding-bottom: 8px;">📂 Sequence: ${seq.sequence_id || seq.purpose || `Sequence ${sIdx + 1}`}</h4>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                `;
+                steps.forEach((email, idx) => {
+                    html += `
+                        <div style="background: white; border: 1px solid #e4e4e7; border-radius: 6px; padding: 12px; margin-top: 10px; font-family: sans-serif;">
+                            <div style="font-weight: bold; color: #18181b; font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between;">
+                                <span>📧 Step ${email.step_number || idx + 1}: ${email.label || 'Email Campaign'}</span>
+                                <span style="font-weight: normal; color: #71717a; font-size: 12px; margin-left: 20px;">⏱️ Delay: ${email.delay_after_prior_step_hours ? `${email.delay_after_prior_step_hours}h` : 'Immediate'}</span>
+                            </div>
+                            <div style="font-size: 13px; color: #3f3f46; margin-bottom: 6px;"><strong>Subject:</strong> ${email.subject || email.subject_line}</div>
+                            ${email.preheader ? `<div style="font-size: 13px; color: #71717a; margin-bottom: 8px; font-style: italic;">Preheader: ${email.preheader}</div>` : ''}
+                            <div style="font-size: 13px; color: #18181b; line-height: 1.6; background: #fafafa; padding: 10px; border-radius: 4px; border: 1px solid #f4f4f5; white-space: pre-wrap;">${formatText(email.body_markdown || email.body || email.content)}</div>
+                            ${email.cta ? `<div style="margin-top: 8px; font-size: 12px; color: #10b981;"><strong>CTA Button:</strong> <span style="background: #ecfdf5; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${email.cta}</span></div>` : ''}
+                        </div>
+                    `;
+                });
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+    }
+
+    // 2. Paid Ad Creative
+    if (content.google_search || content.linkedin_ads || content.meta_ads || content.paid_ad_creative_pack || content.platforms) {
+        const pack = content.paid_ad_creative_pack || content || {};
+        let google = pack.google_search || [];
+        let linkedin = pack.linkedin_ads || [];
+        
+        if (pack.platforms && Array.isArray(pack.platforms)) {
+            const gPlat = pack.platforms.find(p => p.platform_id === 'google_search' || p.platform_id === 'google');
+            if (gPlat && gPlat.campaigns) {
+                google = [];
+                gPlat.campaigns.forEach(c => {
+                    if (c.ads) {
+                        c.ads.forEach(ad => {
+                            google.push({
+                                ...ad,
+                                landing_url: ad.landing_url || c.landing_url || 'https://example.com'
+                            });
+                        });
+                    }
+                });
+            }
+            
+            const lPlat = pack.platforms.find(p => p.platform_id === 'linkedin_ads' || p.platform_id === 'linkedin');
+            if (lPlat && lPlat.campaigns) {
+                linkedin = [];
+                lPlat.campaigns.forEach(c => {
+                    if (c.ads) {
+                        c.ads.forEach(ad => {
+                            linkedin.push(ad);
+                        });
+                    }
+                });
+            }
+        }
+        
+        let html = '<div style="display: flex; flex-direction: column; gap: 15px; font-family: sans-serif;">';
+        
+        google.forEach((ad, idx) => {
+            html += `
+                <div style="border: 1px solid #e4e4e7; border-radius: 6px; padding: 12px; background: white;">
+                    <div style="font-size: 12px; color: #4f46e5; font-weight: bold; margin-bottom: 4px;">Google Search Ad Preview</div>
+                    <div style="font-size: 15px; color: #1a0dab; text-decoration: underline; font-weight: 500;">${Array.isArray(ad.headlines) ? ad.headlines.join(' | ') : (ad.headlines || ad.headline || 'Search Ad')}</div>
+                    <div style="color: #006621; font-size: 12px; margin: 2px 0;">${ad.landing_url || 'https://example.com'}</div>
+                    <p style="color: #4b5563; font-size: 13px; margin: 0; line-height: 1.4;">${ad.description || ad.description_line1 || ''}</p>
+                </div>
+            `;
+        });
+        
+        linkedin.forEach((ad, idx) => {
+            html += `
+                <div style="border: 1px solid #e4e4e7; border-radius: 6px; padding: 12px; background: white; margin-top: 10px;">
+                    <div style="font-size: 12px; color: #0077b5; font-weight: bold; margin-bottom: 4px;">LinkedIn Sponsored Ad Copy</div>
+                    <p style="color: #4b5563; font-size: 13px; margin: 0; line-height: 1.4; white-space: pre-wrap;">${formatText(ad.primary_text || ad.intro_text || ad.body || '')}</p>
+                    ${(ad.headline || ad.title) ? `<div style="font-weight: bold; font-size: 13px; color: #18181b; margin-top: 6px;">Headline: ${ad.headline || ad.title}</div>` : ''}
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    // 3. General Object Formatter
+    if (typeof content === 'object') {
+        let html = '<div style="display: flex; flex-direction: column; gap: 12px; font-family: sans-serif;">';
+        Object.entries(content).forEach(([k, v]) => {
+            if (k === 'schema_version' || k === 'written_by_agent' || k === 'written_at') return;
+            html += `
+                <div style="background: #fafafa; border: 1px solid #e4e4e7; border-radius: 6px; padding: 10px 15px;">
+                    <div style="font-size: 11px; color: #4f46e5; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">${k.replace(/_/g, ' ')}</div>
+                    <div style="font-size: 13px; color: #18181b; line-height: 1.5; white-space: pre-wrap;">
+                        ${typeof v === 'object' ? formatContentToHTML(v) : formatText(v)}
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    // String/text fallback
+    return `<div style="font-size: 14px; line-height: 1.6; color: #18181b; white-space: pre-wrap; font-family: sans-serif;">${formatText(content)}</div>`;
+}
+
 // 30. Dispatch Email API
 app.post('/api/dispatch-email', async (req, res) => {
-    const { tenant, cycle, agent, stakeholder, subject, notes } = req.body;
-    if (!tenant || !cycle || !agent || !stakeholder || !stakeholder.email) {
-        return res.status(400).json({ error: 'Missing required parameters: tenant, cycle, agent, stakeholder, and stakeholder.email' });
+    const { tenant, cycle, agent, stakeholder, recipients, subject, notes, recipientsPayload } = req.body;
+    
+    // Normalize recipients to a list of objects
+    let targetRecipients = [];
+    if (Array.isArray(recipients)) {
+        targetRecipients = recipients;
+    } else if (stakeholder && stakeholder.email) {
+        targetRecipients = [stakeholder];
+    }
+
+    if (!tenant || !cycle || !agent || targetRecipients.length === 0) {
+        return res.status(400).json({ error: 'Missing required parameters: tenant, cycle, agent, and at least one recipient.' });
     }
 
     const busPath = path.join(getRootPath(), 'tenants', tenant, 'cycles', cycle, 'context_bus');
     const filePath = path.join(busPath, `${agent}.output.json`);
 
     try {
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).json({ error: `No generated output found for agent ${agent} in tenant ${tenant}` });
+        let content;
+        if (recipientsPayload) {
+            content = recipientsPayload;
+        } else {
+            if (!fs.existsSync(filePath)) {
+                return res.status(404).json({ error: `No generated output found for agent ${agent} in tenant ${tenant}` });
+            }
+            const rawData = fs.readFileSync(filePath, 'utf8');
+            const parsed = JSON.parse(rawData);
+            content = parsed.payload || parsed;
         }
-
-        const rawData = fs.readFileSync(filePath, 'utf8');
-        const parsed = JSON.parse(rawData);
-        const content = parsed.payload || parsed;
 
         // Configure Nodemailer transporter
         let transporter;
@@ -1146,14 +1604,16 @@ app.post('/api/dispatch-email', async (req, res) => {
             transporter = nodemailer.createTransport({
                 host: process.env.SMTP_HOST,
                 port: parseInt(process.env.SMTP_PORT || '587'),
-                secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+                secure: process.env.SMTP_SECURE === 'true',
                 auth: {
                     user: process.env.SMTP_USER,
                     pass: process.env.SMTP_PASS
+                },
+                tls: {
+                    rejectUnauthorized: false
                 }
             });
         } else {
-            // Setup Ethereal developer test SMTP account
             console.log("[SMTP] No SMTP config found. Creating temporary Ethereal test account...");
             testAccount = await nodemailer.createTestAccount();
             transporter = nodemailer.createTransport({
@@ -1163,68 +1623,283 @@ app.post('/api/dispatch-email', async (req, res) => {
                 auth: {
                     user: testAccount.user,
                     pass: testAccount.pass
+                },
+                tls: {
+                    rejectUnauthorized: false
                 }
             });
             isTestAccount = true;
         }
 
-        // Format content payload for display in email
-        let formattedContent = '';
-        if (typeof content === 'object') {
-            formattedContent = `<pre style="background:#f4f4f5; padding:15px; border-radius:6px; border:1px solid #e4e4e7; font-family:monospace; font-size:13px; color:#18181b; overflow-x:auto;">${JSON.stringify(content, null, 2)}</pre>`;
-        } else {
-            formattedContent = `<div style="background:#f4f4f5; padding:15px; border-radius:6px; border:1px solid #e4e4e7; white-space:pre-wrap; font-family:sans-serif; color:#18181b; line-height:1.6;">${content}</div>`;
-        }
+        const formattedContent = formatContentToHTML(content);
+        const results = [];
 
-        // Email details
-        const mailOptions = {
-            from: process.env.SMTP_FROM || '"GTM OS AI Department" <gtm-dispatcher@example.com>',
-            to: stakeholder.email,
-            subject: subject || `GTM OS Dispatch: AI Marketing ${agent}`,
-            html: `
-                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4e4e7; border-radius: 8px; color: #18181b;">
-                    <h2 style="color: #4f46e5; margin-bottom: 5px;">GTM OS Marketing Dispatch</h2>
-                    <p style="font-size: 14px; color: #71717a; margin-top: 0; margin-bottom: 20px;">Autonomous B2B Marketing Delivery</p>
-                    
-                    <p>Hello <strong>${stakeholder.name}</strong> (${stakeholder.role}),</p>
-                    <p>The AI Agent <strong>${agent}</strong> has generated marketing deliverables for the <strong>${tenant}</strong> campaign cycle (<strong>${cycle}</strong>).</p>
-                    
-                    ${notes ? `
-                    <div style="background: #fef08a; border-left: 4px solid #eab308; padding: 12px; margin: 15px 0; border-radius: 4px; font-size: 14px;">
-                        <strong>Reviewer / CMO Notes:</strong><br/>
-                        ${notes}
+        // Send to all selected recipients
+        for (const recipient of targetRecipients) {
+            if (!recipient.email) continue;
+
+            const mailOptions = {
+                from: process.env.SMTP_FROM || '"GTM OS AI Department" <gtm-dispatcher@example.com>',
+                to: recipient.email,
+                subject: subject || `GTM OS Dispatch: AI Marketing ${agent}`,
+                html: `
+                    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4e4e7; border-radius: 8px; color: #18181b;">
+                        <h2 style="color: #4f46e5; margin-bottom: 5px;">GTM OS Marketing Dispatch</h2>
+                        <p style="font-size: 14px; color: #71717a; margin-top: 0; margin-bottom: 20px;">Autonomous B2B Marketing Delivery</p>
+                        
+                        <p>Hello <strong>${recipient.name || 'Stakeholder'}</strong> (${recipient.role || 'Member'}),</p>
+                        <p>The AI Agent <strong>${agent}</strong> has generated marketing deliverables for the <strong>${tenant}</strong> campaign cycle (<strong>${cycle}</strong>).</p>
+                        
+                        ${notes ? `
+                        <div style="background: #fef08a; border-left: 4px solid #eab308; padding: 12px; margin: 15px 0; border-radius: 4px; font-size: 14px;">
+                            <strong>Reviewer / CMO Notes:</strong><br/>
+                            ${notes}
+                        </div>
+                        ` : ''}
+                        
+                        <h3 style="color: #0f172a; margin-top: 25px; border-bottom: 1px solid #e4e4e7; padding-bottom: 8px;">Deliverable Preview</h3>
+                        ${formattedContent}
+                        
+                        <p style="margin-top: 30px; font-size: 12px; color: #a1a1aa; text-align: center; border-top: 1px solid #e4e4e7; padding-top: 15px;">
+                            Sent automatically by GTM Operating System Monolith.
+                        </p>
                     </div>
-                    ` : ''}
-                    
-                    <h3 style="color: #0f172a; margin-top: 25px; border-bottom: 1px solid #e4e4e7; padding-bottom: 8px;">Deliverable Preview</h3>
-                    ${formattedContent}
-                    
-                    <p style="margin-top: 30px; font-size: 12px; color: #a1a1aa; text-align: center; border-top: 1px solid #e4e4e7; padding-top: 15px;">
-                        Sent automatically by GTM Operating System Monolith.
-                    </p>
-                </div>
-            `
-        };
+                `
+            };
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log(`[SMTP] Email successfully dispatched to ${stakeholder.email}. MessageId: ${info.messageId}`);
+            try {
+                const info = await transporter.sendMail(mailOptions);
+                console.log(`[SMTP] Email successfully dispatched to ${recipient.email}. MessageId: ${info.messageId}`);
+                
+                let previewUrl = null;
+                if (isTestAccount) {
+                    previewUrl = nodemailer.getTestMessageUrl(info);
+                }
 
-        let previewUrl = null;
-        if (isTestAccount) {
-            previewUrl = nodemailer.getTestMessageUrl(info);
-            console.log(`[SMTP] Preview URL: ${previewUrl}`);
+                writeAuditLog(
+                    'email.dispatched',
+                    'System Operator',
+                    'Operator',
+                    'email',
+                    agent,
+                    tenant,
+                    cycle,
+                    null,
+                    { recipient_email: recipient.email, recipient_name: recipient.name, subject, notes }
+                );
+
+                results.push({
+                    email: recipient.email,
+                    name: recipient.name,
+                    role: recipient.role,
+                    success: true,
+                    messageId: info.messageId,
+                    previewUrl
+                });
+
+            } catch (sendErr) {
+                console.error(`[SMTP DISPATCH TO ${recipient.email} FAILED]`, sendErr);
+                results.push({
+                    email: recipient.email,
+                    name: recipient.name,
+                    role: recipient.role,
+                    success: false,
+                    error: sendErr.message
+                });
+            }
         }
 
+        const overallSuccess = results.some(r => r.success);
         res.json({
-            success: true,
-            message: `Email dispatched successfully to ${stakeholder.email}.`,
-            messageId: info.messageId,
-            previewUrl
+            success: overallSuccess,
+            message: overallSuccess ? `Successfully dispatched email to selected members.` : `Failed to dispatch emails.`,
+            results
         });
 
     } catch (error) {
         console.error('[SMTP DISPATCH ERROR]', error);
         res.status(500).json({ error: `Failed to dispatch email: ${error.message}` });
+    }
+});
+
+// 31. Convert Competitor to Tenant Workspace API
+app.post('/api/onboard-competitor', async (req, res) => {
+    const { name, description, founded, headquarters, best_for } = req.body;
+    if (!name) {
+        return res.status(400).json({ error: 'Missing competitor name.' });
+    }
+
+    const folderName = name.replace(/[^a-zA-Z0-9 ]/g, "").trim();
+    const tenantPath = path.join(getRootPath(), 'tenants', folderName);
+    const yamlPath = path.join(tenantPath, 'tenant_profile.yaml');
+
+    try {
+        if (fs.existsSync(yamlPath)) {
+            return res.status(409).json({ error: `A workspace for '${name}' already exists!` });
+        }
+
+        if (!fs.existsSync(tenantPath)) {
+            fs.mkdirSync(tenantPath, { recursive: true });
+        }
+
+        // Clean domain name from competitor name
+        const cleanDomain = name.toLowerCase().replace(/[^a-z0-9]/g, "") + '.com';
+
+        // Write a customized yaml profile with realistic details and stakeholder emails
+        const yamlContent = `version: 2
+profile_id: "${folderName}"
+extends: vertical_packs/_template
+company:
+  legal_name: "${name} Inc."
+  brand_name: "${name}"
+  url: "https://${cleanDomain}"
+  founded: ${founded || 2020}
+  size_band: "mid_market"
+  hq_country: "US"
+  description_short: "${description || `Advanced solutions for ${best_for || 'B2B markets'}.`}"
+  description_long: |
+    ${description || `${name} is a leading provider specializing in ${best_for || 'enterprise software'}.`}.
+    Headquartered in ${headquarters || 'United States'}.
+
+industry:
+  primary: "enterprise_software"
+  secondary: []
+
+lob:
+  - id: core_service
+    motion: enterprise_abm
+    weight: 1.0
+
+icp_archetypes:
+  - id: enterprise_it_decision_maker
+    industries: ["all"]
+    company_size: ["100-1000"]
+    geos: ["US"]
+    buying_committee:
+      economic_buyer: "CTO"
+      technical_buyer: "IT Director"
+      user_buyer: "Knowledge Workers"
+      influencers: ["CISO", "CFO"]
+    committee_complexity: "medium"
+    deal_size_band: "30k-150k"
+    sales_cycle_days: 90
+
+brand_voice:
+  archetype: "Sage"
+  tone: ["trustworthy", "innovative", "clear"]
+  reading_level: "grade_11"
+  banned_phrases: ["revolutionary", "world-class"]
+  required_disclaimers: []
+
+geography:
+  primary_markets: ["US"]
+  expansion_markets: []
+
+languages:
+  default: "en-US"
+  supported: ["en-US"]
+
+currency:
+  default: "USD"
+  reporting: "USD"
+
+tech_stack:
+  crm: "hubspot"
+  marketing_automation: "hubspot"
+  analytics: "ga4"
+  seo: "ahrefs"
+  social: "linkedin"
+  ad_platforms: ["linkedin_ads", "google_ads"]
+
+approval_roles:
+  - role: CMO
+    name: "${name} CMO"
+    email: "cmo@${cleanDomain}"
+    scope: [brand, campaign, positioning]
+    notification: [email]
+  - role: Legal
+    name: "${name} Legal Team"
+    email: "legal@${cleanDomain}"
+    scope: [regulatory_claims, customer_logos]
+  - role: CEO
+    name: "${name} CEO"
+    email: "ceo@${cleanDomain}"
+    scope: [executive_voice, positioning]
+
+operating_calendar:
+  cycle_length: monthly
+  fiscal_year_start: "01-01"
+  blackout_dates: []
+`;
+
+        fs.writeFileSync(yamlPath, yamlContent, 'utf8');
+
+        res.json({
+            success: true,
+            message: `Workspace '${name}' onboarded successfully!`,
+            tenantId: folderName
+        });
+
+    } catch (error) {
+        console.error('[ONBOARD COMPETITOR ERROR]', error);
+        res.status(500).json({ error: `Failed to onboard competitor workspace: ${error.message}` });
+    }
+});
+
+// 32. Dispatch WhatsApp API
+app.post('/api/dispatch-whatsapp', async (req, res) => {
+    const { tenant, cycle, agent, recipients } = req.body;
+    if (!tenant || !cycle || !agent || !recipients || !Array.isArray(recipients) || recipients.length === 0) {
+        return res.status(400).json({ error: 'Missing required parameters: tenant, cycle, agent, and recipients list.' });
+    }
+
+    try {
+        const results = [];
+        
+        for (const recipient of recipients) {
+            if (!recipient.phone) continue;
+
+            const cleanPhone = recipient.phone.replace(/[^0-9]/g, '');
+            const compiledMessage = recipient.compiledMessage || `GTM OS Dispatch for ${tenant}`;
+
+            // Generate official wa.me direct click-to-chat URL
+            const clickToChatUrl = `https://wa.me/${cleanPhone}/?text=${encodeURIComponent(compiledMessage)}`;
+
+            console.log(`[WHATSAPP DISPATCH] Simulating send to ${recipient.name} (${recipient.phone})`);
+            console.log(`[WHATSAPP MESSAGE TEXT]:\n${compiledMessage}`);
+            console.log(`[WHATSAPP CLICK-TO-CHAT]: ${clickToChatUrl}`);
+
+            // Write to compliance audit log
+            writeAuditLog(
+                'whatsapp.dispatched',
+                'System Operator',
+                'Operator',
+                'whatsapp',
+                agent,
+                tenant,
+                cycle,
+                null,
+                { recipient_phone: recipient.phone, recipient_name: recipient.name }
+            );
+
+            results.push({
+                role: recipient.role,
+                name: recipient.name,
+                phone: recipient.phone,
+                success: true,
+                clickToChatUrl
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'WhatsApp dispatches successfully compiled.',
+            results
+        });
+
+    } catch (error) {
+        console.error('[WHATSAPP DISPATCH ERROR]', error);
+        res.status(500).json({ error: `Failed to dispatch WhatsApp: ${error.message}` });
     }
 });
 

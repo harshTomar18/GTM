@@ -1,0 +1,221 @@
+{
+  "schema_version": "paid_ad_creative.Output:v1.0.0",
+  "written_by_agent": "paid_ad_creative",
+  "written_at": "2026-07-16T06:22:06.998Z",
+  "tenant_id": "HCLTech",
+  "cycle_id": "2026-Q3",
+  "payload": {
+    "platforms": [
+      {
+        "platform_id": "google_search",
+        "platform_name": "Google Search Ads",
+        "campaigns": [
+          {
+            "campaign_id": "it_ops_optimization",
+            "campaign_name": "IT Operations Optimization",
+            "ad_groups": [
+              {
+                "ad_group_id": "it_ops_optimization_ag1",
+                "ad_group_name": "IT Ops Optimization Solutions",
+                "keywords": [
+                  {
+                    "term": "it operations optimization",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "it operations optimization",
+                    "match_type": "phrase"
+                  },
+                  {
+                    "term": "optimize it infrastructure",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "optimize it infrastructure",
+                    "match_type": "phrase"
+                  },
+                  {
+                    "term": "it efficiency solutions",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "it efficiency solutions",
+                    "match_type": "phrase"
+                  },
+                  {
+                    "term": "managed it services enterprise",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "managed it services enterprise",
+                    "match_type": "phrase"
+                  },
+                  {
+                    "term": "it service management",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "it service management",
+                    "match_type": "phrase"
+                  },
+                  {
+                    "term": "reduce it costs",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "reduce it costs",
+                    "match_type": "phrase"
+                  },
+                  {
+                    "term": "enterprise it cost management",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "enterprise it cost management",
+                    "match_type": "phrase"
+                  },
+                  {
+                    "term": "it budget optimization",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "it budget optimization",
+                    "match_type": "phrase"
+                  },
+                  {
+                    "term": "strategic it cost reduction",
+                    "match_type": "exact"
+                  },
+                  {
+                    "term": "strategic it cost reduction",
+                    "match_type": "phrase"
+                  }
+                ],
+                "negative_keywords": [
+                  "free",
+                  "jobs",
+                  "hcltech careers",
+                  "internship",
+                  "consultant jobs",
+                  "personal it support",
+                  "cheap solutions",
+                  "outdated tech"
+                ],
+                "ads": [
+                  {
+                    "variant_label": "pain_lead",
+                    "experiment_id": null,
+                    "headlines": [
+                      "Slow IT? Streamline Now.",
+                      "Boost Operational Agility.",
+                      "HCLTech IT Optimization."
+                    ],
+                    "primary_text": "",
+                    "description": "Eliminate IT inefficiencies. HCLTech integrated services for peak performance & cost savings. One partner.",
+                    "cta": "Get started",
+                    "image_prompt": "Abstract visual representing fragmented IT systems converging into a single, efficient stream, with hints of HCLTech blue (#0078D4) and green (#00B140). The overall tone should be problem-solving and clear.",
+                    "video_brief": null,
+                    "emotional_trigger": "urgency",
+                    "landing_url": "https://hcltech.com/solutions/it-operations?utm_source=google_search&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content=pain_lead&utm_term={{ad_group_id}}"
+                  },
+                  {
+                    "variant_label": "outcome_lead",
+                    "experiment_id": null,
+                    "headlines": [
+                      "Optimize IT Performance.",
+                      "Achieve IT Cost Efficiency.",
+                      "HCLTech: Your IT Partner."
+                    ],
+                    "primary_text": "",
+                    "description": "Drive transformation with agile, secure, efficient IT ops. Leverage our global delivery model. Learn more.",
+                    "cta": "Learn more",
+                    "image_prompt": "A modern data center interior, sleek and organized, with clear lines of light representing efficient data flow. The image should convey precision and high performance. Dominant colors are cool blues (#0078D4) and whites, reflecting innovation.",
+                    "video_brief": null,
+                    "emotional_trigger": "aspiration",
+                    "landing_url": "https://hcltech.com/solutions/it-operations?utm_source=google_search&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content=outcome_lead&utm_term={{ad_group_id}}"
+                  },
+                  {
+                    "variant_label": "solution_lead",
+                    "experiment_id": null,
+                    "headlines": [
+                      "Integrated IT Solutions.",
+                      "Global Delivery Expertise.",
+                      "Simplify IT Operations."
+                    ],
+                    "primary_text": "",
+                    "description": "Integrated IT services. Reduce complexity with a single-partner approach. Global expertise.",
+                    "cta": "Get started",
+                    "image_prompt": "Conceptual illustration showing various IT service icons (cloud, security, data, applications) seamlessly connected by a central hub, symbolizing HCLTech's single-partner approach. Use HCLTech's primary brand colors, blue (#0078D4) and green (#00B140), to highlight connectivity.",
+                    "video_brief": null,
+                    "emotional_trigger": "mastery",
+                    "landing_url": "https://hcltech.com/solutions/it-operations?utm_source=google_search&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content=solution_lead&utm_term={{ad_group_id}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "platform_id": "linkedin_ads",
+        "platform_name": "LinkedIn Ads",
+        "campaigns": [
+          {
+            "campaign_id": "digital_transformation_leadership",
+            "campaign_name": "Digital Transformation Leadership",
+            "ad_groups": [
+              {
+                "ad_group_id": "digital_transformation_ag1",
+                "ad_group_name": "Enterprise Digital Transformation",
+                "ads": [
+                  {
+                    "variant_label": "outcome_lead",
+                    "experiment_id": null,
+                    "headlines": [
+                      "Lead Digital Transformation"
+                    ],
+                    "primary_text": "CTOs & IT Directors: Lead your enterprise's digital journey with HCLTech. Our integrated IT services and global delivery model accelerate transformation, ensuring agility, security, and sustained competitive advantage. Simplify complex initiatives with a single-partner approach.",
+                    "description": "Drive innovation & efficiency. HCLTech powers your success.",
+                    "cta": "Learn more",
+                    "image_prompt": "A diverse group of senior IT leaders (mid-40s to late 50s, professionally dressed) collaborating in a modern, brightly lit meeting room. One leader, a woman, is pointing confidently at a large screen displaying interconnected digital processes and data flow. The scene conveys innovation and strategic leadership. Brand colors #0078D4 (a common HCLTech blue) integrated into screen graphics or background elements.",
+                    "video_brief": null,
+                    "emotional_trigger": "aspiration",
+                    "landing_url": "https://hcltech.com/solutions/digital-transformation?utm_source=linkedin_ads&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content=outcome_lead&utm_term={{ad_group_id}}"
+                  },
+                  {
+                    "variant_label": "value_prop_lead",
+                    "experiment_id": null,
+                    "headlines": [
+                      "Integrated Digital Transformation"
+                    ],
+                    "primary_text": "Tired of fragmented IT services? HCLTech delivers comprehensive integrated IT services through a single-partner approach. Optimize operations, accelerate innovation, and achieve true digital transformation with our global expertise.",
+                    "description": "Simplify your IT strategy. Get end-to-end solutions.",
+                    "cta": "Get started",
+                    "image_prompt": "A clean, abstract visual representing interconnected digital services converging into a single, cohesive hub, using HCLTech's brand colors (shades of #0078D4, #00B140, and #666666). No people, focusing on the concept of 'single partner'. Professional, clear, innovative aesthetic, suggesting unity and efficiency.",
+                    "video_brief": null,
+                    "emotional_trigger": "safety",
+                    "landing_url": "https://hcltech.com/solutions/digital-transformation?utm_source=linkedin_ads&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content=value_prop_lead&utm_term={{ad_group_id}}"
+                  },
+                  {
+                    "variant_label": "strategic_lead",
+                    "experiment_id": null,
+                    "headlines": [
+                      "Future-Proof Your Enterprise IT"
+                    ],
+                    "primary_text": "CTOs, are you building an agile, future-proof enterprise? HCLTech's integrated IT services, backed by our global delivery model, ensure your digital transformation initiatives drive efficiency and sustained growth. Innovate confidently with a trusted partner.",
+                    "description": "Strategic IT for lasting competitive advantage.",
+                    "cta": "Learn more",
+                    "image_prompt": "A confident male CTO (mid-50s, sharp business attire) looking thoughtfully out a large office window at a dynamic city skyline, representing forward-thinking and strategic vision. A faint overlay of digital data streams or a blueprint visible on the window, subtly hinting at technology and planning. Soft, professional lighting, reflecting an innovative yet trustworthy tone. Incorporate HCLTech brand color #0078D4 in subtle desk accessories or room accents.",
+                    "video_brief": null,
+                    "emotional_trigger": "mastery",
+                    "landing_url": "https://hcltech.com/solutions/digital-transformation?utm_source=linkedin_ads&utm_medium=paid&utm_campaign={{campaign_id}}&utm_content=strategic_lead&utm_term={{ad_group_id}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

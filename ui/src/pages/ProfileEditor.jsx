@@ -193,13 +193,25 @@ export default function ProfileEditor() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Voice Archetype</label>
-                    <input
-                      type="text"
+                    <select
                       value={profile.brand_voice?.archetype || 'Sage'}
                       onChange={e => handleVisualChange('brand_voice', 'archetype', e.target.value)}
-                      placeholder="e.g. Sage, Creator, Explorer"
                       className="glass-input"
-                    />
+                      style={{ width: '100%', padding: '0.75rem', color: '#fff', background: 'var(--bg-primary)' }}
+                    >
+                      <option value="Sage">Sage</option>
+                      <option value="Creator">Creator</option>
+                      <option value="Explorer">Explorer</option>
+                      <option value="Hero">Hero</option>
+                      <option value="Outlaw">Outlaw</option>
+                      <option value="Magician">Magician</option>
+                      <option value="Lover">Lover</option>
+                      <option value="Caregiver">Caregiver</option>
+                      <option value="Jester">Jester</option>
+                      <option value="Citizen">Citizen</option>
+                      <option value="Ruler">Ruler</option>
+                      <option value="Innocent">Innocent</option>
+                    </select>
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Reading Level</label>
@@ -431,16 +443,26 @@ export default function ProfileEditor() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1rem' }}>
                       <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Persona ID</label>
-                        <input
-                          type="text"
-                          value={icp.id || ''}
+                        <select
+                          value={icp.id || 'enterprise_it_decision_maker'}
                           onChange={e => {
                             const updatedList = [...profile.icp_archetypes];
                             updatedList[index] = { ...updatedList[index], id: e.target.value };
                             handleVisualChange(null, 'icp_archetypes', updatedList);
                           }}
                           className="glass-input"
-                        />
+                          style={{ width: '100%', padding: '0.75rem', color: '#fff', background: 'var(--bg-primary)' }}
+                        >
+                          <option value="enterprise_it_decision_maker">Enterprise IT Decision Maker</option>
+                          <option value="mid_market_finance_ops">Mid-Market Finance Operations (Acme Default)</option>
+                          <option value="ciso">CISO (Chief Information Security Officer)</option>
+                          <option value="cto">CTO (Chief Technology Officer)</option>
+                          <option value="cmo">CMO (Chief Marketing Officer)</option>
+                          <option value="vp_marketing">VP Marketing</option>
+                          <option value="director_of_it">Director of IT</option>
+                          <option value="vp_engineering">VP Engineering</option>
+                          <option value="product_manager">Product Manager</option>
+                        </select>
                       </div>
                       <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Company Size Target</label>

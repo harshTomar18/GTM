@@ -1,0 +1,14 @@
+{
+  "id": "p9iibdiz",
+  "tenant": "HCLTech",
+  "cycle": "2026-Q3",
+  "agent": "website_copy",
+  "required_role": "CMO",
+  "required_roles": [
+    "CMO"
+  ],
+  "approvals_received": {},
+  "revision_iteration": 0,
+  "status": "pending",
+  "created_at": "2026-07-17T05:51:56.781Z"
+}

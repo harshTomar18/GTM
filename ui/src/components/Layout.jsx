@@ -11,7 +11,9 @@ import {
   ChevronRight,
   Search,
   ClipboardList,
-  Mail
+  Mail,
+  MessageSquare,
+  Sparkles
 } from 'lucide-react';
 
 export default function Layout({ healthStatus }) {
@@ -53,6 +55,10 @@ export default function Layout({ healthStatus }) {
             <Search size={20} />
             {!isCollapsed && <span>Competitor Intel</span>}
           </NavLink>
+          <NavLink to="/playground" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
+            <Sparkles size={20} />
+            {!isCollapsed && <span>Agent Playground</span>}
+          </NavLink>
           <NavLink to="/onboarding" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
             <User size={20} />
             {!isCollapsed && <span>SME Input Profile</span>}
@@ -72,6 +78,10 @@ export default function Layout({ healthStatus }) {
           <NavLink to="/dispatcher" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
             <Mail size={20} />
             {!isCollapsed && <span>Email Dispatcher</span>}
+          </NavLink>
+          <NavLink to="/whatsapp-dispatcher" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
+            <MessageSquare size={20} />
+            {!isCollapsed && <span>WhatsApp Dispatcher</span>}
           </NavLink>
           <NavLink to="/audit" onClick={closeSidebar} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
             <ClipboardList size={20} />
